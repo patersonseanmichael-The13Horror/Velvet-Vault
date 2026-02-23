@@ -527,16 +527,31 @@
       row.innerHTML = `<div><b>${who}</b> <small>just won</small> <b style="color:var(--green);">${amt} GOLD</b></div>
                        <small>${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</small>`;
       feedEl.prepend(row);
-      // keep it tidy
       while(feedEl.children.length > 6) feedEl.removeChild(feedEl.lastChild);
     }
     for(let i=0;i<4;i++) addFeed();
-    setInterval(addFeed, 30_000);
+    setInterval(addFeed, 30000);
 
     // Profile placeholder
     document.getElementById("openProfileBtn").addEventListener("click", () => {
       alert("Profile panel coming next (we can show email + tier + wallet here).");
     });
-  </script>
+
+    // 🔹 WALLET DISPLAY (ADD THIS PART)
+    const balEl = document.getElementById("walletBalance");
+
+    function renderWallet(){
+      if(!window.VaultEngine || !window.VaultEngine.user) return;
+      balEl.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
+    }
+
+    const wait = setInterval(() => {
+      if(window.VaultEngine){
+        clearInterval(wait);
+        window.VaultEngine.subscribe(renderWallet);
+        renderWallet();
+      }
+    }, 100);
+</script>
 </body>
 </html>
