@@ -22,7 +22,6 @@
     --line: rgba(255,255,255,0.12);
     --red:#ff233d;
     --green:#00ff9a;
-    --black:#0b0b0f;
     --felt:#0b2a1b;
     --panel: rgba(0,0,0,0.34);
     --shadow: rgba(0,0,0,0.70);
@@ -139,17 +138,6 @@
   }
   .stage > *{position:relative; z-index:2}
 
-  .grid{
-    display:grid;
-    grid-template-columns: 420px 1fr;
-    gap:16px;
-    padding:16px;
-  }
-  @media (max-width: 980px){
-    .grid{grid-template-columns: 1fr; }
-  }
-
-  /* ===== HUD ===== */
   .hudRow{
     display:flex;
     flex-wrap:wrap;
@@ -173,6 +161,16 @@
   .pill b{color: var(--green)}
   .pill .r{color: var(--red)}
 
+  .grid{
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:16px;
+    padding:16px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns: 1fr; }
+  }
+
   /* ===== Wheel ===== */
   .wheelPanel{
     border-radius: 18px;
@@ -193,8 +191,6 @@
     margin: 0 auto;
     position:relative;
   }
-
-  /* Wheel base image (optional) */
   .wheelImage{
     position:absolute;
     inset:0;
@@ -202,15 +198,13 @@
     background:
       radial-gradient(circle at 40% 35%, rgba(255,255,255,0.10), transparent 45%),
       radial-gradient(circle at 50% 60%, rgba(0,0,0,0.75), rgba(0,0,0,0.92)),
-      url("images/roulette-wheel.png") center/cover no-repeat; /* optional */
+      url("images/roulette-wheel.png") center/cover no-repeat;
     border:1px solid rgba(255,255,255,0.10);
     box-shadow:
       0 0 22px rgba(0,255,154,.18),
       0 0 26px rgba(255,35,61,.18),
       0 30px 80px rgba(0,0,0,.65);
   }
-
-  /* The rotating ring (numbers pockets) */
   .wheelRing{
     position:absolute;
     inset: 12%;
@@ -218,22 +212,29 @@
     border:1px solid rgba(255,255,255,0.14);
     background:
       conic-gradient(
-        /* a stylized pocket ring (not the real mapping image) */
-        #1b1b24 0 10deg, #c8132a 10deg 20deg, #1b1b24 20deg 30deg, #c8132a 30deg 40deg,
-        #1b1b24 40deg 50deg, #c8132a 50deg 60deg, #1b1b24 60deg 70deg, #0a6d4b 70deg 78deg,
-        #1b1b24 78deg 88deg, #c8132a 88deg 98deg, #1b1b24 98deg 108deg, #c8132a 108deg 118deg,
-        #1b1b24 118deg 128deg, #c8132a 128deg 138deg, #1b1b24 138deg 148deg, #c8132a 148deg 158deg,
-        #1b1b24 158deg 168deg, #c8132a 168deg 178deg, #1b1b24 178deg 188deg, #c8132a 188deg 198deg,
-        #1b1b24 198deg 208deg, #c8132a 208deg 218deg, #1b1b24 218deg 228deg, #c8132a 228deg 238deg,
-        #1b1b24 238deg 248deg, #c8132a 248deg 258deg, #1b1b24 258deg 268deg, #c8132a 268deg 278deg,
-        #1b1b24 278deg 288deg, #c8132a 288deg 298deg, #1b1b24 298deg 308deg, #c8132a 308deg 318deg,
-        #1b1b24 318deg 328deg, #c8132a 328deg 338deg, #1b1b24 338deg 348deg, #c8132a 348deg 360deg
+        #1b1b24 0 10deg, #c8132a 10deg 20deg,
+        #1b1b24 20deg 30deg, #c8132a 30deg 40deg,
+        #1b1b24 40deg 50deg, #c8132a 50deg 60deg,
+        #1b1b24 60deg 70deg, #0a6d4b 70deg 78deg,
+        #1b1b24 78deg 88deg, #c8132a 88deg 98deg,
+        #1b1b24 98deg 108deg, #c8132a 108deg 118deg,
+        #1b1b24 118deg 128deg, #c8132a 128deg 138deg,
+        #1b1b24 138deg 148deg, #c8132a 148deg 158deg,
+        #1b1b24 158deg 168deg, #c8132a 168deg 178deg,
+        #1b1b24 178deg 188deg, #c8132a 188deg 198deg,
+        #1b1b24 198deg 208deg, #c8132a 208deg 218deg,
+        #1b1b24 218deg 228deg, #c8132a 228deg 238deg,
+        #1b1b24 238deg 248deg, #c8132a 248deg 258deg,
+        #1b1b24 258deg 268deg, #c8132a 268deg 278deg,
+        #1b1b24 278deg 288deg, #c8132a 288deg 298deg,
+        #1b1b24 298deg 308deg, #c8132a 308deg 318deg,
+        #1b1b24 318deg 328deg, #c8132a 328deg 338deg,
+        #1b1b24 338deg 348deg, #c8132a 348deg 360deg
       );
     box-shadow: inset 0 0 30px rgba(0,0,0,0.65);
     transform: rotate(var(--wheelRot, 0deg));
-    transition: transform var(--wheelDur, 4000ms) cubic-bezier(.12,.92,.12,1);
+    transition: transform var(--wheelDur, 4600ms) cubic-bezier(.12,.92,.12,1);
   }
-
   .wheelHub{
     position:absolute;
     width: 34%;
@@ -243,8 +244,6 @@
     border:1px solid rgba(255,255,255,0.10);
     box-shadow: 0 12px 40px rgba(0,0,0,.55);
   }
-
-  /* Ball */
   .ball{
     position:absolute;
     width: 12px;
@@ -256,7 +255,6 @@
     left: 50%;
     top: 50%;
   }
-
   .ballOrbit{
     --r: 44%;
     --a: 0deg;
@@ -266,9 +264,8 @@
       translateX(var(--r))
       rotate(calc(-1 * var(--a)));
     transition:
-      transform var(--ballDur, 4000ms) cubic-bezier(.10,.90,.15,1);
+      transform var(--ballDur, 4600ms) cubic-bezier(.10,.90,.15,1);
   }
-
   .wheelControls{
     display:flex;
     gap:10px;
@@ -318,19 +315,27 @@
     border:1px solid rgba(255,255,255,0.12);
     background:
       radial-gradient(900px 520px at 50% 30%, rgba(0,0,0,0.18), rgba(0,0,0,0.70)),
-      url("images/roulette-board.jpg") center/cover no-repeat, /* optional */
+      url("images/roulette-board.jpg") center/cover no-repeat,
       linear-gradient(180deg, rgba(11,42,27,0.95), rgba(7,20,13,0.98));
     padding:14px;
     box-shadow: 0 18px 50px rgba(0,0,0,0.45);
     position:relative;
   }
 
-  .boardGrid{
+  /* Grid with spacer rows/cols so we can place split/corner spots */
+  .layout{
     display:grid;
-    grid-template-columns: 64px repeat(12, 1fr);
+    grid-template-columns: 70px 1fr 12px 1fr 12px 1fr;
+    grid-auto-rows: 46px;
     gap:6px;
     align-items:stretch;
   }
+  .rowGap{
+    grid-column: 1 / -1;
+    height: 10px;
+    margin: -2px 0;
+  }
+
   .cell{
     position:relative;
     border-radius: 10px;
@@ -344,7 +349,6 @@
     user-select:none;
     cursor:pointer;
     min-height: 44px;
-    box-shadow: inset 0 0 0 rgba(0,0,0,0);
     transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
   }
   .cell:hover{
@@ -352,17 +356,42 @@
     border-color: rgba(0,255,154,0.22);
     box-shadow: 0 0 18px rgba(0,255,154,0.10), 0 0 18px rgba(255,35,61,0.08);
   }
-  .cell.red{ background: rgba(255,35,61,0.16); }
-  .cell.black{ background: rgba(20,20,26,0.30); }
-  .cell.green{ background: rgba(0,255,154,0.12); }
-  .cell.label{
+  .nRed{ background: rgba(255,35,61,0.16); }
+  .nBlack{ background: rgba(20,20,26,0.30); }
+  .nGreen{ background: rgba(0,255,154,0.12); }
+
+  .label{
     cursor:default;
+    opacity:.9;
     background: rgba(0,0,0,0.26);
     font-weight:800;
-    opacity:.9;
   }
 
-  /* chips stacked inside a cell */
+  /* bet spots for split/corner */
+  .spot{
+    position:relative;
+    border-radius: 10px;
+    border: 1px dashed rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.04);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    user-select:none;
+    transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    min-height: 44px;
+  }
+  .spot:hover{
+    transform: translateY(-1px);
+    border-color: rgba(0,255,154,0.26);
+    background: rgba(0,255,154,0.05);
+  }
+  .spot small{
+    font-size:10px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.85;
+  }
+
   .chipStack{
     position:absolute;
     right:6px;
@@ -384,6 +413,19 @@
   .chip.g{
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(0,255,154,0.92));
     box-shadow: 0 0 16px rgba(0,255,154,0.12);
+  }
+
+  .outside{
+    margin-top: 12px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+  }
+  .outside2{
+    margin-top: 10px;
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap:10px;
   }
 
   .boardFooter{
@@ -422,7 +464,7 @@
       <div class="sigil" aria-hidden="true"></div>
       <div>
         <h1>Velvet Vault</h1>
-        <small>Roulette • Wheel + Board • Neon Vegas</small>
+        <small>Roulette • Split / Street / Corner • Neon Vegas</small>
       </div>
     </div>
     <div class="actions">
@@ -458,12 +500,15 @@
           <button class="btn" id="clearBtn">Clear Bets</button>
         </div>
 
-        <div class="log" id="log">Click the board to place chips. Spin when ready.</div>
+        <div class="log" id="log">Click numbers, split lines, corners, or street labels to place chips.</div>
       </div>
 
       <!-- BOARD -->
       <div class="boardPanel">
-        <div class="boardGrid" id="board"></div>
+        <div class="layout" id="layout"></div>
+
+        <div class="outside" id="dozens"></div>
+        <div class="outside2" id="evens"></div>
 
         <div class="boardFooter">
           <div class="betBox">
@@ -471,7 +516,7 @@
             <input id="chipSlider" type="range" min="10" max="1000" step="10" value="100">
             <div class="pill">Amt: <b id="chipAmt">100</b></div>
           </div>
-          <div class="pill">Tip: click same spot to stack chips</div>
+          <div class="pill">Payouts: Straight <b>35:1</b> • Split <b>17:1</b> • Street <b>11:1</b> • Corner <b>8:1</b></div>
         </div>
       </div>
     </div>
@@ -511,6 +556,7 @@ const wWait = setInterval(() => {
   }
 }, 100);
 
+const logEl = document.getElementById("log");
 function requireWallet(){
   if(!window.VaultEngine?.user){
     logEl.textContent = "Connecting to the vault…";
@@ -535,34 +581,29 @@ function credit(amount, note){
 }
 
 /* =========================
-   🎯 Roulette model
-   European wheel order (single 0).
-   This is the REAL sequence.
+   🎯 Wheel order + colors
    ========================= */
 const WHEEL_ORDER = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 const RED_SET = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
-
 function colorOf(n){
   if(n===0) return "green";
   return RED_SET.has(n) ? "red" : "black";
 }
 
 /* =========================
-   🧩 Board bets + payouts
-   Straight: 35:1
-   Dozen: 2:1
-   Column: 2:1
-   Even-money: 1:1 (red/black, odd/even, 1-18, 19-36)
+   🧾 Bets + payouts
    ========================= */
 const PAYOUTS = {
   straight: 35,
+  split: 17,
+  street: 11,
+  corner: 8,
   dozen: 2,
-  column: 2,
   even: 1
 };
 
-const BETS = new Map(); // key -> {type, value, amount}
-function betKey(type, value){ return type + ":" + String(value); }
+const BETS = new Map(); // key -> {type, nums:Set<number>, amount}
+function key(type, id){ return type + ":" + id; }
 
 function totalBet(){
   let t=0;
@@ -570,12 +611,20 @@ function totalBet(){
   return t;
 }
 
+function addChipVisual(stack){
+  const c = document.createElement("div");
+  c.className = "chip " + (Math.random()>0.5 ? "g" : "");
+  stack.appendChild(c);
+  while(stack.children.length > 10) stack.removeChild(stack.firstChild);
+}
+
 /* =========================
-   🧱 Build board UI
-   We generate a standard 0 + 12x3 grid + outside bets
+   🧱 UI build: numbers + split + corner + street
    ========================= */
-const boardEl = document.getElementById("board");
-const logEl = document.getElementById("log");
+const layoutEl = document.getElementById("layout");
+const dozensEl = document.getElementById("dozens");
+const evensEl = document.getElementById("evens");
+
 const totalBetEl = document.getElementById("totalBet");
 const chipValEl = document.getElementById("chipVal");
 const chipAmtEl = document.getElementById("chipAmt");
@@ -584,149 +633,160 @@ const statusEl = document.getElementById("status");
 
 const chipSlider = document.getElementById("chipSlider");
 let chipValue = Number(chipSlider.value||100);
-
 chipSlider.addEventListener("input", ()=>{
   chipValue = Number(chipSlider.value||100);
   chipValEl.textContent = chipValue;
   chipAmtEl.textContent = chipValue;
 });
 
-function makeCell(text, cls, clickHandler){
-  const d = document.createElement("div");
-  d.className = "cell " + (cls||"");
-  d.textContent = text;
-  const stack = document.createElement("div");
-  stack.className = "chipStack";
-  d.appendChild(stack);
-  if(clickHandler){
-    d.addEventListener("click", (e)=>{ audioOn(); tick(); clickHandler(d, stack, e); });
-  }else{
-    d.classList.add("label");
-  }
-  return d;
-}
-
-function addChipVisual(stack){
-  const c = document.createElement("div");
-  c.className = "chip " + (Math.random()>0.5 ? "g" : "");
-  stack.appendChild(c);
-  while(stack.children.length > 8) stack.removeChild(stack.firstChild);
-}
-
-function placeBet(type, value, cell, stack){
-  const key = betKey(type, value);
-  const existing = BETS.get(key);
+function placeBet(type, id, nums, stack){
+  const k = key(type, id);
+  const existing = BETS.get(k);
   if(existing) existing.amount += chipValue;
-  else BETS.set(key, {type, value, amount: chipValue});
+  else BETS.set(k, { type, nums: new Set(nums), amount: chipValue });
   addChipVisual(stack);
   totalBetEl.textContent = totalBet();
 }
 
+function mkStack(){
+  const s = document.createElement("div");
+  s.className = "chipStack";
+  return s;
+}
+
+function mkNumberCell(n){
+  const d = document.createElement("div");
+  const c = colorOf(n);
+  d.className = "cell " + (c==="red" ? "nRed" : c==="black" ? "nBlack" : "nGreen");
+  d.textContent = String(n);
+  const stack = mkStack();
+  d.appendChild(stack);
+  d.addEventListener("click", ()=>{
+    audioOn(); tick();
+    placeBet("straight", String(n), [n], stack);
+  });
+  return d;
+}
+
+function mkStreetCell(start){
+  const d = document.createElement("div");
+  d.className = "cell label";
+  d.textContent = "ST";
+  const stack = mkStack();
+  d.appendChild(stack);
+  d.title = `Street ${start}-${start+2}`;
+  d.addEventListener("click", ()=>{
+    audioOn(); tick();
+    placeBet("street", String(start), [start,start+1,start+2], stack);
+  });
+  return d;
+}
+
+function mkSpot(type, id, nums, label){
+  const d = document.createElement("div");
+  d.className = "spot";
+  d.innerHTML = `<small>${label||type}</small>`;
+  const stack = mkStack();
+  d.appendChild(stack);
+  d.addEventListener("click", ()=>{
+    audioOn(); tick();
+    placeBet(type, id, nums, stack);
+  });
+  return d;
+}
+
+function buildLayout(){
+  layoutEl.innerHTML = "";
+
+  // Build rows top-to-bottom: 12 streets: (1-3) ... (34-36)
+  // Our visual layout goes from 1-3 at top (classic).
+  const rows = [];
+  for(let r=0;r<12;r++){
+    const start = 1 + r*3;
+    rows.push([start, start+1, start+2]);
+  }
+
+  // For each row: street cell + n1 + vsplit + n2 + vsplit + n3
+  rows.forEach((nums, rIdx)=>{
+    // street bet
+    layoutEl.appendChild(mkStreetCell(nums[0]));
+
+    // number 1
+    layoutEl.appendChild(mkNumberCell(nums[0]));
+
+    // split between n1-n2 (horizontal split)
+    layoutEl.appendChild(mkSpot("split", `${nums[0]}-${nums[1]}`, [nums[0],nums[1]], "SPLIT"));
+
+    // number 2
+    layoutEl.appendChild(mkNumberCell(nums[1]));
+
+    // split between n2-n3
+    layoutEl.appendChild(mkSpot("split", `${nums[1]}-${nums[2]}`, [nums[1],nums[2]], "SPLIT"));
+
+    // number 3
+    layoutEl.appendChild(mkNumberCell(nums[2]));
+
+    // Between rows: vertical splits + corners (except after last row)
+    if(rIdx < rows.length-1){
+      const below = rows[rIdx+1]; // [n+3, n+4, n+5]
+
+      // Add a thin gap row (visual spacer)
+      const gap = document.createElement("div");
+      gap.className = "rowGap";
+      layoutEl.appendChild(gap);
+
+      // Now an overlay row of clickable spots for vertical/corner
+      // street column placeholder
+      layoutEl.appendChild(Object.assign(document.createElement("div"), {className:"cell label", textContent:""}));
+
+      // vertical split n1 with below n1 (+3)
+      layoutEl.appendChild(mkSpot("split", `${nums[0]}-${below[0]}`, [nums[0],below[0]], "V"));
+
+      // corner (n1,n2,below1,below2)
+      layoutEl.appendChild(mkSpot("corner", `${nums[0]}-${nums[1]}-${below[0]}-${below[1]}`, [nums[0],nums[1],below[0],below[1]], "C"));
+
+      // vertical split n2 with below n2 (+3)
+      layoutEl.appendChild(mkSpot("split", `${nums[1]}-${below[1]}`, [nums[1],below[1]], "V"));
+
+      // corner (n2,n3,below2,below3)
+      layoutEl.appendChild(mkSpot("corner", `${nums[1]}-${nums[2]}-${below[1]}-${below[2]}`, [nums[1],nums[2],below[1],below[2]], "C"));
+
+      // vertical split n3 with below n3 (+3)
+      layoutEl.appendChild(mkSpot("split", `${nums[2]}-${below[2]}`, [nums[2],below[2]], "V"));
+    }
+  });
+
+  // Dozens
+  dozensEl.innerHTML = "";
+  const d1 = mkSpot("dozen","1",[...Array(12)].map((_,i)=>i+1),"1st 12");
+  const d2 = mkSpot("dozen","2",[...Array(12)].map((_,i)=>i+13),"2nd 12");
+  const d3 = mkSpot("dozen","3",[...Array(12)].map((_,i)=>i+25),"3rd 12");
+  d1.classList.add("cell"); d2.classList.add("cell"); d3.classList.add("cell");
+  dozensEl.appendChild(d1); dozensEl.appendChild(d2); dozensEl.appendChild(d3);
+
+  // Even money
+  evensEl.innerHTML = "";
+  const low = mkSpot("even","low",[...Array(18)].map((_,i)=>i+1),"1–18");
+  const even = mkSpot("even","even",[...Array(18)].map((_,i)=>2*(i+1)).filter(n=>n<=36),"EVEN");
+  const red = mkSpot("even","red",[...RED_SET],"RED");
+  const black = mkSpot("even","black",[...Array(36)].map((_,i)=>i+1).filter(n=>!RED_SET.has(n)),"BLACK");
+  const odd = mkSpot("even","odd",[...Array(18)].map((_,i)=>2*i+1),"ODD");
+  const high = mkSpot("even","high",[...Array(18)].map((_,i)=>i+19),"19–36");
+  [low,even,red,black,odd,high].forEach(x=>{ x.classList.add("cell"); evensEl.appendChild(x); });
+
+  totalBetEl.textContent = "0";
+}
+buildLayout();
+
 function clearBets(){
   BETS.clear();
-  // wipe chip stacks
-  boardEl.querySelectorAll(".chipStack").forEach(s=>s.innerHTML="");
+  document.querySelectorAll(".chipStack").forEach(s=>s.innerHTML="");
   totalBetEl.textContent = "0";
   logEl.textContent = "Bets cleared.";
 }
 
-function buildBoard(){
-  boardEl.innerHTML = "";
-  // Layout:
-  // col 1 is 0 column (64px), then 12 columns.
-  // We'll use 5 rows for: 0 row, 3 number rows x 4 (12 rows total compressed), plus outside rows.
-  // Simpler: render:
-  // Row A: [0] + [1..12]
-  // Row B: [ ] + [13..24]
-  // Row C: [ ] + [25..36]
-  // Row D: [ ] + [1st12][2nd12][3rd12] + fillers
-  // Row E: [ ] + [1-18][EVEN][RED][BLACK][ODD][19-36] + fillers
-
-  // Row A
-  boardEl.appendChild(makeCell("0","green",(cell,stack)=>placeBet("straight",0,cell,stack)));
-  for(let n=1;n<=12;n++){
-    boardEl.appendChild(makeCell(String(n), colorOf(n), (cell,stack)=>placeBet("straight",n,cell,stack)));
-  }
-
-  // Row B
-  boardEl.appendChild(makeCell("", "label")); // spacer
-  for(let n=13;n<=24;n++){
-    boardEl.appendChild(makeCell(String(n), colorOf(n), (cell,stack)=>placeBet("straight",n,cell,stack)));
-  }
-
-  // Row C
-  boardEl.appendChild(makeCell("", "label"));
-  for(let n=25;n<=36;n++){
-    boardEl.appendChild(makeCell(String(n), colorOf(n), (cell,stack)=>placeBet("straight",n,cell,stack)));
-  }
-
-  // Row D: Dozens (span 4 columns each visually by repeating cells)
-  boardEl.appendChild(makeCell("", "label"));
-  const d1 = makeCell("1st 12","",(cell,stack)=>placeBet("dozen",1,cell,stack));
-  const d2 = makeCell("2nd 12","",(cell,stack)=>placeBet("dozen",2,cell,stack));
-  const d3 = makeCell("3rd 12","",(cell,stack)=>placeBet("dozen",3,cell,stack));
-  // place them and fill remaining to 12 columns
-  boardEl.appendChild(d1);
-  boardEl.appendChild(d1.cloneNode(true)); // visual span
-  boardEl.appendChild(d1.cloneNode(true));
-  boardEl.appendChild(d1.cloneNode(true));
-
-  boardEl.appendChild(d2);
-  boardEl.appendChild(d2.cloneNode(true));
-  boardEl.appendChild(d2.cloneNode(true));
-  boardEl.appendChild(d2.cloneNode(true));
-
-  boardEl.appendChild(d3);
-  boardEl.appendChild(d3.cloneNode(true));
-  boardEl.appendChild(d3.cloneNode(true));
-  boardEl.appendChild(d3.cloneNode(true));
-
-  // Fix clones click/stack: rebuild row D properly with per-cell click -> same bet
-  const rowD = Array.from(boardEl.children).slice(boardEl.children.length - 12);
-  function wireSpan(cells, label, dozenNum){
-    cells.forEach((cell)=>{
-      cell.textContent = label;
-      cell.className = "cell";
-      const stack = document.createElement("div");
-      stack.className = "chipStack";
-      cell.innerHTML = "";
-      cell.appendChild(document.createTextNode(label));
-      cell.appendChild(stack);
-      cell.addEventListener("click", ()=>{ audioOn(); tick(); placeBet("dozen", dozenNum, cell, stack); });
-    });
-  }
-  wireSpan(rowD.slice(0,4), "1st 12", 1);
-  wireSpan(rowD.slice(4,8), "2nd 12", 2);
-  wireSpan(rowD.slice(8,12), "3rd 12", 3);
-
-  // Row E: Even money bets (we will use 6 cells then fillers)
-  boardEl.appendChild(makeCell("", "label"));
-  const labels = [
-    {t:"even", v:"low",  txt:"1–18"},
-    {t:"even", v:"even", txt:"EVEN"},
-    {t:"even", v:"red",  txt:"RED"},
-    {t:"even", v:"black",txt:"BLACK"},
-    {t:"even", v:"odd",  txt:"ODD"},
-    {t:"even", v:"high", txt:"19–36"}
-  ];
-  // put 6 and then fillers to reach 12
-  for(let i=0;i<12;i++){
-    if(i < labels.length){
-      const L = labels[i];
-      boardEl.appendChild(makeCell(L.txt,"",(cell,stack)=>placeBet(L.t,L.v,cell,stack)));
-    }else{
-      boardEl.appendChild(makeCell("", "label"));
-    }
-  }
-
-  totalBetEl.textContent = "0";
-}
-buildBoard();
-
 /* =========================
-   🎡 Spin + Ball landing
-   - We map a winning number to a target angle.
-   - Wheel rotates a lot, ball orbits then slows to pocket.
+   🎡 Spin + ball landing
    ========================= */
 const wheelRing = document.getElementById("wheelRing");
 const ball = document.getElementById("ball");
@@ -736,46 +796,23 @@ const clearBtn = document.getElementById("clearBtn");
 let spinning = false;
 
 function pocketAngleForNumber(n){
-  // 37 pockets evenly around 360
   const idx = WHEEL_ORDER.indexOf(n);
   const pocketSize = 360 / WHEEL_ORDER.length;
-  // angle where the pocket center sits (0deg at top). We’ll rotate with offset so it feels right.
   return (idx * pocketSize);
 }
-
 function randInt(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
-/* payout resolution */
 function resolvePayout(win){
   let payout = 0;
-
   for(const b of BETS.values()){
-    if(b.type === "straight"){
-      if(Number(b.value) === win) payout += b.amount * (PAYOUTS.straight + 1);
-    }
-    if(b.type === "dozen"){
-      const d = Number(b.value);
-      const inDozen =
-        (d===1 && win>=1 && win<=12) ||
-        (d===2 && win>=13 && win<=24) ||
-        (d===3 && win>=25 && win<=36);
-      if(inDozen) payout += b.amount * (PAYOUTS.dozen + 1);
-    }
-    if(b.type === "even"){
-      if(win === 0) continue; // 0 loses even-money bets
-      if(b.value === "red"   && RED_SET.has(win)) payout += b.amount * (PAYOUTS.even + 1);
-      if(b.value === "black" && !RED_SET.has(win)) payout += b.amount * (PAYOUTS.even + 1);
-      if(b.value === "odd"   && (win % 2 === 1)) payout += b.amount * (PAYOUTS.even + 1);
-      if(b.value === "even"  && (win % 2 === 0)) payout += b.amount * (PAYOUTS.even + 1);
-      if(b.value === "low"   && (win >= 1 && win <= 18)) payout += b.amount * (PAYOUTS.even + 1);
-      if(b.value === "high"  && (win >= 19 && win <= 36)) payout += b.amount * (PAYOUTS.even + 1);
+    if(b.nums.has(win)){
+      const mult = PAYOUTS[b.type] ?? 0;
+      payout += b.amount * (mult + 1);
     }
   }
-
-  return payout; // includes returned stake for winners
+  return payout;
 }
-
-async function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
 async function spin(){
   audioOn();
@@ -794,28 +831,23 @@ async function spin(){
   clearBtn.disabled = true;
   statusEl.textContent = "SPINNING";
 
-  // choose winner
   const win = WHEEL_ORDER[randInt(0, WHEEL_ORDER.length-1)];
   const winAngle = pocketAngleForNumber(win);
 
-  // durations
-  const dur = randInt(4200, 5600); // ms
+  const dur = randInt(4400, 5900);
   wheelRing.style.setProperty("--wheelDur", dur + "ms");
   ball.style.setProperty("--ballDur", dur + "ms");
 
-  // big wheel rotation (multiple turns) + land with pocket offset
-  const extraTurns = randInt(8, 13) * 360;
-  const finalWheel = extraTurns + (360 - winAngle) + randInt(-4,4); // tiny wobble
+  const extraTurns = randInt(9, 14) * 360;
+  const finalWheel = extraTurns + (360 - winAngle) + randInt(-4,4);
 
-  // ball: orbit opposite direction and settle into pocket angle
-  const ballTurns = randInt(10, 16) * 360;
+  const ballTurns = randInt(11, 17) * 360;
   const finalBall = ballTurns + winAngle + randInt(-6,6);
 
-  // trigger motion
   wheelRing.style.setProperty("--wheelRot", finalWheel + "deg");
   ball.style.setProperty("--a", finalBall + "deg");
 
-  // fake bounce: radius decreases mid-spin then drops in
+  // “bounce / drop” radius
   ball.style.setProperty("--r", "48%");
   tick();
   setTimeout(()=>{ ball.style.setProperty("--r","46%"); tick(); }, Math.floor(dur*0.25));
@@ -824,13 +856,12 @@ async function spin(){
   setTimeout(()=>{ ball.style.setProperty("--r","40%"); tick(); }, Math.floor(dur*0.86));
   setTimeout(()=>{ ball.style.setProperty("--r","38%"); }, Math.floor(dur*0.95));
 
-  logEl.innerHTML = `Spinning… <b>no more bets</b>.`;
-  await sleep(dur + 80);
+  logEl.innerHTML = `Spinning… <b>No more bets</b>.`;
+  await sleep(dur + 100);
 
   lastResultEl.innerHTML = `${win} <span class="${colorOf(win)==="red"?"r":""}">${colorOf(win).toUpperCase()}</span>`;
 
   const payout = resolvePayout(win);
-
   if(payout > 0){
     credit(payout, "roulette-payout");
     chime();
@@ -841,8 +872,6 @@ async function spin(){
   }
 
   renderWallet();
-
-  // auto clear after spin (Vegas standard)
   clearBets();
 
   statusEl.textContent = "READY";
