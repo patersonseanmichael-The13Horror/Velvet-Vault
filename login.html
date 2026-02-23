@@ -1,1 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Velvet Vault — Login</title>
+</head>
+<body>
+  <h1>Velvet Vault — Login</h1>
 
+  <input id="email" type="email" placeholder="Email" autocomplete="email">
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+
+  <div style="margin-top:10px;">
+    <button id="signupBtn">Create Account</button>
+    <button id="signinBtn">Sign In</button>
+    <button id="resendBtn">Resend Verify Email</button>
+  </div>
+
+  <p id="message" style="margin-top:12px;"></p>
+
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
