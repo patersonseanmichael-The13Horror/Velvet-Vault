@@ -1,1 +1,5 @@
-
+body{
+ background:
+ radial-gradient(circle at top,#1a120a,#050408 70%),
+ url("images/velvet-vault-hero.png") center/cover fixed no-repeat;
+}
