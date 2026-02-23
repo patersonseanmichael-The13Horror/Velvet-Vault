@@ -2,18 +2,19 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-// ✅ PASTE YOUR FIREBASE CONFIG HERE:
+// Velvet Vault Firebase config
 const firebaseConfig = {
-  apiKey: "PASTE_HERE",
-  authDomain: "PASTE_HERE",
-  projectId: "PASTE_HERE",
-  storageBucket: "PASTE_HERE",
-  messagingSenderId: "PASTE_HERE",
-  appId: "PASTE_HERE"
+  apiKey: "AIzaSyC3qIWUSeO5r9uGBV7NrwdHNVKZ2BbQ2B8",
+  authDomain: "the-velvet-vault-11bd2.firebaseapp.com",
+  projectId: "the-velvet-vault-11bd2",
+  storageBucket: "the-velvet-vault-11bd2.firebasestorage.app",
+  messagingSenderId: "929853784997",
+  appId: "1:929853784997:web:c8588d30bc4c0489629e4c",
+  measurementId: "G-8HHEKDPGVY"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// expose auth globally for other modules
+// make auth usable in other files
 window.vvAuth = auth;
