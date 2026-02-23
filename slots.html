@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Velvet Vault — Slots</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- ✅ Auth + Wallet -->
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/guard.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+
+  <style>
+    :root{
+      --bg:#050408;
+      --panel: rgba(10,8,14,0.72);
+      --panel2: rgba(16,12,20,0.72);
+      --line: rgba(255,255,255,0.12);
+      --text:#f1ecff;
+      --muted: rgba(241,236,255,0.68);
+      --red:#ff233d;
+      --green:#00ff9a;
+      --shadow: rgba(0,0,0,0.70);
+      --radius:18px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 680px at 50% 10%, rgba(255,35,61,0.18), transparent 62%),
+        radial-gradient(1000px 600px at 70% 55%, rgba(0,255,154,0.12), transparent 60%),
+        linear-gradient(180deg, #050408 0%, #020106 100%);
+      color: var(--text);
+      overflow-x:hidden;
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(8,6,12,0.82), rgba(8,6,12,0.52));
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width:0;
+    }
+    .sigil{
+      width:42px; height:42px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0,255,154,0.35), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,35,61,0.35), transparent 55%),
+        linear-gradient(135deg, rgba(255,35,61,0.18), rgba(0,255,154,0.16));
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      position:relative;
+      overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .sigil::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: conic-gradient(from 180deg, transparent, rgba(255,35,61,0.25), transparent, rgba(0,255,154,0.25), transparent);
+      animation: spin 9s linear infinite;
+      opacity:.85;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    .brand h1{
+      margin:0;
+      font-family: Cinzel, serif;
+      font-size: 16px;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand small{
+      display:block;
+      margin-top:2px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:0.06em;
+    }
+    .actions{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .chip{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(241,236,255,0.92);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .chip:hover{ transform: translateY(-1px); }
+    .chip.green:hover{ border-color: rgba(0,255,154,0.35); background: rgba(0,255,154,0.08); }
+    .chip.red:hover{ border-color: rgba(255,35,61,0.35); background: rgba(255,35,61,0.08); }
+
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding: 18px 18px 80px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .card{
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      border-radius: var(--radius);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.55);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .cardHead{
+      padding: 16px 16px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .cardHead h2{
+      margin:0;
+      font-family: Cinzel, serif;
+      letter-spacing:0.10em;
+      text-transform:uppercase;
+      font-size: 16px;
+    }
+    .cardHead small{
+      display:block;
+      margin-top:6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.35;
+      max-width: 520px;
+    }
+
+    .cardBody{ padding: 16px; }
+
+    /* Slot machine */
+    .machine{
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.28);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .machine::before{
+      content:"";
+      position:absolute; inset:-30%;
+      background: radial-gradient(closest-side at 30% 40%, rgba(255,35,61,0.10), transparent 65%),
+                  radial-gradient(closest-side at 70% 60%, rgba(0,255,154,0.10), transparent 65%);
+      filter: blur(18px);
+      opacity:0.9;
+      pointer-events:none;
+    }
+    .machine > *{ position:relative; z-index:2; }
+
+    .reels{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top: 6px;
+    }
+
+    .reel{
+      height: 140px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.35));
+      display:grid;
+      place-items:center;
+      font-family: Cinzel, serif;
+      font-size: 44px;
+      letter-spacing:0.08em;
+      text-shadow: 0 0 22px rgba(255,35,61,0.18), 0 0 22px rgba(0,255,154,0.12);
+      user-select:none;
+      position:relative;
+      overflow:hidden;
+    }
+    .reel.spin{
+      animation: reelSpin .14s linear infinite;
+    }
+    @keyframes reelSpin{
+      0%{ transform: translateY(0px); filter: blur(0px); }
+      50%{ transform: translateY(-2px); filter: blur(0.7px); }
+      100%{ transform: translateY(0px); filter: blur(0px); }
+    }
+
+    .hud{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.22);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: rgba(241,236,255,0.90);
+    }
+    .pill b{ color: var(--green); }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .btn{
+      border-radius: 14px;
+      padding: 12px 14px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight:900;
+      letter-spacing:0.10em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+      flex: 1;
+      min-width: 170px;
+      text-align:center;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
+
+    .btn.red{
+      border-color: rgba(255,35,61,0.26);
+      background: linear-gradient(180deg, rgba(255,35,61,0.18), rgba(0,0,0,0.12));
+    }
+    .btn.red:hover{
+      border-color: rgba(255,35,61,0.42);
+      box-shadow: 0 0 28px rgba(255,35,61,0.16);
+    }
+    .btn.green{
+      border-color: rgba(0,255,154,0.26);
+      background: linear-gradient(180deg, rgba(0,255,154,0.14), rgba(0,0,0,0.14));
+    }
+    .btn.green:hover{
+      border-color: rgba(0,255,154,0.42);
+      box-shadow: 0 0 28px rgba(0,255,154,0.16);
+    }
+
+    .result{
+      margin-top: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      padding: 12px 12px;
+      color: rgba(241,236,255,0.92);
+      font-size: 13px;
+      line-height: 1.35;
+      min-height: 44px;
+    }
+    .result b{ color: var(--green); }
+
+    /* Side panel: payouts + ledger link */
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 6px;
+    }
+    .item{
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .item b{
+      font-size: 12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+    }
+    .item small{ color: var(--muted); }
+
+    @media (max-width: 960px){
+      .grid{ grid-template-columns: 1fr; }
+      .btn{ min-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="sigil" aria-hidden="true"></div>
+      <div>
+        <h1>Velvet Vault</h1>
+        <small>Slots • Wallet Wired</small>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="chip green" href="members.html">Lobby</a>
+      <a class="chip" href="ledger.html">Ledger</a>
+      <button class="chip red" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="grid">
+    <!-- Machine -->
+    <article class="card">
+      <div class="cardHead">
+        <div>
+          <h2>Neon Reels</h2>
+          <small>Every spin debits your wallet. Wins credit your wallet and log to the ledger automatically.</small>
+        </div>
+        <div class="pill">Wallet: <b id="balance">—</b></div>
+      </div>
+
+      <div class="cardBody">
+        <div class="machine">
+          <div class="reels">
+            <div class="reel" id="r1">◆</div>
+            <div class="reel" id="r2">◆</div>
+            <div class="reel" id="r3">◆</div>
+          </div>
+
+          <div class="hud">
+            <div class="pill">Bet: <b id="betLabel">100</b> GOLD</div>
+            <div class="pill">Multiplier: <b id="multLabel">—</b></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn" id="betDown">Bet −</button>
+            <button class="btn" id="betUp">Bet +</button>
+            <button class="btn green" id="spinBtn">Spin</button>
+            <button class="btn red" id="maxBtn">Max Bet</button>
+          </div>
+
+          <div class="result" id="result">Awaiting signal…</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Payouts -->
+    <aside class="card">
+      <div class="cardHead">
+        <div>
+          <h2>Payout Table</h2>
+          <small>Simple rules. More matches = higher multipliers.</small>
+        </div>
+        <a class="chip" href="ledger.html">View Ledger</a>
+      </div>
+
+      <div class="cardBody">
+        <div class="list">
+          <div class="item"><div><b>3 of a kind</b><br><small>Any symbol</small></div><div><b>×8</b></div></div>
+          <div class="item"><div><b>2 of a kind</b><br><small>Any symbol</small></div><div><b>×2</b></div></div>
+          <div class="item"><div><b>Jackpot</b><br><small>★★★ (stars)</small></div><div><b>×25</b></div></div>
+          <div class="item"><div><b>Vault Hit</b><br><small>♛♛♛ (crown)</small></div><div><b>×15</b></div></div>
+        </div>
+        <p style="margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.45;">
+          Tip: Keep this logic here. Games should only call <b>VaultEngine.debit/credit</b>.
+        </p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script>
+  // --- Hooks ---
+  const balanceEl = document.getElementById("balance");
+  const resultEl  = document.getElementById("result");
+  const betLabel  = document.getElementById("betLabel");
+  const multLabel = document.getElementById("multLabel");
+
+  const r1 = document.getElementById("r1");
+  const r2 = document.getElementById("r2");
+  const r3 = document.getElementById("r3");
+
+  const spinBtn = document.getElementById("spinBtn");
+  const betUp   = document.getElementById("betUp");
+  const betDown = document.getElementById("betDown");
+  const maxBtn  = document.getElementById("maxBtn");
+
+  // --- Game config ---
+  const SYMBOLS = ["◆","♛","★","✦","✶","✷"]; // diamond / crown / star / sparkles
+  let BET = 100;
+  const MIN_BET = 50;
+  const MAX_BET = 1000;
+
+  let spinning = false;
+
+  function renderWallet(){
+    if(!window.VaultEngine?.user) return;
+    balanceEl.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
+  }
+
+  function setBet(n){
+    BET = Math.max(MIN_BET, Math.min(MAX_BET, n));
+    betLabel.textContent = BET;
+  }
+
+  // --- Spin animation helpers ---
+  function startSpinAnim(){
+    [r1,r2,r3].forEach(r => r.classList.add("spin"));
+  }
+  function stopSpinAnim(){
+    [r1,r2,r3].forEach(r => r.classList.remove("spin"));
+  }
+  function randSym(){
+    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+  }
+
+  function calcMultiplier(a,b,c){
+    // Jackpot: ★★★
+    if(a==="★" && b==="★" && c==="★") return 25;
+    // Vault Hit: ♛♛♛
+    if(a==="♛" && b==="♛" && c==="♛") return 15;
+
+    // Any 3 of a kind
+    if(a===b && b===c) return 8;
+
+    // Any 2 of a kind
+    if(a===b || a===c || b===c) return 2;
+
+    return 0;
+  }
+
+  async function spin(){
+    if(spinning) return;
+
+    // wait until wallet is ready
+    if(!window.VaultEngine?.user){
+      resultEl.textContent = "Connecting to the vault…";
+      return;
+    }
+
+    const bal = window.VaultEngine.getBalance();
+    if(bal < BET){
+      resultEl.innerHTML = `Insufficient funds. Wallet: <b>${window.VaultEngine.formatGold(bal)}</b>`;
+      return;
+    }
+
+    // Debit immediately (real casino feel)
+    const ok = window.VaultEngine.debit(BET, "slots-bet");
+    if(!ok){
+      resultEl.textContent = "Debit failed.";
+      return;
+    }
+
+    spinning = true;
+    spinBtn.disabled = true;
+    betUp.disabled = true;
+    betDown.disabled = true;
+    maxBtn.disabled = true;
+
+    resultEl.textContent = "Spinning…";
+    multLabel.textContent = "—";
+    startSpinAnim();
+
+    // fake spinning change symbols quickly
+    const t0 = Date.now();
+    const flicker = setInterval(() => {
+      r1.textContent = randSym();
+      r2.textContent = randSym();
+      r3.textContent = randSym();
+    }, 80);
+
+    // stop after 1.25s
+    await new Promise(res => setTimeout(res, 1250));
+    clearInterval(flicker);
+
+    // final symbols
+    const a = randSym();
+    const b = randSym();
+    const c = randSym();
+    r1.textContent = a;
+    r2.textContent = b;
+    r3.textContent = c;
+
+    stopSpinAnim();
+
+    const mult = calcMultiplier(a,b,c);
+    multLabel.textContent = mult ? `×${mult}` : "0";
+
+    if(mult > 0){
+      const win = BET * mult;
+      window.VaultEngine.credit(win, "slots-win");
+      resultEl.innerHTML = `WIN: <b>${win} GOLD</b> (×${mult}) — The vault approves.`;
+    }else{
+      resultEl.textContent = "No hit. The night stays hungry.";
+    }
+
+    spinning = false;
+    spinBtn.disabled = false;
+    betUp.disabled = false;
+    betDown.disabled = false;
+    maxBtn.disabled = false;
+  }
+
+  // Controls
+  betUp.onclick = () => setBet(BET + 50);
+  betDown.onclick = () => setBet(BET - 50);
+  maxBtn.onclick = () => setBet(MAX_BET);
+  spinBtn.onclick = spin;
+
+  // Logout handled in guard.js, but button exists here
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    // guard.js has logout handler if the element exists
+  });
+
+  // Subscribe to wallet updates
+  const wait = setInterval(() => {
+    if(window.VaultEngine){
+      clearInterval(wait);
+      window.VaultEngine.subscribe(renderWallet);
+      renderWallet();
+      setBet(BET);
+    }
+  }, 100);
+</script>
+</body>
+</html>
