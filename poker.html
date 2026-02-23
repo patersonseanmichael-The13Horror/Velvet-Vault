@@ -602,392 +602,255 @@
     </div>
   </section>
 </main>
-
+  
 <script>
-  // ===== Wallet UI =====
-  const walletBal = document.getElementById("walletBal");
-  function renderWallet(){
-    if(!window.VaultEngine?.user) return;
-    walletBal.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
+
+/* ============================================
+   💎 VELVET VAULT — COMPLETE POKER ENGINE
+   ============================================ */
+
+/* ========= WALLET UI ========= */
+
+const walletBal = document.getElementById("walletBal");
+
+function renderWallet(){
+  if(!window.VaultEngine?.user) return;
+  walletBal.textContent =
+    window.VaultEngine.formatGold(
+      window.VaultEngine.getBalance()
+    );
+}
+
+const wWait = setInterval(()=>{
+  if(window.VaultEngine){
+    clearInterval(wWait);
+    window.VaultEngine.subscribe(renderWallet);
+    renderWallet();
   }
-  const wWait = setInterval(() => {
-    if(window.VaultEngine){
-      clearInterval(wWait);
-      window.VaultEngine.subscribe(renderWallet);
-      renderWallet();
-    }
-  }, 100);
+},100);
 
-  // ===== Table state (Upgrades 1 + 2) =====
-  const logEl = document.getElementById("log");
-  const dealBtn = document.getElementById("dealBtn");
-  const resetBtn = document.getElementById("resetBtn");
 
-  const foldBtn = document.getElementById("foldBtn");
-  const callBtn = document.getElementById("callBtn");
-  const raiseBtn = document.getElementById("raiseBtn");
+/* ========= UI ELEMENTS ========= */
 
-  const potEl = document.getElementById("pot");
-  const potHud = document.getElementById("potHud");
-  const toCallHud = document.getElementById("toCallHud");
+const logEl      = document.getElementById("log");
+const dealBtn    = document.getElementById("dealBtn");
+const resetBtn   = document.getElementById("resetBtn");
+const foldBtn    = document.getElementById("foldBtn");
+const callBtn    = document.getElementById("callBtn");
+const raiseBtn   = document.getElementById("raiseBtn");
+const potEl      = document.getElementById("pot");
+const seat1      = document.getElementById("seat1");
+const potZone    = document.getElementById("potZone");
 
-  const raiseSlider = document.getElementById("raiseSlider");
-  const raiseAmtEl = document.getElementById("raiseAmt");
-  const streetEl = document.getElementById("street");
 
-  const potZone = document.getElementById("potZone");
-  const seat1 = document.getElementById("seat1");
+/* ========= GAME STATE ========= */
 
-  const cards = Array.from(document.querySelectorAll(".card3d"));
-  const seats = [
-    document.getElementById("seat1"),
-    document.getElementById("seat2"),
-    document.getElementById("seat3"),
-    document.getElementById("seat4"),
-    document.getElementById("seat5"),
-    document.getElementById("seat6"),
+let pot = 0;
+let board = [];
+let players = [];
+
+
+/* ========= CARD SYSTEM ========= */
+
+const SUITS = ["♠","♥","♦","♣"];
+const RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+const VALUES = Object.fromEntries(RANKS.map((r,i)=>[r,i+2]));
+
+function draw(){
+  return {
+    r: RANKS[Math.floor(Math.random()*13)],
+    s: SUITS[Math.floor(Math.random()*4)]
+  };
+}
+
+
+/* ========= VEGAS HAND EVALUATOR ========= */
+
+function evaluate(cards){
+  const r = cards.map(c=>VALUES[c.r]).sort((a,b)=>b-a);
+  const counts = {};
+  r.forEach(v=>counts[v]=(counts[v]||0)+1);
+  const groups = Object.values(counts).sort((a,b)=>b-a);
+
+  if(groups[0]==4) return 7;
+  if(groups[0]==3 && groups[1]>=2) return 6;
+  if(groups[0]==3) return 3;
+  if(groups[0]==2 && groups[1]==2) return 2;
+  if(groups[0]==2) return 1;
+  return 0;
+}
+
+
+/* ========= VEGAS AI PLAYERS ========= */
+
+const vegasNames = [
+  "Mr Blackjack",
+  "Lady Mirage",
+  "Red Jack",
+  "Silk Dealer",
+  "Ghost Ace"
+];
+
+function createPlayers(){
+  players = [
+    {name:"You", ai:false, folded:false, hole:[draw(),draw()]},
+    ...vegasNames.map(n=>({
+      name:n,
+      ai:true,
+      folded:false,
+      hole:[draw(),draw()]
+    }))
   ];
+}
 
-  // Poker "street" tracker
-  // 0=pre,1=flop,2=turn,3=river,4=showdown
-  let street = 0;
 
-  // Betting model (simple, single player actions)
-  let pot = 0;
-  let toCall = 0;        // amount player must call
-  let playerInHand = true;
-  let handLocked = false; // lock betting until cards dealt at least flop
+function aiDecision(p){
 
-  function setStreetLabel(){
-    const name = ["PRE","FLOP","TURN","RIVER","SHOW"][street] || "—";
-    streetEl.textContent = name;
+  const strength = evaluate([...p.hole,...board]);
+  const bluff = Math.random()<0.15;
+
+  if(strength>=3){
+    bet(200 + Math.random()*200);
+    say(p,"raises aggressively.");
   }
-
-  function setSeatActive(i){
-    seats.forEach(s => s.classList.remove("active"));
-    seats[i].classList.add("active");
+  else if(strength>=1){
+    bet(100);
+    say(p,"calls coolly.");
   }
-
-  function uiPot(){
-    potEl.textContent = pot;
-    potHud.textContent = pot;
-    toCallHud.textContent = toCall;
+  else if(bluff){
+    bet(200);
+    say(p,"bluffs.");
   }
-
-  function uiButtons(){
-    const canAct = playerInHand && !handLocked;
-    foldBtn.disabled = !canAct;
-    callBtn.disabled = !canAct || toCall === 0;
-    raiseBtn.disabled = !canAct;
+  else{
+    p.folded=true;
+    say(p,"folds.");
   }
+}
 
-  // ===== Card generation =====
-  const SUITS = [
-    { sym:"♦", cls:"red", name:"D" },
-    { sym:"♥", cls:"red", name:"H" },
-    { sym:"♠", cls:"blk", name:"S" },
-    { sym:"♣", cls:"blk", name:"C" }
-  ];
-  const RANKS = ["A","K","Q","J","10","9","8","7","6","5","4","3","2"];
-  const RANK_VALUE = Object.fromEntries(["2","3","4","5","6","7","8","9","10","J","Q","K","A"].map((r,i)=>[r,i+2]));
 
-  // We'll store board + hole cards for evaluator
-  let boardCards = []; // 5 cards
-  let holeCards = [];  // 2 cards for "You"
+function say(p,msg){
+  logEl.innerHTML += `<br><b>${p.name}</b> ${msg}`;
+}
 
-  function drawCard(){
-    const suit = SUITS[Math.floor(Math.random()*SUITS.length)];
-    const rank = RANKS[Math.floor(Math.random()*RANKS.length)];
-    return { rank, suitSym: suit.sym, suit: suit.name, colorClass: suit.cls };
-  }
 
-  function setFace(el, c){
-    const face = el.querySelector(".face");
-    const corner = el.querySelector(".corner");
-    const pip = el.querySelector(".pip");
-    face.classList.remove("red","blk");
-    face.classList.add(c.colorClass);
-    corner.innerHTML = `${c.rank}<span class="suit">${c.suitSym}</span>`;
-    pip.textContent = c.suitSym;
-    pip.className = "pip " + c.colorClass;
-  }
+/* ========= BETTING ========= */
 
-  // ===== Upgrade 3: Chip animation =====
-  function chipBurst(fromEl, toEl, count=6){
-    const stage = document.querySelector(".stage");
-    const a = fromEl.getBoundingClientRect();
-    const b = toEl.getBoundingClientRect();
-    const s = stage.getBoundingClientRect();
+function bet(amount){
+  pot += Math.floor(amount);
+  potEl.textContent = pot;
+}
 
-    const startX = (a.left + a.width/2) - s.left;
-    const startY = (a.top + a.height/2) - s.top;
-    const endX   = (b.left + b.width/2) - s.left;
-    const endY   = (b.top + b.height/2) - s.top;
 
-    for(let i=0;i<count;i++){
-      const chip = document.createElement("div");
-      chip.className = "chipFly " + (Math.random() > 0.5 ? "g" : "");
-      chip.style.left = (startX + (Math.random()*18 - 9)) + "px";
-      chip.style.top  = (startY + (Math.random()*18 - 9)) + "px";
+/* ========= CHIP ANIMATION ========= */
 
-      const dx = (endX - startX) + (Math.random()*18 - 9);
-      const dy = (endY - startY) + (Math.random()*18 - 9);
-      chip.style.setProperty("--dx", dx + "px");
-      chip.style.setProperty("--dy", dy + "px");
+function chipBurst(){
+  if(!seat1 || !potZone) return;
 
-      stage.appendChild(chip);
-      setTimeout(() => chip.remove(), 700);
+  const stage = document.querySelector(".stage");
+  const chip = document.createElement("div");
+  chip.className = "chipFly";
+  stage.appendChild(chip);
+  setTimeout(()=>chip.remove(),600);
+}
+
+
+/* ========= HAND FLOW ========= */
+
+function startHand(){
+
+  pot = 0;
+  board = [];
+  createPlayers();
+
+  logEl.textContent = "Shuffling cards…";
+
+  setTimeout(()=>{
+    board=[draw(),draw(),draw()];
+    logEl.innerHTML="Flop dealt.";
+    aiRound();
+  },1000);
+
+  setTimeout(()=>{
+    board.push(draw());
+    logEl.innerHTML+="<br>Turn.";
+    aiRound();
+  },2000);
+
+  setTimeout(()=>{
+    board.push(draw());
+    logEl.innerHTML+="<br>River.";
+    aiRound();
+    showdown();
+  },3000);
+}
+
+
+function aiRound(){
+  players.forEach(p=>{
+    if(p.ai && !p.folded) aiDecision(p);
+  });
+}
+
+
+/* ========= SHOWDOWN ========= */
+
+function showdown(){
+
+  let best=-1;
+  let winner=null;
+
+  players.forEach(p=>{
+    if(p.folded) return;
+    const score=evaluate([...p.hole,...board]);
+    if(score>best){
+      best=score;
+      winner=p;
     }
-  }
-
-  // ===== Upgrade 4: Hand evaluator (7 cards) =====
-  function evaluateTexasHoldem(hole, board){
-    const cards7 = [...hole, ...board].filter(Boolean);
-    const ranks = cards7.map(c => c.rank);
-    const suits = cards7.map(c => c.suit);
-
-    // counts
-    const rankCount = new Map();
-    for(const r of ranks) rankCount.set(r, (rankCount.get(r)||0)+1);
-
-    const suitCount = new Map();
-    for(const s of suits) suitCount.set(s, (suitCount.get(s)||0)+1);
-
-    const counts = Array.from(rankCount.entries()).sort((a,b)=>b[1]-a[1] || (RANK_VALUE[b[0]]-RANK_VALUE[a[0]]));
-
-    // Flush?
-    let flushSuit = null;
-    for(const [s,c] of suitCount.entries()){
-      if(c >= 5){ flushSuit = s; break; }
-    }
-
-    // Straight (helper)
-    function straightHigh(vals){
-      // vals are numeric ranks
-      const set = new Set(vals);
-      // wheel: A as 1
-      if(set.has(14)) set.add(1);
-      const uniq = Array.from(set).sort((a,b)=>a-b);
-      let run = 1;
-      let best = 0;
-      for(let i=1;i<uniq.length;i++){
-        if(uniq[i] === uniq[i-1] + 1){
-          run++;
-          if(run >= 5) best = uniq[i]; // high card
-        }else{
-          run = 1;
-        }
-      }
-      return best; // 0 if none
-    }
-
-    const numericRanks = ranks.map(r => RANK_VALUE[r]);
-    const straight = straightHigh(numericRanks);
-
-    // Straight flush?
-    if(flushSuit){
-      const suited = cards7.filter(c => c.suit === flushSuit).map(c => RANK_VALUE[c.rank]);
-      const sf = straightHigh(suited);
-      if(sf){
-        if(sf === 14) return "Royal Flush";
-        return "Straight Flush";
-      }
-    }
-
-    // 4 / full / 3 / 2pair / pair
-    const maxCount = counts[0]?.[1] || 0;
-    if(maxCount === 4) return "Four of a Kind";
-    if(maxCount === 3){
-      const hasPair = counts.slice(1).some(([_,n])=>n>=2);
-      if(hasPair) return "Full House";
-      return "Three of a Kind";
-    }
-    if(flushSuit) return "Flush";
-    if(straight) return "Straight";
-    if(maxCount === 2){
-      const pairs = counts.filter(([_,n])=>n===2).length;
-      if(pairs >= 2) return "Two Pair";
-      return "Pair";
-    }
-    return "High Card";
-  }
-
-  // ===== Dealing animation (existing) + upgrades integration =====
-  function resetTable(){
-    // reset board visuals
-    cards.forEach(c => {
-      c.classList.remove("dealIn","flip");
-      const inner = c.querySelector(".cardInner");
-      inner.style.transition = "none";
-      inner.style.opacity = "0";
-      inner.getBoundingClientRect();
-      inner.style.transition = "";
-    });
-
-    // reset state
-    street = 0;
-    pot = 0;
-    toCall = 0;
-    playerInHand = true;
-    handLocked = true; // lock until flop reveals
-    setSeatActive(0);
-    setStreetLabel();
-    uiPot();
-    uiButtons();
-
-    logEl.textContent = "Awaiting the shuffle…";
-    dealBtn.disabled = false;
-  }
-
-  function dealSequence(){
-    // generate board + your hole cards
-    holeCards = [drawCard(), drawCard()];
-    boardCards = [drawCard(), drawCard(), drawCard(), drawCard(), drawCard()];
-
-    // show your hole in log (for now)
-    logEl.innerHTML = `Hole: <b>${holeCards[0].rank}${holeCards[0].suitSym}</b> <b>${holeCards[1].rank}${holeCards[1].suitSym}</b> — dealing…`;
-
-    // set board faces
-    cards.forEach((c,i) => setFace(c, boardCards[i]));
-
-    dealBtn.disabled = true;
-    handLocked = true;
-    uiButtons();
-
-    // Deal in all 5 facedown (sequential)
-    cards.forEach((c,i) => setTimeout(() => c.classList.add("dealIn"), 140*i));
-
-    // flop
-    setTimeout(() => {
-      street = 1;
-      setStreetLabel();
-      logEl.innerHTML = "Flop. <b>Actions open</b>.";
-      [0,1,2].forEach((i,ix) => setTimeout(() => cards[i].classList.add("flip"), 160*ix));
-
-      // start betting street: toCall baseline
-      toCall = 100;
-      handLocked = false;
-      uiPot();
-      uiButtons();
-      setSeatActive(0);
-    }, 1100);
-
-    // turn
-    setTimeout(() => {
-      street = 2;
-      setStreetLabel();
-      logEl.innerHTML = "Turn.";
-      cards[3].classList.add("flip");
-
-      // new street bet
-      toCall = 150;
-      uiPot();
-      uiButtons();
-    }, 2100);
-
-    // river
-    setTimeout(() => {
-      street = 3;
-      setStreetLabel();
-      logEl.innerHTML = "River.";
-      cards[4].classList.add("flip");
-
-      // new street bet
-      toCall = 200;
-      uiPot();
-      uiButtons();
-    }, 2950);
-
-    // showdown (evaluate)
-    setTimeout(() => {
-      street = 4;
-      setStreetLabel();
-
-      const result = evaluateTexasHoldem(holeCards, boardCards);
-      logEl.innerHTML = `Showdown: <b>${result}</b>. (Next: opponents + winner + payout.)`;
-      dealBtn.disabled = false;
-    }, 3650);
-  }
-
-  // ===== Upgrade 1: Betting actions wired to wallet =====
-  function requireWallet(){
-    if(!window.VaultEngine?.user){
-      logEl.textContent = "Connecting to the vault…";
-      return false;
-    }
-    return true;
-  }
-
-  function debit(amount, note){
-    if(!requireWallet()) return false;
-    const ok = window.VaultEngine.debit(amount, note);
-    if(!ok){
-      const bal = window.VaultEngine.getBalance?.() ?? 0;
-      logEl.innerHTML = `Insufficient funds. Wallet: <b>${window.VaultEngine.formatGold(bal)}</b>`;
-      return false;
-    }
-    return true;
-  }
-
-  foldBtn.addEventListener("click", () => {
-    if(handLocked) return;
-    playerInHand = false;
-    handLocked = true;
-    uiButtons();
-    logEl.textContent = "You folded. (Reset or Deal again.)";
   });
 
-  callBtn.addEventListener("click", () => {
-    if(handLocked || !playerInHand) return;
-    if(toCall <= 0){
-      logEl.textContent = "Nothing to call.";
-      return;
-    }
-    if(!debit(toCall, `poker-call-${street}`)) return;
+  if(!winner){
+    logEl.innerHTML+="<br>No winner.";
+    return;
+  }
 
-    pot += toCall;
-    uiPot();
-    chipBurst(seat1, potZone, 7);
+  logEl.innerHTML+=`<br><b>${winner.name}</b> wins ${pot} GOLD`;
 
-    logEl.innerHTML = `Call <b>${toCall}</b>. Pot is now <b>${pot}</b>.`;
-    toCall = 0;
-    uiPot();
-    uiButtons();
-  });
+  if(winner.name=="You" && window.VaultEngine){
+    window.VaultEngine.credit(pot,"poker-win");
+  }
+}
 
-  raiseBtn.addEventListener("click", () => {
-    if(handLocked || !playerInHand) return;
-    const amt = Number(raiseSlider.value || 100);
-    const total = Math.max(amt, 0);
 
-    if(total <= 0){
-      logEl.textContent = "Raise amount is 0.";
-      return;
-    }
+/* ========= PLAYER BUTTONS ========= */
 
-    if(!debit(total, `poker-raise-${street}`)) return;
+dealBtn.onclick=startHand;
 
-    pot += total;
-    // after raising, set a new amount to call (simple model)
-    toCall = Math.max(100, Math.floor(total/2));
-    uiPot();
-    chipBurst(seat1, potZone, 10);
+callBtn.onclick=()=>{
+  if(window.VaultEngine?.debit(100,"poker-call")){
+    bet(100);
+    chipBurst();
+    logEl.innerHTML+="<br>You call.";
+  }
+};
 
-    logEl.innerHTML = `Raise <b>${total}</b>. New to-call is <b>${toCall}</b>. Pot: <b>${pot}</b>.`;
-    uiButtons();
-  });
+raiseBtn.onclick=()=>{
+  if(window.VaultEngine?.debit(200,"poker-raise")){
+    bet(200);
+    chipBurst();
+    logEl.innerHTML+="<br>You raise.";
+  }
+};
 
-  raiseSlider.addEventListener("input", () => {
-    raiseAmtEl.textContent = raiseSlider.value;
-  });
+foldBtn.onclick=()=>{
+  logEl.innerHTML+="<br>You fold.";
+};
 
-  // ===== Buttons =====
-  dealBtn.addEventListener("click", dealSequence);
-  resetBtn.addEventListener("click", resetTable);
+resetBtn.onclick=()=>{
+  pot=0;
+  potEl.textContent=0;
+  logEl.textContent="Table reset.";
+};
 
-  // init
-  raiseAmtEl.textContent = raiseSlider.value;
-  resetTable();
 </script>
 </body>
 </html>
