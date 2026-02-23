@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Velvet Vault — Ledger</title>
+
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/guard.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+
+  <style>
+    body{margin:0;font-family:system-ui;background:#050408;color:#f1ecff;padding:18px}
+    .box{max-width:900px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;background:rgba(10,8,14,.72)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .btn{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#f1ecff;font-weight:800;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left;font-size:13px}
+    small{opacity:.75}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="row">
+      <div>
+        <h2 style="margin:0 0 6px;">Ledger</h2>
+        <small>All credits/debits recorded for this account.</small>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="location.href='members.html'">Back</button>
+        <button class="btn" id="testCredit">+500</button>
+        <button class="btn" id="testDebit">-200</button>
+      </div>
+    </div>
+
+    <p style="margin:12px 0 0;">Wallet: <b id="bal">—</b></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Note</th>
+          <th>Balance After</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const bal = document.getElementById("bal");
+    const rows = document.getElementById("rows");
+
+    function render(){
+      if(!window.VaultEngine?.user) return;
+      bal.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
+
+      const led = window.VaultEngine.getLedger();
+      rows.innerHTML = led.slice(0, 50).map(e => {
+        const t = new Date(e.ts).toLocaleString();
+        const type = e.type === "credit" ? "CREDIT" : "DEBIT";
+        const amt = (e.type === "credit" ? "+" : "-") + Number(e.amount).toFixed(0);
+        const note = (e.note || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+        return `<tr>
+          <td>${t}</td>
+          <td>${type}</td>
+          <td>${amt}</td>
+          <td>${note}</td>
+          <td>${Number(e.balanceAfter).toFixed(0)}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    const wait = setInterval(() => {
+      if(window.VaultEngine){
+        clearInterval(wait);
+        window.VaultEngine.subscribe(render);
+        render();
+      }
+    }, 100);
+
+    document.getElementById("testCredit").onclick = () => window.VaultEngine.credit(500, "ledger-test-credit");
+    document.getElementById("testDebit").onclick  = () => window.VaultEngine.debit(200, "ledger-test-debit");
+  </script>
+</body>
+</html>
