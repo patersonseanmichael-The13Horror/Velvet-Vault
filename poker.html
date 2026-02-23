@@ -33,6 +33,33 @@
       background: #050408;
       overflow-x:hidden;
     }
+    .seats{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.seat{
+  position:absolute;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.45);
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+#seat1{ bottom:10px; left:50%; transform:translateX(-50%); }
+#seat2{ left:10px; bottom:140px; }
+#seat3{ left:10px; top:120px; }
+#seat4{ top:20px; left:50%; transform:translateX(-50%); }
+#seat5{ right:10px; top:120px; }
+#seat6{ right:10px; bottom:140px; }
+
+.seat.active{
+  box-shadow:0 0 20px rgba(0,255,154,.5);
+}
 
     header{
       position:sticky; top:0; z-index:20;
@@ -431,6 +458,14 @@
 
     <!-- community cards -->
     <div class="board" id="board">
+      <div class="seats">
+  <div class="seat" id="seat1">You</div>
+  <div class="seat" id="seat2">AI-1</div>
+  <div class="seat" id="seat3">AI-2</div>
+  <div class="seat" id="seat4">AI-3</div>
+  <div class="seat" id="seat5">AI-4</div>
+  <div class="seat" id="seat6">AI-5</div>
+</div>
       <!-- 5 cards -->
       <div class="card3d" data-i="0"><div class="cardInner">
         <div class="back"></div>
@@ -456,6 +491,10 @@
 
     <!-- controls -->
     <div class="controls">
+      <button class="btn" id="foldBtn">Fold</button>
+<button class="btn green" id="callBtn">Call</button>
+<button class="btn red" id="raiseBtn">Raise 100</button>
+<div class="pill">Pot: <b id="pot">0</b></div>
       <button class="btn green" id="dealBtn">Deal (Flop → Turn → River)</button>
       <button class="btn" id="resetBtn">Reset</button>
       <div class="log" id="log">Awaiting the shuffle…</div>
