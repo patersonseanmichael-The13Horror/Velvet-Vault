@@ -10,13 +10,79 @@
   <script type="module" src="js/wallet.js"></script>
 
   <style>
-    body{margin:0;font-family:system-ui;background:#050408;color:#f1ecff;padding:18px}
-    .box{max-width:900px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;background:rgba(10,8,14,.72)}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .btn{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#f1ecff;font-weight:800;cursor:pointer}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);text-align:left;font-size:13px}
+    :root{
+      --text:#f1ecff;
+      --line:rgba(255,255,255,.12);
+      --muted:rgba(241,236,255,.72);
+      --red:#ff233d;
+      --green:#00ff9a;
+    }
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 520px at 50% 8%, rgba(255,35,61,.16), transparent 62%),
+        radial-gradient(900px 520px at 70% 55%, rgba(0,255,154,.12), transparent 60%),
+        #050408;
+      padding:18px;
+    }
+    .box{
+      max-width:980px;
+      margin:0 auto;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:linear-gradient(180deg, rgba(10,8,14,.74), rgba(16,12,20,.72));
+      box-shadow:0 24px 70px rgba(0,0,0,.55);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .btn:hover{ border-color:rgba(0,255,154,.34); background:rgba(0,255,154,.08); }
+    .btn.red:hover{ border-color:rgba(255,35,61,.34); background:rgba(255,35,61,.08); }
+    .tableWrap{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:auto;
+      background:rgba(0,0,0,.22);
+    }
+    table{
+      width:100%;
+      min-width:720px;
+      border-collapse:collapse;
+    }
+    th,td{
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      text-align:left;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    th{ letter-spacing:.08em; text-transform:uppercase; font-size:12px; color:var(--muted); }
     small{opacity:.75}
+    @media (max-width:680px){
+      body{ padding:12px; }
+      .box{ padding:12px; }
+      .row .row{ width:100%; }
+      .row .row .btn{ flex:1; min-width:110px; }
+    }
   </style>
 </head>
 <body>
@@ -35,18 +101,20 @@
 
     <p style="margin:12px 0 0;">Wallet: <b id="bal">—</b></p>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Note</th>
-          <th>Balance After</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Note</th>
+            <th>Balance After</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>

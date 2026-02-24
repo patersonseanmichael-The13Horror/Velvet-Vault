@@ -13,8 +13,16 @@ const firebaseConfig = {
   measurementId: "G-8HHEKDPGVY"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+let auth = null;
+let initError = null;
 
-// make auth usable in other files
+try {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+} catch (error) {
+  initError = error;
+  console.error("[VelvetVault] Firebase init failed:", error);
+}
+
 window.vvAuth = auth;
+window.vvFirebaseInitError = initError;

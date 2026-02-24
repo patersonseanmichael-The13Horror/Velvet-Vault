@@ -3,15 +3,22 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 
 const auth = window.vvAuth;
 
-onAuthStateChanged(auth, (user) => {
-  if(!user || !user.emailVerified){
-    location.href = "login.html";
-  }
-});
+if (!auth) {
+  console.warn("[VelvetVault] Auth unavailable, redirecting to login.");
+  location.href = "login.html";
+} else {
+  onAuthStateChanged(auth, (user) => {
+    if (!user || !user.emailVerified) {
+      location.href = "login.html";
+    }
+  });
+}
 
 // Optional: hook up a logout button if it exists
 const logoutBtn = document.getElementById("logoutBtn");
 logoutBtn?.addEventListener("click", async () => {
-  await signOut(auth);
+  if (auth) {
+    await signOut(auth);
+  }
   location.href = "login.html";
 });

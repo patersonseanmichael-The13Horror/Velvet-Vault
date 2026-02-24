@@ -227,6 +227,8 @@
 
 .hero-left{
   background: url("images/velvet-vault-hero.png") center/cover no-repeat;
+  padding: 28px;
+  min-height: 540px;
 }
 
     .headline{
@@ -832,7 +834,7 @@
           <div class="cta-row">
             <!-- CHANGE THESE LINKS -->
             <a class="btn btn-enter" href="members.html" id="enterBtn">Enter</a>
-            <a class="btn btn-dare" href="explore.html" id="exploreBtn">Dare To Explore</a>
+            <a class="btn btn-dare" href="login.html" id="exploreBtn">Dare To Explore</a>
           </div>
 
           <div class="micro">
@@ -937,8 +939,7 @@
 
   <!-- Ambient audio (add your own file path) -->
   <audio id="ambient" loop preload="auto">
-    <!-- Put your mp3 here -->
-    <source src="assets/velvet-ambient.mp3" type="audio/mpeg">
+    <!-- Optional ambient file intentionally not bundled in this repo -->
   </audio>
 
   <script>
@@ -957,6 +958,11 @@
       let audioOn = false;
 
       async function enableAudio(){
+        if(!ambient || !ambient.querySelector("source")){
+          audioOn = false;
+          toggleAudioBtn.textContent = "Audio: Unavailable";
+          return;
+        }
         try{
           await ambient.play();
           audioOn = true;

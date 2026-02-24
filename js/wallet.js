@@ -21,6 +21,17 @@ function loadUser(uid){
   if(raw){
     try { return JSON.parse(raw); } catch {}
   }
+  // Backward compatibility for older single-user key format.
+  const legacyRaw = localStorage.getItem("vv_user");
+  if (legacyRaw) {
+    try {
+      const legacy = JSON.parse(legacyRaw);
+      const migrated = { ...DEFAULT_USER, ...legacy, id: uid };
+      localStorage.setItem(key, JSON.stringify(migrated));
+      localStorage.removeItem("vv_user");
+      return migrated;
+    } catch {}
+  }
   const u = { ...DEFAULT_USER, id: uid };
   localStorage.setItem(key, JSON.stringify(u));
   return u;
@@ -115,9 +126,23 @@ window.VaultEngine = {
   formatGold
 };
 
-// Auto-init after Firebase auth is ready
-onAuthStateChanged(auth, (user) => {
-  if(!user) return; // guard.js will redirect if needed
-  window.VaultEngine.initFor(user.uid);
-  window.VaultEngine.emit();
+window.addEventListener("storage", (event) => {
+  const uid = window.VaultEngine.user?.id;
+  if (!uid) return;
+  if (event.key !== keyFor(uid) || !event.newValue) return;
+  try {
+    window.VaultEngine.user = JSON.parse(event.newValue);
+    window.VaultEngine.emit();
+  } catch {}
 });
+
+// Auto-init after Firebase auth is ready
+if (auth) {
+  onAuthStateChanged(auth, (user) => {
+    if(!user) return; // guard.js will redirect if needed
+    window.VaultEngine.initFor(user.uid);
+    window.VaultEngine.emit();
+  });
+} else {
+  console.warn("[VelvetVault] Wallet waiting: auth is unavailable.");
+}

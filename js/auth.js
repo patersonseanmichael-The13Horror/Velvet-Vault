@@ -18,7 +18,12 @@ const resendBtn = document.getElementById("resendBtn");
 
 function say(t){ if(msgEl) msgEl.textContent = t; }
 
+if (!auth) {
+  say("Auth is unavailable. Check Firebase configuration and network access.");
+}
+
 signupBtn?.addEventListener("click", async () => {
+  if (!auth) return;
   try{
     const email = emailEl.value.trim();
     const pass  = passEl.value;
@@ -34,6 +39,7 @@ signupBtn?.addEventListener("click", async () => {
 });
 
 signinBtn?.addEventListener("click", async () => {
+  if (!auth) return;
   try{
     const email = emailEl.value.trim();
     const pass  = passEl.value;
@@ -52,6 +58,7 @@ signinBtn?.addEventListener("click", async () => {
 });
 
 resendBtn?.addEventListener("click", async () => {
+  if (!auth) return;
   try{
     const u = auth.currentUser;
     if(!u) return say("Sign in first, then resend verification.");
@@ -63,11 +70,13 @@ resendBtn?.addEventListener("click", async () => {
 });
 
 // If already signed in + verified, skip login page
-onAuthStateChanged(auth, (user) => {
-  if(user && user.emailVerified){
-    location.href = "members.html";
-  }
-});
+if (auth) {
+  onAuthStateChanged(auth, (user) => {
+    if(user && user.emailVerified){
+      location.href = "members.html";
+    }
+  });
+}
 
 // Optional helper if you add a logout button on login page
-window.vvLogout = async () => { await signOut(auth); };
+window.vvLogout = async () => { if (auth) await signOut(auth); };
