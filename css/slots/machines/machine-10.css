@@ -1,0 +1,6 @@
+body.machine-10 {
+  --slot-bg: radial-gradient(1200px 700px at 50% 10%, rgba(94, 255, 162, 0.2), transparent 58%), radial-gradient(900px 620px at 72% 52%, rgba(255, 35, 61, 0.16), transparent 56%), linear-gradient(180deg, #07130f 0%, #020604 100%);
+  --machine-bg: radial-gradient(closest-side at 26% 20%, rgba(102, 255, 176, 0.3), transparent 72%), radial-gradient(closest-side at 76% 72%, rgba(255, 35, 61, 0.22), transparent 70%), linear-gradient(180deg, rgba(12, 52, 34, 0.94), rgba(8, 22, 16, 0.98));
+  --machine-cell-bg: linear-gradient(180deg, rgba(224, 255, 236, 0.11), rgba(12, 52, 30, 0.62));
+  --machine-cell-glow: 0 0 22px rgba(108, 255, 182, 0.34), 0 0 18px rgba(255, 35, 61, 0.24);
+}

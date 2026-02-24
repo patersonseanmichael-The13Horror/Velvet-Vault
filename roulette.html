@@ -235,6 +235,32 @@
     transform: rotate(var(--wheelRot, 0deg));
     transition: transform var(--wheelDur, 4600ms) cubic-bezier(.12,.92,.12,1);
   }
+  .wheelPocket{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:8px;
+    height:42%;
+    border-radius:999px;
+    transform-origin:50% 100%;
+    transform: translate(-50%,-100%) rotate(var(--pocketAngle, 0deg));
+    background: linear-gradient(180deg, rgba(255,35,61,.75), rgba(0,255,154,.15));
+    opacity:0;
+    pointer-events:none;
+    filter: blur(0.2px);
+  }
+  .wheelNum{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform-origin:center -240px;
+    font-weight:700;
+    font-size:14px;
+    text-shadow:0 0 8px rgba(0,0,0,.8);
+  }
+  .wheelNum.red{ color:#ff2340; }
+  .wheelNum.black{ color:#fff; }
+  .wheelNum.green{ color:#00ff9a; }
   .wheelHub{
     position:absolute;
     width: 34%;
@@ -414,6 +440,31 @@
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(0,255,154,0.92));
     box-shadow: 0 0 16px rgba(0,255,154,0.12);
   }
+  .chipFlight{
+    position:fixed;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.2);
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.24), rgba(255,35,61,0.95));
+    box-shadow: 0 0 12px rgba(255,35,61,.2), 0 0 14px rgba(0,255,154,.1);
+    pointer-events:none;
+    z-index:80;
+  }
+  .chipFlight.g{
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.24), rgba(0,255,154,0.95));
+    box-shadow: 0 0 12px rgba(0,255,154,.2), 0 0 14px rgba(255,35,61,.1);
+  }
+  .winFlash{
+    animation: winFlashPulse 1.5s ease;
+    box-shadow: 0 0 28px rgba(255,35,61,.45), 0 0 28px rgba(0,255,154,.45) !important;
+    border-color: rgba(255,255,255,.8) !important;
+  }
+  @keyframes winFlashPulse{
+    0%{ opacity:.25; transform: scale(0.98); }
+    20%{ opacity:1; transform: scale(1.02); }
+    100%{ opacity:1; transform: scale(1); }
+  }
 
   .outside{
     margin-top: 12px;
@@ -435,6 +486,91 @@
     align-items:center;
     justify-content:space-between;
     margin-top: 12px;
+  }
+  .racetrack{
+    margin-top:12px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    background: rgba(0,0,0,.26);
+    padding:10px;
+  }
+  .racetrack h4{
+    margin:0 0 8px;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color: rgba(241,236,255,.88);
+  }
+  .raceOrder{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding-bottom:6px;
+  }
+  .raceOrder .num{
+    min-width:30px;
+    text-align:center;
+    padding:5px 8px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:999px;
+    font-size:11px;
+    font-weight:800;
+    background: rgba(255,255,255,.03);
+  }
+  .raceOrder .num.r{ color: var(--red); }
+  .raceOrder .num.g{ color: var(--green); }
+  .raceOrder .num.b{ color: #cfcfdf; }
+  .raceControls{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:8px;
+    margin-top:8px;
+  }
+  .raceControls .rtBtn{
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.04);
+    color: var(--text);
+    border-radius:10px;
+    padding:10px;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:800;
+    cursor:pointer;
+    position:relative;
+    min-height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .raceControls .rtBtn:hover{
+    border-color: rgba(0,255,154,.34);
+    box-shadow: 0 0 16px rgba(0,255,154,.12), 0 0 16px rgba(255,35,61,.1);
+  }
+  .rtStack{
+    position:absolute;
+    right:6px;
+    bottom:6px;
+    pointer-events:none;
+  }
+  .neighborPick{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:8px;
+    flex-wrap:wrap;
+  }
+  .neighborPick select{
+    border:1px solid rgba(255,255,255,.16);
+    background: rgba(0,0,0,.35);
+    color: var(--text);
+    border-radius:10px;
+    padding:8px 10px;
+    font-weight:700;
+  }
+  @media (max-width:680px){
+    .raceControls{ grid-template-columns: 1fr; }
   }
   .betBox{
     display:flex;
@@ -462,16 +598,22 @@
   <div class="topbar">
     <div class="brand">
       <div class="sigil" aria-hidden="true"></div>
-      <div>
+      <div class="t">
         <h1>Velvet Vault</h1>
-        <small>Roulette • Split / Street / Corner • Neon Vegas</small>
+        <small>Neon Members Club</small>
       </div>
     </div>
-    <div class="actions">
+
+    <nav class="actions" aria-label="Primary">
+      <a class="chipLink" href="index.html">Home</a>
       <a class="chipLink green" href="members.html">Lobby</a>
+      <a class="chipLink" href="slots.html">Slots</a>
+      <a class="chipLink" href="roulette.html">Roulette</a>
+      <a class="chipLink" href="blackjack.html">Blackjack</a>
+      <a class="chipLink" href="poker.html">Poker</a>
       <a class="chipLink" href="ledger.html">Ledger</a>
-      <button class="chipBtn red" id="logoutBtn">Logout</button>
-    </div>
+      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
+    </nav>
   </div>
 </header>
 
@@ -518,371 +660,27 @@
           </div>
           <div class="pill">Payouts: Straight <b>35:1</b> • Split <b>17:1</b> • Street <b>11:1</b> • Corner <b>8:1</b></div>
         </div>
+
+        <section class="racetrack" aria-label="Racetrack Bets">
+          <h4>Racetrack / Neighbours</h4>
+          <div class="raceOrder" id="raceOrder"></div>
+          <div class="neighborPick">
+            <label for="neighborSelect">Neighbours Of:</label>
+            <select id="neighborSelect"></select>
+            <button class="rtBtn" id="neighborsBtn" type="button">Neighbours <span class="rtStack" id="rtStackNeighbors"></span></button>
+          </div>
+          <div class="raceControls">
+            <button class="rtBtn" id="voisinsBtn" type="button">Voisins <span class="rtStack" id="rtStackVoisins"></span></button>
+            <button class="rtBtn" id="tiersBtn" type="button">Tiers <span class="rtStack" id="rtStackTiers"></span></button>
+            <button class="rtBtn" id="orphelinsBtn" type="button">Orphelins <span class="rtStack" id="rtStackOrphelins"></span></button>
+          </div>
+        </section>
       </div>
     </div>
   </section>
 </main>
 
-<script>
-/* =========================
-   🔊 SOUND (WebAudio tiny)
-   ========================= */
-let AC=null;
-function audioOn(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume(); }
-function beep(freq=440, ms=60, type="sine", gain=0.05){
-  if(!AC) return;
-  const o=AC.createOscillator(), g=AC.createGain();
-  o.type=type; o.frequency.value=freq; g.gain.value=gain;
-  o.connect(g); g.connect(AC.destination);
-  o.start(); setTimeout(()=>o.stop(), ms);
-}
-function chime(){ beep(660,70,"sine",0.05); setTimeout(()=>beep(880,90,"sine",0.05),80); }
-function thud(){ beep(140,90,"triangle",0.06); }
-function tick(){ beep(520,30,"square",0.02); }
-
-/* =========================
-   💳 WALLET UI
-   ========================= */
-const walletBalEl = document.getElementById("walletBal");
-function renderWallet(){
-  if(!window.VaultEngine?.user) return;
-  walletBalEl.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
-}
-const wWait = setInterval(() => {
-  if(window.VaultEngine){
-    clearInterval(wWait);
-    window.VaultEngine.subscribe(renderWallet);
-    renderWallet();
-  }
-}, 100);
-
-const logEl = document.getElementById("log");
-function requireWallet(){
-  if(!window.VaultEngine?.user){
-    logEl.textContent = "Connecting to the vault…";
-    return false;
-  }
-  return true;
-}
-function debit(amount, note){
-  if(!requireWallet()) return false;
-  const ok = window.VaultEngine.debit(amount, note);
-  if(!ok){
-    const bal = window.VaultEngine.getBalance?.() ?? 0;
-    logEl.innerHTML = `Insufficient funds. Wallet: <b>${window.VaultEngine.formatGold(bal)}</b>`;
-    thud();
-    return false;
-  }
-  return true;
-}
-function credit(amount, note){
-  if(!window.VaultEngine?.user) return;
-  window.VaultEngine.credit(amount, note);
-}
-
-/* =========================
-   🎯 Wheel order + colors
-   ========================= */
-const WHEEL_ORDER = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
-const RED_SET = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
-function colorOf(n){
-  if(n===0) return "green";
-  return RED_SET.has(n) ? "red" : "black";
-}
-
-/* =========================
-   🧾 Bets + payouts
-   ========================= */
-const PAYOUTS = {
-  straight: 35,
-  split: 17,
-  street: 11,
-  corner: 8,
-  dozen: 2,
-  even: 1
-};
-
-const BETS = new Map(); // key -> {type, nums:Set<number>, amount}
-function key(type, id){ return type + ":" + id; }
-
-function totalBet(){
-  let t=0;
-  for(const b of BETS.values()) t += b.amount;
-  return t;
-}
-
-function addChipVisual(stack){
-  const c = document.createElement("div");
-  c.className = "chip " + (Math.random()>0.5 ? "g" : "");
-  stack.appendChild(c);
-  while(stack.children.length > 10) stack.removeChild(stack.firstChild);
-}
-
-/* =========================
-   🧱 UI build: numbers + split + corner + street
-   ========================= */
-const layoutEl = document.getElementById("layout");
-const dozensEl = document.getElementById("dozens");
-const evensEl = document.getElementById("evens");
-
-const totalBetEl = document.getElementById("totalBet");
-const chipValEl = document.getElementById("chipVal");
-const chipAmtEl = document.getElementById("chipAmt");
-const lastResultEl = document.getElementById("lastResult");
-const statusEl = document.getElementById("status");
-
-const chipSlider = document.getElementById("chipSlider");
-let chipValue = Number(chipSlider.value||100);
-chipSlider.addEventListener("input", ()=>{
-  chipValue = Number(chipSlider.value||100);
-  chipValEl.textContent = chipValue;
-  chipAmtEl.textContent = chipValue;
-});
-
-function placeBet(type, id, nums, stack){
-  const k = key(type, id);
-  const existing = BETS.get(k);
-  if(existing) existing.amount += chipValue;
-  else BETS.set(k, { type, nums: new Set(nums), amount: chipValue });
-  addChipVisual(stack);
-  totalBetEl.textContent = totalBet();
-}
-
-function mkStack(){
-  const s = document.createElement("div");
-  s.className = "chipStack";
-  return s;
-}
-
-function mkNumberCell(n){
-  const d = document.createElement("div");
-  const c = colorOf(n);
-  d.className = "cell " + (c==="red" ? "nRed" : c==="black" ? "nBlack" : "nGreen");
-  d.textContent = String(n);
-  const stack = mkStack();
-  d.appendChild(stack);
-  d.addEventListener("click", ()=>{
-    audioOn(); tick();
-    placeBet("straight", String(n), [n], stack);
-  });
-  return d;
-}
-
-function mkStreetCell(start){
-  const d = document.createElement("div");
-  d.className = "cell label";
-  d.textContent = "ST";
-  const stack = mkStack();
-  d.appendChild(stack);
-  d.title = `Street ${start}-${start+2}`;
-  d.addEventListener("click", ()=>{
-    audioOn(); tick();
-    placeBet("street", String(start), [start,start+1,start+2], stack);
-  });
-  return d;
-}
-
-function mkSpot(type, id, nums, label){
-  const d = document.createElement("div");
-  d.className = "spot";
-  d.innerHTML = `<small>${label||type}</small>`;
-  const stack = mkStack();
-  d.appendChild(stack);
-  d.addEventListener("click", ()=>{
-    audioOn(); tick();
-    placeBet(type, id, nums, stack);
-  });
-  return d;
-}
-
-function buildLayout(){
-  layoutEl.innerHTML = "";
-
-  // Build rows top-to-bottom: 12 streets: (1-3) ... (34-36)
-  // Our visual layout goes from 1-3 at top (classic).
-  const rows = [];
-  for(let r=0;r<12;r++){
-    const start = 1 + r*3;
-    rows.push([start, start+1, start+2]);
-  }
-
-  // For each row: street cell + n1 + vsplit + n2 + vsplit + n3
-  rows.forEach((nums, rIdx)=>{
-    // street bet
-    layoutEl.appendChild(mkStreetCell(nums[0]));
-
-    // number 1
-    layoutEl.appendChild(mkNumberCell(nums[0]));
-
-    // split between n1-n2 (horizontal split)
-    layoutEl.appendChild(mkSpot("split", `${nums[0]}-${nums[1]}`, [nums[0],nums[1]], "SPLIT"));
-
-    // number 2
-    layoutEl.appendChild(mkNumberCell(nums[1]));
-
-    // split between n2-n3
-    layoutEl.appendChild(mkSpot("split", `${nums[1]}-${nums[2]}`, [nums[1],nums[2]], "SPLIT"));
-
-    // number 3
-    layoutEl.appendChild(mkNumberCell(nums[2]));
-
-    // Between rows: vertical splits + corners (except after last row)
-    if(rIdx < rows.length-1){
-      const below = rows[rIdx+1]; // [n+3, n+4, n+5]
-
-      // Add a thin gap row (visual spacer)
-      const gap = document.createElement("div");
-      gap.className = "rowGap";
-      layoutEl.appendChild(gap);
-
-      // Now an overlay row of clickable spots for vertical/corner
-      // street column placeholder
-      layoutEl.appendChild(Object.assign(document.createElement("div"), {className:"cell label", textContent:""}));
-
-      // vertical split n1 with below n1 (+3)
-      layoutEl.appendChild(mkSpot("split", `${nums[0]}-${below[0]}`, [nums[0],below[0]], "V"));
-
-      // corner (n1,n2,below1,below2)
-      layoutEl.appendChild(mkSpot("corner", `${nums[0]}-${nums[1]}-${below[0]}-${below[1]}`, [nums[0],nums[1],below[0],below[1]], "C"));
-
-      // vertical split n2 with below n2 (+3)
-      layoutEl.appendChild(mkSpot("split", `${nums[1]}-${below[1]}`, [nums[1],below[1]], "V"));
-
-      // corner (n2,n3,below2,below3)
-      layoutEl.appendChild(mkSpot("corner", `${nums[1]}-${nums[2]}-${below[1]}-${below[2]}`, [nums[1],nums[2],below[1],below[2]], "C"));
-
-      // vertical split n3 with below n3 (+3)
-      layoutEl.appendChild(mkSpot("split", `${nums[2]}-${below[2]}`, [nums[2],below[2]], "V"));
-    }
-  });
-
-  // Dozens
-  dozensEl.innerHTML = "";
-  const d1 = mkSpot("dozen","1",[...Array(12)].map((_,i)=>i+1),"1st 12");
-  const d2 = mkSpot("dozen","2",[...Array(12)].map((_,i)=>i+13),"2nd 12");
-  const d3 = mkSpot("dozen","3",[...Array(12)].map((_,i)=>i+25),"3rd 12");
-  d1.classList.add("cell"); d2.classList.add("cell"); d3.classList.add("cell");
-  dozensEl.appendChild(d1); dozensEl.appendChild(d2); dozensEl.appendChild(d3);
-
-  // Even money
-  evensEl.innerHTML = "";
-  const low = mkSpot("even","low",[...Array(18)].map((_,i)=>i+1),"1–18");
-  const even = mkSpot("even","even",[...Array(18)].map((_,i)=>2*(i+1)).filter(n=>n<=36),"EVEN");
-  const red = mkSpot("even","red",[...RED_SET],"RED");
-  const black = mkSpot("even","black",[...Array(36)].map((_,i)=>i+1).filter(n=>!RED_SET.has(n)),"BLACK");
-  const odd = mkSpot("even","odd",[...Array(18)].map((_,i)=>2*i+1),"ODD");
-  const high = mkSpot("even","high",[...Array(18)].map((_,i)=>i+19),"19–36");
-  [low,even,red,black,odd,high].forEach(x=>{ x.classList.add("cell"); evensEl.appendChild(x); });
-
-  totalBetEl.textContent = "0";
-}
-buildLayout();
-
-function clearBets(){
-  BETS.clear();
-  document.querySelectorAll(".chipStack").forEach(s=>s.innerHTML="");
-  totalBetEl.textContent = "0";
-  logEl.textContent = "Bets cleared.";
-}
-
-/* =========================
-   🎡 Spin + ball landing
-   ========================= */
-const wheelRing = document.getElementById("wheelRing");
-const ball = document.getElementById("ball");
-const spinBtn = document.getElementById("spinBtn");
-const clearBtn = document.getElementById("clearBtn");
-
-let spinning = false;
-
-function pocketAngleForNumber(n){
-  const idx = WHEEL_ORDER.indexOf(n);
-  const pocketSize = 360 / WHEEL_ORDER.length;
-  return (idx * pocketSize);
-}
-function randInt(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-
-function resolvePayout(win){
-  let payout = 0;
-  for(const b of BETS.values()){
-    if(b.nums.has(win)){
-      const mult = PAYOUTS[b.type] ?? 0;
-      payout += b.amount * (mult + 1);
-    }
-  }
-  return payout;
-}
-
-async function spin(){
-  audioOn();
-  if(spinning) return;
-
-  const wager = totalBet();
-  if(wager <= 0){
-    logEl.textContent = "Place a bet first.";
-    thud();
-    return;
-  }
-  if(!debit(wager, "roulette-spin")) return;
-
-  spinning = true;
-  spinBtn.disabled = true;
-  clearBtn.disabled = true;
-  statusEl.textContent = "SPINNING";
-
-  const win = WHEEL_ORDER[randInt(0, WHEEL_ORDER.length-1)];
-  const winAngle = pocketAngleForNumber(win);
-
-  const dur = randInt(4400, 5900);
-  wheelRing.style.setProperty("--wheelDur", dur + "ms");
-  ball.style.setProperty("--ballDur", dur + "ms");
-
-  const extraTurns = randInt(9, 14) * 360;
-  const finalWheel = extraTurns + (360 - winAngle) + randInt(-4,4);
-
-  const ballTurns = randInt(11, 17) * 360;
-  const finalBall = ballTurns + winAngle + randInt(-6,6);
-
-  wheelRing.style.setProperty("--wheelRot", finalWheel + "deg");
-  ball.style.setProperty("--a", finalBall + "deg");
-
-  // “bounce / drop” radius
-  ball.style.setProperty("--r", "48%");
-  tick();
-  setTimeout(()=>{ ball.style.setProperty("--r","46%"); tick(); }, Math.floor(dur*0.25));
-  setTimeout(()=>{ ball.style.setProperty("--r","44%"); tick(); }, Math.floor(dur*0.50));
-  setTimeout(()=>{ ball.style.setProperty("--r","42%"); tick(); }, Math.floor(dur*0.70));
-  setTimeout(()=>{ ball.style.setProperty("--r","40%"); tick(); }, Math.floor(dur*0.86));
-  setTimeout(()=>{ ball.style.setProperty("--r","38%"); }, Math.floor(dur*0.95));
-
-  logEl.innerHTML = `Spinning… <b>No more bets</b>.`;
-  await sleep(dur + 100);
-
-  lastResultEl.innerHTML = `${win} <span class="${colorOf(win)==="red"?"r":""}">${colorOf(win).toUpperCase()}</span>`;
-
-  const payout = resolvePayout(win);
-  if(payout > 0){
-    credit(payout, "roulette-payout");
-    chime();
-    logEl.innerHTML = `Result: <b>${win}</b>. You win <b>${payout}</b> GOLD.`;
-  }else{
-    thud();
-    logEl.innerHTML = `Result: <b>${win}</b>. Dealer takes it.`;
-  }
-
-  renderWallet();
-  clearBets();
-
-  statusEl.textContent = "READY";
-  spinning = false;
-  spinBtn.disabled = false;
-  clearBtn.disabled = false;
-}
-
-spinBtn.addEventListener("click", spin);
-clearBtn.addEventListener("click", clearBets);
-</script>
+<script src="js/games/roulette.js"></script>
 
 </body>
 </html>

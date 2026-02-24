@@ -268,6 +268,43 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
+    .slotsLobbyGrid{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .slotLobbyTile{
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      padding: 12px 12px;
+      border-radius: 16px;
+      cursor:pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+      min-height: 92px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:6px;
+      text-decoration:none;
+      color: inherit;
+    }
+    .slotLobbyTile:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,255,154,0.30);
+      background: rgba(0,255,154,0.07);
+    }
+    .slotLobbyTile b{
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      font-size: 12px;
+    }
+    .slotLobbyTile p{
+      margin:0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.35;
+    }
     .tile{
       border:1px solid rgba(255,255,255,0.10);
       background: rgba(0,0,0,0.22);
@@ -377,6 +414,7 @@
     @media (max-width: 960px){
       .card{ grid-column: span 12; }
       .tiles{ grid-template-columns: 1fr; }
+      .slotsLobbyGrid{ grid-template-columns: repeat(2, 1fr); }
       .btn{ min-width: 100%; }
     }
   </style>
@@ -386,21 +424,27 @@
   <div class="grain" aria-hidden="true"></div>
 
   <header>
-    <div class="topbar">
-      <div class="brand">
-        <div class="sigil" aria-hidden="true"></div>
-        <div class="t">
-          <h1>Velvet Vault</h1>
-          <small>Members Lobby • Verified Access</small>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="chip green" id="openProfileBtn">Profile</button>
-        <button class="chip red" id="logoutBtn">Logout</button>
+  <div class="topbar">
+    <div class="brand">
+      <div class="sigil" aria-hidden="true"></div>
+      <div class="t">
+        <h1>Velvet Vault</h1>
+        <small>Neon Members Club</small>
       </div>
     </div>
-  </header>
+
+    <nav class="actions" aria-label="Primary">
+      <a class="chipLink" href="index.html">Home</a>
+      <a class="chipLink green" href="members.html">Lobby</a>
+      <a class="chipLink" href="slots.html">Slots</a>
+      <a class="chipLink" href="roulette.html">Roulette</a>
+      <a class="chipLink" href="blackjack.html">Blackjack</a>
+      <a class="chipLink" href="poker.html">Poker</a>
+      <a class="chipLink" href="ledger.html">Ledger</a>
+      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
+    </nav>
+  </div>
+</header>
 
   <main>
     <section class="hero">
@@ -450,6 +494,31 @@
           <div class="ctaRow">
             <a class="btn red" href="slots.html">All Games</a>
             <a class="btn green" href="ledger.html">The Vault</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Slots Lobby -->
+      <article class="card span12">
+        <div class="cardHead">
+          <div>
+            <h3>Slots Lobby</h3>
+            <small>Choose one of 10 uniquely styled machines. Wallet and ledger stay shared.</small>
+          </div>
+          <span class="badge green">10 Machines</span>
+        </div>
+        <div class="cardBody">
+          <div class="slotsLobbyGrid">
+            <a class="slotLobbyTile" href="slots.html?m=machine-01"><b>Machine 01</b><p>Velvet Neon</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-02"><b>Machine 02</b><p>Crimson Cathedral</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-03"><b>Machine 03</b><p>Emerald Mirage</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-04"><b>Machine 04</b><p>Midnight Chrome</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-05"><b>Machine 05</b><p>Golden Syndicate</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-06"><b>Machine 06</b><p>Neon Koi</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-07"><b>Machine 07</b><p>Arc Light</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-08"><b>Machine 08</b><p>Vintage Velvet</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-09"><b>Machine 09</b><p>Obsidian Oracle</p></a>
+            <a class="slotLobbyTile" href="slots.html?m=machine-10"><b>Machine 10</b><p>Starlight Heist</p></a>
           </div>
         </div>
       </article>
@@ -533,7 +602,8 @@
     setInterval(addFeed, 30000);
 
     // Profile placeholder
-    document.getElementById("openProfileBtn").addEventListener("click", () => {
+    const profileBtn = document.getElementById("openProfileBtn");
+    profileBtn?.addEventListener("click", () => {
       alert("Profile panel coming next (we can show email + tier + wallet here).");
     });
 
