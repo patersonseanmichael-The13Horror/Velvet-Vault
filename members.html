@@ -1,21 +1,20 @@
-<!-- members.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Velvet Vault — Members Lobby</title>
+  <title>Velvet Vault - Members Lobby</title>
   <meta name="description" content="Velvet Vault Members Lobby"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- ✅ Auth protection -->
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/guard.js"></script>
   <script type="module" src="js/wallet.js"></script>
 
+HEAD
   <style>
     :root{
       --bg:#050408;
@@ -418,210 +417,145 @@
       .btn{ min-width: 100%; }
     }
   </style>
-</head>
 
-<body>
+  <link rel="stylesheet" href="css/velvet.css">
+  <link rel="stylesheet" href="css/casino-floor.css">
+6f865bd (Add casino floor lobby, manual review UI, and helper widget)
+</head>
+<body class="members-page">
   <div class="grain" aria-hidden="true"></div>
 
   <header>
-  <div class="topbar">
-    <div class="brand">
-      <div class="sigil" aria-hidden="true"></div>
-      <div class="t">
-        <h1>Velvet Vault</h1>
-        <small>Neon Members Club</small>
+    <div class="topbar">
+      <div class="brand">
+        <div class="sigil" aria-hidden="true"></div>
+        <div class="t">
+          <h1>Velvet Vault</h1>
+          <small>Neon Members Club</small>
+        </div>
       </div>
-    </div>
 
-    <nav class="actions" aria-label="Primary">
-      <a class="chipLink" href="index.html">Home</a>
-      <a class="chipLink green" href="members.html">Lobby</a>
-      <a class="chipLink" href="slots.html">Slots</a>
-      <a class="chipLink" href="roulette.html">Roulette</a>
-      <a class="chipLink" href="blackjack.html">Blackjack</a>
-      <a class="chipLink" href="poker.html">Poker</a>
-      <a class="chipLink" href="ledger.html">Ledger</a>
-      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
-    </nav>
-  </div>
-</header>
+      <nav class="actions" aria-label="Primary">
+        <a class="chipLink" href="index.html">Home</a>
+        <a class="chipLink green" href="members.html">Lobby</a>
+        <a class="chipLink" href="slots.html">Slots</a>
+        <a class="chipLink" href="roulette.html">Roulette</a>
+        <a class="chipLink" href="blackjack.html">Blackjack</a>
+        <a class="chipLink" href="poker.html">Poker</a>
+        <a class="chipLink" href="ledger.html">Ledger</a>
+        <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
+      </nav>
+    </div>
+  </header>
 
   <main>
-    <section class="hero">
-      <h2 class="headline">WELCOME BACK, MEMBER</h2>
-      <p class="sub">
-        The lights are low. The signal is <b>green</b>. Your next move is <b>red</b>.
-        Choose a room below — every door leads somewhere.
-      </p>
-
-      <div class="stats">
-        <div class="pill">Status: <strong>VERIFIED</strong></div>
-        <div class="pill">Tier: <strong>VIP I</strong></div>
-       <div class="pill">Wallet: <strong id="walletBalance">—</strong></div>
+    <section class="casinoFloor">
+      <div class="floorHeader">
+        <div>
+          <h2 class="floorTitle">Velvet Vault Casino Floor</h2>
+          <p class="floorSub">Neon lounge • VIP tables • Machine hall</p>
+        </div>
+        <div class="jackpot">
+          <span>JACKPOT</span>
+          <b id="vvJackpot">—</b>
+        </div>
       </div>
-    </section>
 
-    <section class="grid">
-      <!-- Rooms -->
-      <article class="card span6">
-        <div class="cardHead">
-          <div>
-            <h3>Games Hall</h3>
-            <small>Slots, roulette, blackjack — the core loop. Keep it clean, one engine per game.</small>
-          </div>
-          <span class="badge red">Hot</span>
-        </div>
-        <div class="cardBody">
-          <div class="tiles">
-            <div class="tile" onclick="location.href='slots.html'">
-              <b>Slots</b>
-              <p>Spin the neon reels.</p>
-            </div>
-            <div class="tile" onclick="location.href='roulette.html'">
-              <b>Roulette</b>
-              <p>Red or green? Place your bet.</p>
-            </div>
-            <div class="tile" onclick="location.href='blackjack.html'">
-              <b>Blackjack</b>
-              <p>Dealer’s watching.</p>
-            </div>
-            <div class="tile" onclick="location.href='poker.html'">
-              <b>Poker</b>
-              <p>Private table access.</p>
-            </div>
-          </div>
+      <div class="floorGrid">
+        <a class="floorCard" href="roulette.html">
+          <div class="cardGlow"></div>
+          <div class="cardTag">Table</div>
+          <div class="cardName">Roulette</div>
+          <p class="cardDesc">Ultra realistic spin + neon win flash.</p>
+        </a>
 
-          <div class="ctaRow">
-            <a class="btn red" href="slots.html">All Games</a>
-            <a class="btn green" href="ledger.html">The Vault</a>
-          </div>
-        </div>
-      </article>
+        <a class="floorCard" href="blackjack.html">
+          <div class="cardGlow"></div>
+          <div class="cardTag">Table</div>
+          <div class="cardName">Blackjack VIP</div>
+          <p class="cardDesc">Dealer glow • chip flow • fast actions.</p>
+        </a>
 
-      <!-- Slots Lobby -->
-      <article class="card span12">
-        <div class="cardHead">
-          <div>
-            <h3>Slots Lobby</h3>
-            <small>Choose one of 10 uniquely styled machines. Wallet and ledger stay shared.</small>
-          </div>
-          <span class="badge green">10 Machines</span>
-        </div>
-        <div class="cardBody">
-          <div class="slotsLobbyGrid">
-            <a class="slotLobbyTile" href="slots.html?m=machine-01"><b>Machine 01</b><p>Velvet Neon</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-02"><b>Machine 02</b><p>Crimson Cathedral</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-03"><b>Machine 03</b><p>Emerald Mirage</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-04"><b>Machine 04</b><p>Midnight Chrome</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-05"><b>Machine 05</b><p>Golden Syndicate</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-06"><b>Machine 06</b><p>Neon Koi</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-07"><b>Machine 07</b><p>Arc Light</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-08"><b>Machine 08</b><p>Vintage Velvet</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-09"><b>Machine 09</b><p>Obsidian Oracle</p></a>
-            <a class="slotLobbyTile" href="slots.html?m=machine-10"><b>Machine 10</b><p>Starlight Heist</p></a>
-          </div>
-        </div>
-      </article>
+        <a class="floorCard" href="poker.html">
+          <div class="cardGlow"></div>
+          <div class="cardTag">Lounge</div>
+          <div class="cardName">Poker</div>
+          <p class="cardDesc">Dealing animation • AI seats.</p>
+        </a>
 
-      <!-- Vault / Wallet -->
-      <article class="card span6">
-        <div class="cardHead">
-          <div>
-            <h3>The Vault</h3>
-            <small>Your wallet, tier, ledger. We’ll wire this next as a single clean system.</small>
-          </div>
-          <span class="badge green">Secure</span>
-        </div>
-        <div class="cardBody">
-          <div class="tiles">
-            <div class="tile" onclick="location.href='ledger.html'">
-              <b>Wallet</b>
-              <p>Balance + top ups.</p>
-            </div>
-            <div class="tile" onclick="location.href='ledger.html'">
-              <b>Ledger</b>
-              <p>Every move recorded.</p>
-            </div>
-            <div class="tile" onclick="location.href='poker.html'">
-              <b>VIP Tier</b>
-              <p>Unlock rooms.</p>
-            </div>
-            <div class="tile" onclick="location.href='slots.html'">
-              <b>Rewards</b>
-              <p>Nightly drops.</p>
-            </div>
-          </div>
+        <a class="floorCard" href="slots.html?m=machine-01">
+          <div class="cardGlow"></div>
+          <div class="cardTag">Machines</div>
+          <div class="cardName">Slots Hall</div>
+          <p class="cardDesc">10 machines • unique skins • wallet-safe.</p>
+        </a>
 
-          <div class="ctaRow">
-            <a class="btn green" href="poker.html">Upgrade</a>
-            <a class="btn red" href="blackjack.html">House Rules</a>
-          </div>
-        </div>
-      </article>
+        <a class="floorCard" href="slots.html?m=machine-10">
+          <div class="cardGlow"></div>
+          <div class="cardTag">High Risk</div>
+          <div class="cardName">HyperSpin X</div>
+          <p class="cardDesc">Aggressive volatility • VIP energy.</p>
+        </a>
+      </div>
 
-      <!-- Activity feed -->
-      <article class="card span12">
-        <div class="cardHead">
-          <div>
-            <h3>Live Floor</h3>
-            <small>Fake “recent wins” feed (safe for now). Later we can connect it to real events.</small>
-          </div>
-          <span class="badge">Live</span>
+      <div class="floorFooterRow">
+        <div class="winFeed">
+          <p class="winFeedTitle">Live Wins</p>
+          <div id="vvWinFeed"></div>
         </div>
-        <div class="cardBody">
-          <div class="feed" id="feed"></div>
+
+        <div class="manualPanel">
+          <h3>Manual Review Submission</h3>
+
+          <form id="vvManualForm" class="manualGrid">
+            <div class="manualRow">
+              <label>Name</label>
+              <input value="Michael Sean" readonly>
+            </div>
+            <div class="manualRow">
+              <label>PayID</label>
+              <input value="ledgertheivory@gmail.com" readonly>
+            </div>
+            <div class="manualRow">
+              <label>Reference</label>
+              <input value="2009855" readonly>
+            </div>
+            <div class="manualRow">
+              <label>Description</label>
+              <textarea readonly>Items Purchased Ebay</textarea>
+            </div>
+            <div class="manualRow">
+              <label>Submit Screenshot</label>
+              <input id="vvScreenshot" type="file" accept="image/*">
+            </div>
+
+            <div class="manualBtns">
+              <button class="vvBtn green" type="submit">Submit</button>
+            </div>
+
+            <p class="manualMsg" id="vvManualMsg"></p>
+          </form>
         </div>
-      </article>
+      </div>
     </section>
   </main>
 
-  <script>
-    // Simple rotating "live floor" feed — no backend, no collisions.
-    const feedEl = document.getElementById("feed");
+  <button id="vvHelperOpen" class="vvBtn" style="display:none; position:fixed; right:14px; bottom:14px; z-index:9998;">
+    Help
+  </button>
 
-    function maskId(){
-      const a = String(Math.floor(Math.random()*99)).padStart(2,"0");
-      const b = String(Math.floor(Math.random()*999)).padStart(3,"0");
-      const c = String(Math.floor(Math.random()*999)).padStart(3,"0");
-      return `${a}*****${b}${c}`.slice(0,10);
-    }
-    function randGold(){
-      return Math.floor(120 + Math.random()*4200);
-    }
-    function addFeed(){
-      const row = document.createElement("div");
-      row.className = "feedItem";
-      const who = maskId();
-      const amt = randGold();
-      row.innerHTML = `<div><b>${who}</b> <small>just won</small> <b style="color:var(--green);">${amt} GOLD</b></div>
-                       <small>${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</small>`;
-      feedEl.prepend(row);
-      while(feedEl.children.length > 6) feedEl.removeChild(feedEl.lastChild);
-    }
-    for(let i=0;i<4;i++) addFeed();
-    setInterval(addFeed, 30000);
+  <div class="vvHelper" id="vvHelper">
+    <div class="vvHelperHeader">
+      <b>Helper</b>
+      <button class="vvHelperClose" id="vvHelperClose" aria-label="Close">×</button>
+    </div>
+    <div class="vvHelperBody" id="vvHelperBody"></div>
+  </div>
 
-    // Profile placeholder
-    const profileBtn = document.getElementById("openProfileBtn");
-    profileBtn?.addEventListener("click", () => {
-      alert("Profile panel coming next (we can show email + tier + wallet here).");
-    });
+  <div id="vvFooterLogo" style="display:none"></div>
 
-    // 🔹 WALLET DISPLAY (ADD THIS PART)
-    const balEl = document.getElementById("walletBalance");
-
-    function renderWallet(){
-      if(!window.VaultEngine || !window.VaultEngine.user) return;
-      balEl.textContent = window.VaultEngine.formatGold(window.VaultEngine.getBalance());
-    }
-
-    const wait = setInterval(() => {
-      if(window.VaultEngine){
-        clearInterval(wait);
-        window.VaultEngine.subscribe(renderWallet);
-        renderWallet();
-      }
-    }, 100);
-</script>
+  <script src="js/casino-floor.js"></script>
+  <script src="js/manual-payment.js"></script>
+  <script src="js/helper.js"></script>
 </body>
 </html>
