@@ -448,3 +448,16 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+/* VIP SLOT VISUALS */
+
+@keyframes vvReelShimmer{
+  0%{transform:translateX(-120%)}
+  100%{transform:translateX(120%)}
+}
+
+@keyframes vvJackpotBeam{
+  0%{opacity:.2}
+  50%{opacity:.5}
+  100%{opacity:.2}
+}

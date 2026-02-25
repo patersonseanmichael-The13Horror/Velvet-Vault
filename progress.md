@@ -69,3 +69,137 @@ Final slots production audit (2026-02-24):
   - Members -> Slots machine -> back to Members works.
   - Slots logout redirects to login.
   - Logged-out guard redirects to login on slots page.
+
+Feature add pass (2026-02-25):
+- Added new additive files (no game logic rewrites):
+  - css/dealer-voice.css
+  - css/slots/vip-themes.css
+  - js/dealer-voice.js
+  - js/helper-bot.js
+  - js/wallet-manual.js
+  - js/casino-floor-animations.js
+- Updated pages to load new modules/styles:
+  - members.html
+  - slots.html
+  - roulette.html
+  - blackjack.html
+  - poker.html
+- Replaced members helper/manual script tags with new additive modules to prevent duplicate listeners.
+- Dealer voice notes:
+  - Uses WebAudio fallback and arms only after user interaction.
+  - File audio path support remains available but disabled by default (`localStorage.vv_enable_dealer_audio_files="1"` to enable).
+- Playwright audit (mocked Firebase modules, mobile viewport 390x844):
+  - Console errors: 0
+  - Page errors: 0
+  - Horizontal overflow: none across index/login/members/slots/roulette/blackjack/poker/ledger
+  - One benign requestfailed on login run due immediate redirect to members aborting an image request.
+- Follow-up fix: helper bot now forces visibility for pre-existing members helper mount (inline `display:none` compatibility).
+- Final verification pass:
+  - Console errors: 0
+  - Page errors: 0
+  - Mobile overflow violations: 0
+  - Remaining request failures in audit were aborted external fonts/redirect artifacts only under mocked auth transitions.
+
+Secure wallet + payout hardening (2026-02-25):
+- Added Cloud Functions backend wallet authority (`functions/index.js`) with callable endpoints:
+  - `walletGetState`
+  - `walletDebit`
+  - `walletCredit`
+  - `walletVoidRound`
+- Added idempotency layer in Firestore (`users/{uid}/idempotency/{key}`) so repeated calls return prior result.
+- Added round settlement model (`users/{uid}/rounds/{roundId}`):
+  - `OPEN` on debit
+  - `SETTLED` on credit
+  - duplicate credit blocked for same round
+- Added secure rules:
+  - `firestore.rules` denies client writes to wallet/ledger/round/idempotency docs
+  - allows client create/read of own manual upload requests only under `users/{uid}/manual_uploads/{requestId}`
+  - `storage.rules` restricts uploads to `manual-uploads/{uid}/...` and image MIME with auth
+- Replaced client wallet engine with secure wrapper (`js/wallet-secure.js`) while preserving `window.VaultEngine` API used by games.
+- `js/wallet.js` is now a thin module wrapper importing `wallet-secure.js`.
+- Added secure manual upload script (`js/manual-upload.js`) using Firebase Storage + Firestore with uid-scoped path and request docs.
+- Updated `js/firebase-init.js` to expose `window.vvApp` for secure wallet/storage/firestore clients.
+- Updated `members.html` to load `js/manual-upload.js` (module).
+
+Firestore schema (brief):
+- `users/{uid}`:
+  - `uid`, `name`, `tier`, `balance`, `createdAt`, `updatedAt`
+- `users/{uid}/ledger/{entryId}`:
+  - `ts`, `type` (`debit|credit`), `amount`, `note`, `game`, `roundId`, `balanceAfter`, `idempotencyKey`
+- `users/{uid}/rounds/{roundId}`:
+  - `uid`, `roundId`, `game`, `note`, `status` (`OPEN|SETTLED|VOID`), `wager`, `payout`, `createdAt`, `updatedAt`, `settledAt?`, `voidReason?`
+- `users/{uid}/idempotency/{idempotencyKey}`:
+  - `uid`, `createdAt`, `result`
+- `users/{uid}/manual_uploads/{requestId}`:
+  - `uid`, `requestId`, `status`, `createdAt`, `storagePath`, `downloadURL`, `screenshotName`, `screenshotSize`, metadata fields
+- Upload path policy aligned to requirement: `uploads/{uid}/...` (Storage rule + Firestore storagePath validator + client upload path).
+
+## Security Patch — Server Authoritative Wallet (Velvet Vault)
+
+### Source of truth
+- Firestore: `users/{uid}.balance` is authoritative.
+- Client localStorage is cache only (UI fallback).
+
+### Ledger
+- `users/{uid}/ledger/{entryId}` entries created server-side:
+  - `{ type: "debit"|"credit", amount, game, roundId, createdAt }`
+
+### Idempotency
+- `payoutLocks/{uid_roundId}` prevents double payout for the same roundId.
+- `debitLocks/{uid_roundId}` prevents repeated debit if same roundId is replayed.
+
+### Manual review
+- Upload: Storage `uploads/{uid}/...` (images only, <=5MB)
+- Request: Firestore `manualReviews/{docId}` written server-side via callable `vvCreateManualReview`.
+
+### Client API compatibility
+Games still call:
+- `window.VaultEngine.getBalance()`
+- `window.VaultEngine.debit(amount, note)`
+- `window.VaultEngine.credit(amount, note)`
+- `window.VaultEngine.subscribe(fn)`
+
+Under the hood, `debit/credit` call Cloud Functions and balance updates via Firestore snapshots.
+
+Secure wallet schema + implementation notes (2026-02-24):
+- Server authority:
+  - `functions/index.js` now exposes callable endpoints `walletGetState`, `walletDebit`, `walletCredit`, `walletVoidRound`, and `vvCreateManualReview`.
+  - Firestore `users/{uid}.balance` is authoritative; client localStorage is cache-only.
+- Round + idempotency model:
+  - Debit creates `users/{uid}/rounds/{roundId}` with status `OPEN` and wager amount.
+  - Credit requires `roundId`; transaction settles `OPEN -> SETTLED` once.
+  - Duplicate payout attempts for same `roundId` return `alreadyPaid: true` via `users/{uid}/idempotency/payout_{roundId}`.
+- Wallet API compatibility:
+  - Preserved `window.VaultEngine` API used by games: `getBalance`, `debit`, `credit`, `subscribe`, `formatGold`.
+  - Added `getLedger` compatibility for ledger page rendering (cache-backed, no client write authority).
+  - `credit()` now refuses calls that do not have a prior debited round id (prevents direct console minting path).
+- Manual upload hardening:
+  - Client uploads to Firebase Storage path `uploads/{uid}/...` only.
+  - Callable writes metadata to `users/{uid}/manual_uploads/{requestId}`.
+  - `storage.rules` and `firestore.rules` deny cross-user and all direct client writes for wallet/ledger/round/idempotency collections.
+## Security Patch — Server Authoritative Wallet (Velvet Vault)
+
+### Source of truth
+- Firestore: `users/{uid}.balance` is authoritative.
+- Client localStorage is cache only (UI fallback).
+
+### Ledger
+- `users/{uid}/ledger/{entryId}` entries created server-side:
+  - `{ type: "debit"|"credit", amount, game, roundId, createdAt }`
+
+### Idempotency
+- `payoutLocks/{uid_roundId}` prevents double payout for the same roundId.
+- `debitLocks/{uid_roundId}` prevents repeated debit if same roundId is replayed.
+
+### Manual review
+- Upload: Storage `uploads/{uid}/...` (images only, <=5MB)
+- Request: Firestore `manualReviews/{docId}` written server-side via callable `vvCreateManualReview`.
+
+### Client API compatibility
+Games still call:
+- `window.VaultEngine.getBalance()`
+- `window.VaultEngine.debit(amount, note)`
+- `window.VaultEngine.credit(amount, note)`
+- `window.VaultEngine.subscribe(fn)`
+
+Under the hood, `debit/credit` call Cloud Functions and balance updates via Firestore snapshots.

@@ -106,6 +106,7 @@ export const MACHINE_CONFIGS = [
   cfg({
     id: "machine-05",
     name: "Golden Syndicate",
+    vip: true,
     themeClass: "machine-05",
     description: "High-limit board with elegant odds and rare top-end bursts.",
     symbols: ["ACE", "KING", "QUEEN", "CHIP", "GOLD", "CASH", "WILD", "JACK"],
@@ -148,6 +149,7 @@ export const MACHINE_CONFIGS = [
   cfg({
     id: "machine-07",
     name: "Arc Light",
+    vip: true,
     themeClass: "machine-07",
     description: "Electric sci-fi machine tuned for swingy outcomes.",
     symbols: ["ATOM", "ION", "LASER", "GRID", "PULSE", "QUARK", "WILD", "JACK"],
@@ -190,6 +192,7 @@ export const MACHINE_CONFIGS = [
   cfg({
     id: "machine-09",
     name: "Obsidian Oracle",
+    vip: true,
     themeClass: "machine-09",
     description: "Occult machine with sparse hits and heavy spike potential.",
     symbols: ["EYE", "SKULL", "ORB", "TAROT", "SIGIL", "RAVEN", "WILD", "JACK"],
@@ -211,6 +214,7 @@ export const MACHINE_CONFIGS = [
   cfg({
     id: "machine-10",
     name: "Starlight Heist",
+    vip: true,
     themeClass: "machine-10",
     description: "High-energy finale machine with dramatic near-misses.",
     symbols: ["STAR", "SAFE", "GEM", "DRONE", "LASER", "MAP", "WILD", "JACK"],

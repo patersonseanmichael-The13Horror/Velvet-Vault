@@ -21,6 +21,7 @@ if (machineThemeCss) {
   .filter((cls) => /^machine-\d{2}$/.test(cls))
   .forEach((cls) => document.body.classList.remove(cls));
 document.body.classList.add(machine.themeClass);
+document.body.classList.toggle("vip", Boolean(machine.vip));
 
 const machineNameEl = document.getElementById("machineName");
 const machineDescEl = document.getElementById("machineDesc");
@@ -273,6 +274,18 @@ let uiSpinning = false;
 let autoRunning = false;
 let autoRemaining = 0;
 
+function slotsRoundKey() {
+  return `slots-${machine.id}`;
+}
+
+function ensureSlotsRound() {
+  return window.RoundEngine?.begin(slotsRoundKey()) || "";
+}
+
+function clearSlotsRound() {
+  window.RoundEngine?.clear(slotsRoundKey());
+}
+
 function clampBet(value) {
   const min = machine.bet.min;
   const max = machine.bet.max;
@@ -391,9 +404,19 @@ async function doSpin() {
     return false;
   }
 
-  const debitOk = window.VaultEngine.debit(currentBet, `${machine.id}-bet`);
+  const roundId = ensureSlotsRound();
+  if (!roundId) {
+    resultTextEl.textContent = "Round engine unavailable.";
+    return false;
+  }
+
+  const debitOk = window.VaultEngine.debit(
+    currentBet,
+    window.RoundEngine.note(`${machine.id}-bet`, roundId)
+  );
   if (!debitOk) {
     resultTextEl.textContent = "Bet debit failed.";
+    clearSlotsRound();
     return false;
   }
 
@@ -405,12 +428,18 @@ async function doSpin() {
 
   const result = engine.spin({ bet: currentBet });
   await animateSpin(result.grid);
-  if (pageClosed) return false;
+  if (pageClosed) {
+    clearSlotsRound();
+    return false;
+  }
 
   showWinningPaylines(result.wins.map((line) => line.index));
 
   if (result.totalWin > 0) {
-    window.VaultEngine.credit(result.totalWin, `${machine.id}-win`);
+    window.VaultEngine.credit(
+      result.totalWin,
+      window.RoundEngine.note(`${machine.id}-win`, roundId)
+    );
     if (result.isBigWin || result.jackpotHit) {
       flashBigWin(`${Math.max(1, Math.floor(result.totalWin / currentBet))}x`);
       bigWinTone();
@@ -424,6 +453,7 @@ async function doSpin() {
 
   uiSpinning = false;
   setControlState();
+  clearSlotsRound();
   return true;
 }
 
@@ -506,3 +536,6 @@ const walletWait = trackedInterval(() => {
     renderWallet();
   }
 }, 100);
+if (machineStageEl) {
+  machineStageEl.classList.toggle("vip", Boolean(machine.vip));
+}

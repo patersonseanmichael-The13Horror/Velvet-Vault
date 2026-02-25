@@ -14,15 +14,17 @@ const firebaseConfig = {
 };
 
 let auth = null;
+let app = null;
 let initError = null;
 
 try {
-  const app = initializeApp(firebaseConfig);
+  app = initializeApp(firebaseConfig);
   auth = getAuth(app);
 } catch (error) {
   initError = error;
   console.error("[VelvetVault] Firebase init failed:", error);
 }
 
+window.vvApp = app;
 window.vvAuth = auth;
 window.vvFirebaseInitError = initError;
