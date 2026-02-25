@@ -1,5 +1,9 @@
 import { MACHINE_CONFIGS, getMachineConfig } from "./machines.js";
 import { SlotsEngine } from "./slots-engine.js";
+import { updateWalletUI } from "../wallet.js";
+
+// Hydrate balance *before* first paint
+updateWalletUI();
 
 const params = new URLSearchParams(window.location.search);
 const requestedMachine = params.get("m");

@@ -1,0 +1,18 @@
+/* Velvet Vault Background System */
+
+.page-bg{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  filter:brightness(0.55) contrast(1.1) saturate(1.1);
+}
+
+/* Individual Pages */
+.bg-casino    { background-image:url("../images/casino-bg.jpg"); }
+.bg-slots     { background-image:url("../images/slots-bg.jpg"); }
+.bg-roulette  { background-image:url("../images/roulette-bg.jpg"); }
+.bg-blackjack { background-image:url("../images/blackjack-bg.jpg"); }
+.bg-poker     { background-image:url("../images/poker-bg.jpg"); }

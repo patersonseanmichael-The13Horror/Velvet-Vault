@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/page-backgrounds.css">
 
   <!-- ✅ Auth + Wallet -->
   <script type="module" src="js/firebase-init.js"></script>
@@ -491,6 +492,17 @@
 </head>
 
 <body>
+  <link rel="stylesheet" href="/css/slots/vegas-slot.css">
+  <section class="game-area">
+    <div class="slot-container" data-machine="5-dragons">
+      <div class="reels"></div>
+      <div class="slot-controls">
+        <button data-spin>SPIN</button>
+      </div>
+      <p class="wallet-display">Balance: <span data-wallet-balance>—</span></p>
+    </div>
+  </section>
+  <div class="page-bg bg-slots"></div>
 <header>
   <div class="topbar">
     <div class="brand">
@@ -518,7 +530,7 @@
           <h2>Neon Reels</h2>
           <small>3×3 window with <b>Top / Mid / Bottom</b> paylines. Bet debits once per spin. Wins credit + log.</small>
         </div>
-        <div class="pill">Wallet: <b id="balance">—</b></div>
+        <div class="pill">Wallet: <b id="balance" data-wallet-balance>—</b></div>
       </div>
 
       <div class="cardBody">
@@ -978,5 +990,7 @@
     }
   }, 100);
 </script>
+  <script type="module" src="/js/slots/slots-page.js"></script>
+  <script type="module" src="/js/slots/vegas-slot.js"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/page-backgrounds.css">
 
   <!-- ✅ Auth + Wallet -->
   <script type="module" src="js/firebase-init.js"></script>
@@ -133,7 +134,7 @@
     radial-gradient(1200px 700px at 50% 28%, rgba(255,35,61,0.10), transparent 62%),
     radial-gradient(900px 520px at 50% 45%, rgba(0,0,0,0.14), rgba(0,0,0,0.86)),
     linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78)),
-    url("images/blackjack-table.jpg") center/cover no-repeat;
+    url("images/blackjack-bg.jpg") center/cover no-repeat;
 }
     .stage::before{
       content:"";
@@ -492,7 +493,8 @@
 </head>
 
 <body>
-<header>
+  <div class="page-bg bg-blackjack"></div>
+  <header>
   <div class="topbar">
     <div class="brand">
       <div class="sigil" aria-hidden="true"></div>

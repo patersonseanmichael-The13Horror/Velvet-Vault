@@ -10,11 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="/js/firebase-init.js"></script>
+  <script type="module" src="/js/auth-guard.js"></script>
   <script type="module" src="js/guard.js"></script>
   <script type="module" src="js/wallet.js"></script>
 
-HEAD
   <style>
     :root{
       --bg:#050408;
@@ -420,9 +420,12 @@ HEAD
 
   <link rel="stylesheet" href="css/velvet.css">
   <link rel="stylesheet" href="css/casino-floor.css">
-6f865bd (Add casino floor lobby, manual review UI, and helper widget)
+  <link rel="stylesheet" href="css/page-backgrounds.css">
+  <link rel="stylesheet" href="css/members-bg.css">
 </head>
-<body class="members-page">
+<body class="membersBg">
+  <div class="page-bg bg-casino"></div>
+  <div class="overlay" style="backdrop-filter:blur(4px);background:rgba(0,0,0,.45)"></div>
   <div class="grain" aria-hidden="true"></div>
 
   <header>

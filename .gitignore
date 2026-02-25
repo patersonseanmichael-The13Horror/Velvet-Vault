@@ -2,3 +2,18 @@ node_modules/
 .tmp_*
 /tmp/
 *.log
+# --- Velvet Vault ---
+# Build artefacts
+.next/
+dist/
+coverage/
+
+# Node
+node_modules/
+
+# Environment
+.env*
+
+# OS / misc
+.DS_Store
+Thumbs.db
