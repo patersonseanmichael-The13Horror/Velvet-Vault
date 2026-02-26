@@ -161,29 +161,6 @@ Games still call:
 
 Under the hood, `debit/credit` call Cloud Functions and balance updates via Firestore snapshots.
 
-Deep strict console audit pass (2026-02-25):
-- Skill used: `develop-web-game` runtime validation loop with Playwright.
-- Ran local server on `http://127.0.0.1:4173` and executed `.tmp_pages_audit.mjs` across:
-  - `index.html`, `login.html`, `members.html`, `slots.html`, `roulette.html`, `blackjack.html`, `poker.html`, `ledger.html`
-- Initial findings:
-  - `js/firebase-config.js` crashed in static HTML runtime from direct `import.meta.env.*` dereference.
-  - `js/auth-guard.js` imported `vvAuth`, but `js/firebase-init.js` did not export it.
-  - Multiple image URL 404s from CSS relative paths and missing image filenames.
-  - Console errors from Firebase init in environments without real env keys.
-- Fixes applied:
-  - `js/firebase-config.js`: added safe env resolution (`import.meta?.env ?? process?.env ?? {}`).
-  - `js/firebase-init.js`: exported `vvApp`, `vvAuth`, `vvFirebaseInitError`; added graceful missing-config path; converted init failure logging to `console.warn`.
-  - `css/velvet.css`: fixed image URL base to `../images/...`.
-  - `css/page-backgrounds.css`: fixed URL base to `../images/...`.
-  - `roulette.html`: replaced missing `roulette-board.jpg` / `roulette-wheel.png` references with existing `images/roulette-bg.jpg`.
-  - `blackjack.html`: replaced missing `images/blackjack-table.jpg` with `images/blackjack-bg.jpg`.
-  - `poker.html`: replaced missing `images/poker-table.jpg` with `images/poker-bg.jpg`.
-  - Added `images/poker-bg.jpg` copy from existing `images/poker-bg.jpg.jpg` so all references resolve.
-- Final verification result:
-  - HTTP status: 200 for all 8 audited pages.
-  - `consoleErrorCount`: 0 for all pages.
-  - `requestFailedCount`: 0 for all pages.
-
 Secure wallet schema + implementation notes (2026-02-24):
 - Server authority:
   - `functions/index.js` now exposes callable endpoints `walletGetState`, `walletDebit`, `walletCredit`, `walletVoidRound`, and `vvCreateManualReview`.

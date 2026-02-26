@@ -1,0 +1,17 @@
+{
+  "name": "velvet-vault-audit",
+  "private": true,
+  "scripts": {
+    "audit:lint":   "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
+    "audit:deps":   "npm audit --audit-level=high",
+    "audit:lighthouse": "lhci autorun --upload.target=filesystem --upload.outputDir=.lighthouse",
+    "audit:jscpd":  "jscpd src --reporters json,markdown",
+    "audit:all":    "npm run audit:lint && npm run audit:deps && npm run audit:lighthouse && npm run audit:jscpd && node scripts/merge-reports.js"
+  },
+  "devDependencies": {
+    "eslint": "^10.0.1",
+    "eslint-config-next": "^15.0.0",
+    "lighthouseci": "^0.13.2",
+    "jscpd": "^4.1.0"
+  }
+}
