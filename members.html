@@ -479,9 +479,40 @@
   <meta name="vv-protected" content="true">
   <div class="grain" aria-hidden="true"></div>
 
+  <!-- Phase 3: Mobile drawer (only activates on small screens) -->
+  <div data-drawer-backdrop></div>
+  <nav class="mobile-drawer" data-drawer aria-label="Mobile navigation">
+    <a href="members.html" class="active">Lobby</a>
+    <a href="ledger.html">Ledger</a>
+    <a href="roulette.html">Roulette</a>
+    <a href="blackjack.html">Blackjack</a>
+    <a href="poker.html">Poker</a>
+    <a href="slots.html">Slots</a>
+    <a href="index.html">Home</a>
+  </nav>
+
   <header id="vv-topbar"></header>
 
   <main>
+    <!-- Phase 3: VIP Hero (safe, additive) -->
+    <section class="vipHero" aria-label="VIP Lobby">
+      <h1 class="vipTitle">Velvet Vault — VIP Floor</h1>
+      <p class="vipSub">
+        Welcome back. Your next win is a choice: spin, deal, or go full high-roller.
+        Keep it smooth. Keep it velvet.
+      </p>
+      <div class="vipRow">
+        <div class="vipActions">
+          <a class="btn primary" href="roulette.html">Play Roulette</a>
+          <a class="btn" href="blackjack.html">Play Blackjack</a>
+          <a class="btn" href="ledger.html">View Ledger</a>
+        </div>
+        <div class="vipBadge" title="Wallet balance">
+          Balance <strong id="walletBal">—</strong>
+        </div>
+      </div>
+    </section>
+
     <section class="casinoFloor">
       <div class="floorHeader">
         <div>
@@ -590,6 +621,7 @@
   <script src="js/casino-floor.js"></script>
   <script src="js/manual-payment.js"></script>
   <script src="js/helper.js"></script>
+  <script src="js/rebirth-ui.js"></script>
 <footer id="vv-footer"></footer>
 <script type="module" src="js/ui/topbar.js"></script>
 <script type="module" src="js/ui/footer.js"></script>

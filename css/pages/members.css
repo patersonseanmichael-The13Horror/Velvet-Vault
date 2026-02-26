@@ -32,6 +32,121 @@ body{
   border-color: rgba(255,255,255,0.18);
 }
 
+/* ===== Phase 3: VIP Lobby Hero + Quick Actions ===== */
+.vipHero{
+  width:min(var(--max), calc(100% - 28px));
+  margin: 16px auto 18px;
+  padding: 18px 18px 16px;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background:
+    radial-gradient(720px 240px at 20% 20%, rgba(255,35,64,0.22), transparent 60%),
+    radial-gradient(680px 240px at 90% 40%, rgba(0,255,154,0.14), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.18));
+  box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+  position:relative;
+  overflow:hidden;
+}
+.vipHero:after{
+  content:"";
+  position:absolute; inset:-2px;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.14), transparent 40%);
+  pointer-events:none;
+}
+.vipTitle{
+  margin: 0;
+  letter-spacing:.06em;
+}
+.vipSub{
+  margin: 8px 0 0;
+  color: rgba(243,239,255,0.74);
+  max-width: 70ch;
+}
+.vipRow{
+  margin-top: 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.vipActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.vipBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.22);
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-size: 11px;
+  color: rgba(243,239,255,0.78);
+}
+.vipBadge strong{
+  color: rgba(255,210,122,0.96);
+  letter-spacing:.06em;
+  font-size: 12px;
+}
+
+/* Make lobby cards feel premium */
+.floorCard .cardName{
+  letter-spacing:.03em;
+}
+.floorCard .btn, .floorCard .btn-vault{
+  width:100%;
+}
+.floorCard .cardInner{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.cardMetaRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.metaChip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-weight: 900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-size: 10px;
+  color: rgba(243,239,255,0.78);
+}
+.metaChip.hot{
+  border-color: rgba(255,35,64,0.32);
+}
+.metaChip.new{
+  border-color: rgba(0,255,154,0.32);
+}
+
+/* Mobile drawer backdrop */
+[data-drawer-backdrop]{
+  position:fixed; inset:0;
+  background: rgba(0,0,0,0.55);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .18s ease;
+  z-index:110;
+}
+[data-drawer-backdrop].open{
+  opacity:1;
+  pointer-events:auto;
+}
 /* “VIP glow” emphasis helpers you can add to any lobby card */
 .vipGlow{
   box-shadow:
@@ -40,4 +155,3 @@ body{
     0 0 30px rgba(255,35,64,0.10),
     0 0 26px rgba(0,255,154,0.08);
 }
-
