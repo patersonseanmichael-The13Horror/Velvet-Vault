@@ -1,0 +1,192 @@
+/* Velvet Vault — Rebirth Refresh
+   Shared theme layer (safe to add without removing existing page CSS).
+   Loads AFTER css/velvet.css so it can enhance base components.
+*/
+
+:root{
+  --bg0:#04030a;
+  --bg1:#070512;
+  --panel: rgba(12,10,20,0.66);
+  --panel2: rgba(18,14,28,0.66);
+  --line: rgba(255,255,255,0.12);
+  --text:#f3efff;
+  --muted: rgba(243,239,255,0.72);
+  --red:#ff2340;
+  --red2:#b30a1c;
+  --green:#00ff9a;
+  --green2:#00b874;
+  --gold:#ffd27a;
+  --shadow: rgba(0,0,0,0.72);
+  --radius: 18px;
+  --radius2: 24px;
+  --max: 1100px;
+  --h: 58px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1100px 620px at 50% 10%, rgba(255,35,64,0.18), transparent 62%),
+    radial-gradient(900px 520px at 72% 56%, rgba(0,255,154,0.11), transparent 60%),
+    radial-gradient(900px 520px at 18% 72%, rgba(255,210,122,0.07), transparent 60%),
+    linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
+  overflow-x:hidden;
+}
+
+a{ color: inherit; }
+img{ max-width:100%; display:block; }
+::selection{ background: rgba(255,35,64,0.28); }
+
+/* Optional grain overlay: add <div class="grain"></div> as first element in body */
+.grain{
+  pointer-events:none;
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity:.10;
+  z-index:1;
+}
+main, header, footer{ position:relative; z-index:2; }
+
+.container{
+  width:min(var(--max), calc(100% - 28px));
+  margin:0 auto;
+}
+
+h1,h2,h3{ font-family: Cinzel, ui-serif, Georgia, "Times New Roman", serif; letter-spacing:.02em; }
+h1{ font-size: clamp(28px, 4vw, 44px); margin:0; }
+h2{ font-size: clamp(20px, 3vw, 30px); margin:0; }
+p{ color: var(--muted); line-height:1.55; }
+
+/* Buttons */
+.btn, .btn-vault{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  color: rgba(243,239,255,0.94);
+  font-weight: 900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.32);
+}
+.btn:hover, .btn-vault:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0,255,154,0.32);
+  box-shadow: 0 18px 34px rgba(0,0,0,0.28), 0 0 18px rgba(0,255,154,0.24);
+}
+.btn:active, .btn-vault:active{ transform: translateY(0); }
+.btn.red{ border-color: rgba(255,35,64,0.36); box-shadow: 0 18px 34px rgba(0,0,0,0.28), 0 0 18px rgba(255,35,64,0.26); }
+.btn.ghost{ background: rgba(255,255,255,0.08); }
+
+/* Cards */
+.card{
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+.card.glow{
+  border-color: rgba(0,255,154,0.24);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 0 24px rgba(0,255,154,0.22);
+}
+
+.hero{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:18px;
+  align-items:stretch;
+}
+.hero .card{
+  min-height:420px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(0,255,154,0.08);
+  border:1px solid rgba(0,255,154,0.24);
+  color: var(--text);
+  font-weight:700;
+  letter-spacing:.06em;
+}
+
+.tableWrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.pillRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border:1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  color: var(--muted);
+  font-weight:700;
+  letter-spacing:.06em;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:14px;
+}
+
+.panel{
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(12,10,20,0.78), rgba(18,14,28,0.78));
+}
+
+.hud{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.hud .pill{
+  background: rgba(0,0,0,0.35);
+}
+
+.chipFly{
+  position:absolute;
+  width:14px; height:14px;
+  background: linear-gradient(135deg, var(--red), var(--green));
+  border-radius:50%;
+  box-shadow: 0 0 12px rgba(255,255,255,0.4);
+  animation: chip 0.6s ease forwards;
+}
+@keyframes chip{
+  0%{ transform: translate3d(0,0,0) scale(1); opacity:1; }
+  100%{ transform: translate3d(120px,-80px,0) scale(0.7); opacity:0; }
+}
+
+@media(max-width:900px){
+  .hero{ grid-template-columns:1fr; }
+}
+@media(max-width:600px){
+  .container{ width: calc(100% - 20px); }
+  .btn,.btn-vault{ width:100%; justify-content:center; }
+}
