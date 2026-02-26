@@ -291,6 +291,8 @@
   let autoLeft = 0;
   let busy = false;
   let stopRequested = false;
+  let celebrating = false;
+  let cancelCelebration = false;
 
   let freeSpinsLeft = 0;
   let inFreeSpins = false;
@@ -501,6 +503,63 @@
     }
   }
 
+  function clearPaylineCycle(){
+    document.querySelectorAll(".payline.cycle").forEach(el=>el.classList.remove("cycle"));
+  }
+  function clearCellWin(){
+    document.querySelectorAll(".cell.win").forEach(el=>el.classList.remove("win"));
+  }
+  function sleep(ms){ return new Promise(res=>setTimeout(res, ms)); }
+
+  async function animateCountUp(amount, prefix){
+    const steps = 14;
+    for (let i=1;i<=steps;i++){
+      if (cancelCelebration) return;
+      const v = Math.floor((amount * i) / steps);
+      setResult(`${prefix}${v}`);
+      await sleep(28);
+    }
+  }
+
+  async function ladderCelebrate(grid, res, payout){
+    if (!res.wins.length) return;
+    celebrating = true;
+    cancelCelebration = false;
+
+    await animateCountUp(payout, "Win: +");
+    if (cancelCelebration) { celebrating = false; return; }
+    await sleep(120);
+
+    for (const w of res.wins){
+      if (cancelCelebration) break;
+      clearPaylineCycle();
+      clearCellWin();
+
+      const pl = paylinesWrap.querySelector(`.payline[data-line=\"${w.line}\"]`);
+      if (pl){
+        pl.classList.add("on");
+        pl.classList.add("cycle");
+      }
+
+      const pattern = PAYLINES[w.line];
+      for (let r=0;r<w.count;r++){
+        const row = pattern[r];
+        cells[r][row].classList.add("win");
+      }
+
+      const symGlyph = symbolById(w.symId).glyph;
+      setResult(`Line ${w.line+1}: ${symGlyph} ×${w.count}  (+${w.pay * lastMult | 0})`);
+      await sleep(420);
+    }
+
+    clearPaylineCycle();
+    applyHighlights(res);
+    if (!cancelCelebration){
+      setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
+    }
+    celebrating = false;
+  }
+
   // --- Reel realism ---
   const REALISM = {
     spinUpMs: 140,
@@ -521,6 +580,15 @@
       cols[r].classList.remove("slam","anticipation");
     }
     reelsWrap?.classList.remove("tease-coins","tease-scatters");
+  }
+
+  function bounceReel(r){
+    const el = cols[r];
+    if (!el) return;
+    el.classList.remove("bounce");
+    void el.offsetWidth; // restart animation
+    el.classList.add("bounce");
+    setTimeout(()=>el.classList.remove("bounce"), 260);
   }
 
   function detectEarlyScatters(grid, uptoReelInclusive){
@@ -637,6 +705,7 @@
             st.pos = finals[r];
             setReelClass(r, "slam", true);
             setTimeout(()=>setReelClass(r,"slam",false), 120 + r*20);
+            setTimeout(()=>bounceReel(r), 60 + r*25);
           }
         }
         renderGrid();
@@ -776,6 +845,11 @@
 
   async function doSpin(){
     if (busy) return;
+    if (celebrating){
+      cancelCelebration = true;
+      celebrating = false;
+      return;
+    }
     busy = true;
     clearHighlights();
 
@@ -830,6 +904,9 @@
       syncUI();
       applyHighlights(res);
       setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
+      if (!hw && res.wins.length <= 4){
+        await ladderCelebrate(grid, res, payout);
+      }
     } else {
       setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
     }
@@ -862,6 +939,7 @@
   stopBtn.addEventListener("click", ()=>{
     auto = false; autoLeft = 0;
     stopRequested = true;
+    cancelCelebration = true;
     syncUI();
   });
 
