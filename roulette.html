@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/velvet.css">
 
 <style>
   :root{
@@ -894,34 +895,7 @@
 </div>
 
 
-<script>
-(function vvMobileNavInit(){
-  const hamburger = document.querySelector('.hamburger');
-  const drawer = document.querySelector('.mobile-drawer');
-  if (hamburger && drawer) {
-    hamburger.addEventListener('click', () => {
-      drawer.classList.toggle('open');
-    });
-    drawer.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => drawer.classList.remove('open'));
-    });
-  }
-
-  const currentPath = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const markActive = (selector) => {
-    document.querySelectorAll(selector).forEach((link) => {
-      const href = (link.getAttribute('href') || '').split('#')[0].split('?')[0].toLowerCase();
-      if (!href) return;
-      if (href === currentPath || (currentPath === '' && href === 'index.html')) {
-        link.classList.add('active');
-      }
-    });
-  };
-
-  markActive('.chipLink');
-  markActive('.mobile-drawer a');
-})();
-</script>
+<script src="js/nav.js"></script>
 
 </body>
 </html>

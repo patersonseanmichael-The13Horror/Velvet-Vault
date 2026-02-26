@@ -1,7 +1,21 @@
 const LS_KEY = "vv_wallet_balance_v1";
+const LEGACY_KEYS = ["vv_wallet_balance", "vault_wallet_balance", "walletBalance"];
 const LEDGER_KEY = "vv_wallet_ledger_v1";
 const DEFAULT_BALANCE = 10000;
 const subscribers = new Set();
+
+// Try to load the server-authoritative wallet first; fall back to local cache.
+(async function initWallet() {
+  if (window.vvApp && window.vvAuth) {
+    try {
+      await import("./wallet-secure.js");
+      return; // secure engine installed window.VaultEngine
+    } catch (err) {
+      console.warn("[VelvetVault] Secure wallet unavailable, using local fallback.", err);
+    }
+  }
+  initLocalWallet();
+})();
 
 function toInt(value) {
   const parsed = Number(value);
@@ -13,9 +27,20 @@ export function formatGold(value) {
   return `${toInt(value).toLocaleString()} GOLD`;
 }
 
-export function readWallet() {
+function readWallet() {
   try {
-    const raw = localStorage.getItem(LS_KEY);
+    let raw = localStorage.getItem(LS_KEY);
+    if (raw == null) {
+      // migrate from any legacy keys
+      for (const key of LEGACY_KEYS) {
+        const legacy = localStorage.getItem(key);
+        if (legacy != null) {
+          raw = legacy;
+          localStorage.setItem(LS_KEY, legacy);
+          break;
+        }
+      }
+    }
     if (raw == null) {
       localStorage.setItem(LS_KEY, String(DEFAULT_BALANCE));
       return DEFAULT_BALANCE;
@@ -54,7 +79,7 @@ function appendLedger(type, amount, note, balanceAfter) {
   writeLedger(next);
 }
 
-export function writeWallet(nextBalance) {
+function writeWallet(nextBalance) {
   const safeBalance = toInt(nextBalance);
   try {
     localStorage.setItem(LS_KEY, String(safeBalance));
@@ -118,32 +143,42 @@ function subscribe(handler) {
   return () => subscribers.delete(handler);
 }
 
-if (!window.VaultEngine) {
-  window.VaultEngine = {
-    get user() {
-      return window.vvAuth?.currentUser || { uid: "local-user" };
-    },
-    getBalance,
-    debit: (amount, note) => {
-      const spend = toInt(amount);
-      if (spend <= 0) return false;
-      const current = readWallet();
-      if (spend > current) return false;
-      const next = writeWallet(current - spend);
-      appendLedger("debit", spend, note, next);
-      return true;
-    },
-    credit,
-    subscribe,
-    formatGold,
-    getLedger: () => readLedger()
-  };
-}
+function initLocalWallet() {
+  if (!window.VaultEngine) {
+    window.VaultEngine = {
+      get user() {
+        return window.vvAuth?.currentUser || { uid: "local-user" };
+      },
+      getBalance,
+      debit: (amount, note) => {
+        const spend = toInt(amount);
+        if (spend <= 0) return false;
+        const current = readWallet();
+        if (spend > current) return false;
+        const next = writeWallet(current - spend);
+        appendLedger("debit", spend, note, next);
+        return true;
+      },
+      credit,
+      subscribe,
+      formatGold,
+      getLedger: () => readLedger()
+    };
+  }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
+  // keep other tabs in sync
+  window.addEventListener("storage", (e) => {
+    if (e.key === LS_KEY || e.key === LEDGER_KEY) {
+      updateWalletUI();
+      notify();
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      updateWalletUI();
+    }, { once: true });
+  } else {
     updateWalletUI();
-  }, { once: true });
-} else {
-  updateWalletUI();
+  }
 }

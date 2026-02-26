@@ -12,7 +12,15 @@
    Idempotency: roundId required for credit (payout)
    ========================================================== */
 
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-functions.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
@@ -51,6 +59,7 @@ let state = {
   ready: false
 };
 
+let ledgerCache = [];
 const subs = new Set();
 function notify() {
   for (const fn of subs) {
@@ -90,9 +99,12 @@ const vvDebit = httpsCallable(fx, "vvDebit");
 const vvCredit = httpsCallable(fx, "vvCredit");
 
 let unsubUser = null;
+let unsubLedger = null;
 
 function attachUser(uid) {
   if (unsubUser) { try { unsubUser(); } catch {} }
+  if (unsubLedger) { try { unsubLedger(); } catch {} }
+
   const ref = doc(db, "users", uid);
   unsubUser = onSnapshot(ref, (snap) => {
     const bal = safeInt(snap.data()?.balance || 0);
@@ -106,16 +118,42 @@ function attachUser(uid) {
     if (c) state.balance = safeInt(c.balance);
     notify();
   });
+
+  const ledgerQuery = query(
+    collection(db, "users", uid, "ledger"),
+    orderBy("createdAt", "desc"),
+    limit(50)
+  );
+  unsubLedger = onSnapshot(ledgerQuery, (snap) => {
+    ledgerCache = snap.docs.map((d) => {
+      const data = d.data() || {};
+      return {
+        ts: data.createdAt?.toMillis ? data.createdAt.toMillis() : Date.now(),
+        type: data.type || "",
+        amount: safeInt(data.amount),
+        note: data.note || "",
+        game: data.game || "",
+        roundId: data.roundId || "",
+        balanceAfter: safeInt(data.balanceAfter ?? state.balance)
+      };
+    });
+    notify();
+  }, () => {
+    ledgerCache = [];
+  });
 }
 
 function detachUser() {
   if (unsubUser) { try { unsubUser(); } catch {} }
   unsubUser = null;
+  if (unsubLedger) { try { unsubLedger(); } catch {} }
+  unsubLedger = null;
   state.user = null;
   state.ready = false;
 
   const c = getCache();
   state.balance = c ? safeInt(c.balance) : 0;
+  ledgerCache = [];
   notify();
 }
 
@@ -182,6 +220,10 @@ function getBalance() {
   return safeInt(state.balance);
 }
 
+function getLedger() {
+  return Array.isArray(ledgerCache) ? ledgerCache : [];
+}
+
 function subscribe(fn) {
   if (typeof fn !== "function") return () => {};
   subs.add(fn);
@@ -206,5 +248,6 @@ window.VaultEngine = {
     return true;
   },
   subscribe,
-  formatGold
+  formatGold,
+  getLedger
 };
