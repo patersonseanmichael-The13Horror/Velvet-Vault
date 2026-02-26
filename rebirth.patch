@@ -1,1 +1,195 @@
-
+*** Begin Patch
+*** Add File: css/rebirth.css
++/* Velvet Vault — Rebirth Refresh
++   Shared theme layer (safe to add without removing existing page CSS).
++   Loads AFTER css/velvet.css so it can enhance base components.
++*/
++
++:root{
++  --bg0:#04030a;
++  --bg1:#070512;
++  --panel: rgba(12,10,20,0.66);
++  --panel2: rgba(18,14,28,0.66);
++  --line: rgba(255,255,255,0.12);
++  --text:#f3efff;
++  --muted: rgba(243,239,255,0.72);
++  --red:#ff2340;
++  --red2:#b30a1c;
++  --green:#00ff9a;
++  --green2:#00b874;
++  --gold:#ffd27a;
++  --shadow: rgba(0,0,0,0.72);
++  --radius: 18px;
++  --radius2: 24px;
++  --max: 1100px;
++  --h: 58px;
++}
++
++*{ box-sizing:border-box; }
++html,body{ height:100%; }
++body{
++  margin:0;
++  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
++  color: var(--text);
++  background:
++    radial-gradient(1100px 620px at 50% 10%, rgba(255,35,64,0.18), transparent 62%),
++    radial-gradient(900px 520px at 72% 56%, rgba(0,255,154,0.11), transparent 60%),
++    radial-gradient(900px 520px at 18% 72%, rgba(255,210,122,0.07), transparent 60%),
++    linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
++  overflow-x:hidden;
++}
++
++a{ color: inherit; }
++img{ max-width:100%; display:block; }
++::selection{ background: rgba(255,35,64,0.28); }
++
++/* Optional grain overlay: add <div class="grain"></div> as first element in body */
++.grain{
++  pointer-events:none;
++  position:fixed; inset:0;
++  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
++  mix-blend-mode: overlay;
++  opacity:.10;
++  z-index:1;
++}
++main, header, footer{ position:relative; z-index:2; }
++
++.container{
++  width:min(var(--max), calc(100% - 28px));
++  margin:0 auto;
++}
++
++h1,h2,h3{ font-family: Cinzel, ui-serif, Georgia, "Times New Roman", serif; letter-spacing:.02em; }
++h1{ font-size: clamp(28px, 4vw, 44px); margin:0; }
++h2{ font-size: clamp(20px, 3vw, 30px); margin:0; }
++p{ color: var(--muted); line-height:1.55; }
++
++/* Buttons */
++.btn, .btn-vault{
++  display:inline-flex;
++  align-items:center;
++  justify-content:center;
++  gap:10px;
++  padding: 12px 14px;
++  border-radius: 14px;
++  border:1px solid rgba(255,255,255,0.14);
++  background: rgba(255,255,255,0.05);
++  color: rgba(243,239,255,0.94);
++  font-weight: 900;
++  letter-spacing:.08em;
++  text-transform:uppercase;
++  text-decoration:none;
++  cursor:pointer;
++  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
++}
++.btn:hover, .btn-vault:hover{
++  transform: translateY(-1px);
++  box-shadow: 0 18px 40px rgba(0,0,0,0.28);
++  border-color: rgba(255,255,255,0.20);
++}
++.btn.primary, .btn-vault{
++  background: linear-gradient(135deg, rgba(255,35,64,0.92), rgba(0,255,154,0.75));
++  border-color: rgba(255,255,255,0.16);
++  box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 0 22px rgba(0,255,154,0.10);
++}
++
++/* Wallet highlight */
++#walletBal,[data-wallet-balance]{
++  font-weight: 900;
++  letter-spacing:.06em;
++  color: rgba(255,210,122,0.96);
++  text-shadow: 0 10px 30px rgba(0,0,0,0.35);
++}
++
++/* Forms */
++input, select, textarea{
++  font: inherit;
++  color: rgba(243,239,255,0.94);
++  background: rgba(0,0,0,0.20);
++  border: 1px solid rgba(255,255,255,0.14);
++  border-radius: 14px;
++  padding: 12px 12px;
++  outline:none;
++}
++input:focus, select:focus, textarea:focus{
++  border-color: rgba(0,255,154,0.45);
++  box-shadow: 0 0 0 4px rgba(0,255,154,0.12);
++}
++
++/* Tables */
++table{
++  width:100%;
++  border-collapse: collapse;
++  overflow:hidden;
++  border-radius: var(--radius2);
++  border: 1px solid rgba(255,255,255,0.12);
++  background: rgba(0,0,0,0.18);
++}
++th, td{
++  padding: 12px 10px;
++  border-bottom: 1px solid rgba(255,255,255,0.08);
++  text-align:left;
++  font-size: 13px;
++}
++th{
++  color: rgba(243,239,255,0.78);
++  font-weight: 900;
++  letter-spacing:.08em;
++  text-transform:uppercase;
++  font-size: 11px;
++}
++tr:hover td{ background: rgba(255,255,255,0.03); }
++
++@media (prefers-reduced-motion: reduce){
++  *{ scroll-behavior:auto !important; transition:none !important; animation:none !important; }
++}
++
+*** Update File: index.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: login.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: members.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: ledger.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: roulette.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: poker.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: blackjack.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** Update File: slots.html
+@@
+-  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/velvet.css">
++  <link rel="stylesheet" href="css/rebirth.css">
+ 
+*** End Patch
