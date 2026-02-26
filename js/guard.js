@@ -10,9 +10,10 @@ function goToLogin() {
   }
 }
 
+// Demo-friendly: if Firebase auth is not available, allow the page to continue.
 if (!auth) {
-  console.warn("[VelvetVault] Auth unavailable");
-  goToLogin();
+  console.info("[VelvetVault] Auth unavailable — running in demo mode (no redirect).");
+  guardResolved = true;
 } else {
   (async () => {
     try {
