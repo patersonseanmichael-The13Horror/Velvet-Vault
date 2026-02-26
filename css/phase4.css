@@ -1,0 +1,144 @@
+/* Velvet Vault — Phase 4 UI
+   - Story HUD badge (fixed, compact)
+   - Chapter intro card for games
+   - “Unlocked” styling hooks
+*/
+
+.vv-hud{
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 140;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:10px;
+  pointer-events:none;
+}
+
+.vv-badge{
+  pointer-events:auto;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width: 220px;
+  padding: 12px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.34);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+}
+
+.vv-badge__top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.vv-badge__title{
+  margin:0;
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-size: 11px;
+  color: rgba(243,239,255,0.76);
+}
+.vv-badge__pct{
+  font-weight:900;
+  letter-spacing:.06em;
+  color: rgba(255,210,122,0.96);
+  font-size: 12px;
+}
+.vv-bar{
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  overflow:hidden;
+}
+.vv-bar > div{
+  height:100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,35,64,0.88), rgba(0,255,154,0.72));
+  transition: width 450ms ease;
+}
+.vv-badge__links{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.vv-miniLink{
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-size: 10px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: rgba(243,239,255,0.84);
+}
+.vv-miniLink:hover{
+  border-color: rgba(255,255,255,0.20);
+}
+
+/* Game chapter intro */
+.vv-chapter{
+  width: min(1100px, calc(100% - 28px));
+  margin: 16px auto 14px;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background:
+    radial-gradient(720px 240px at 20% 20%, rgba(255,35,64,0.18), transparent 60%),
+    radial-gradient(680px 240px at 90% 40%, rgba(0,255,154,0.12), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.18));
+  box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+  overflow:hidden;
+}
+.vv-chapter__inner{
+  padding: 16px 16px 14px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.vv-chapter__kicker{
+  margin:0;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-weight:900;
+  font-size: 11px;
+  color: rgba(243,239,255,0.76);
+}
+.vv-chapter__title{
+  margin: 8px 0 0;
+  letter-spacing:.06em;
+}
+.vv-chapter__desc{
+  margin: 8px 0 0;
+  color: rgba(243,239,255,0.72);
+  max-width: 70ch;
+}
+.vv-chapter__actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* “Unlocked” optional class you can apply to buttons/cards */
+.vv-unlocked{
+  border-color: rgba(0,255,154,0.34) !important;
+  box-shadow: 0 0 0 1px rgba(0,255,154,0.14);
+}
+
+@media (max-width: 520px){
+  .vv-badge{ min-width: 200px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .vv-bar > div{ transition:none; }
+}
+
