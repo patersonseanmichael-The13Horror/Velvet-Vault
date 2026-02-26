@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Velvet Vault — Poker</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/page-backgrounds.css">
+
+  <!-- ✅ Auth + Wallet -->
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/guard.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+
+  <style>
+    :root{
+      --text:#f1ecff;
+      --muted: rgba(241,236,255,0.70);
+      --line: rgba(255,255,255,0.12);
+      --red:#ff233d;
+      --green:#00ff9a;
+      --shadow: rgba(0,0,0,0.70);
+      --radius:18px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: #050408;
+      overflow-x:hidden;
+    }
+
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(8,6,12,0.86), rgba(8,6,12,0.55));
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+    .sigil{
+      width:42px; height:42px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0,255,154,0.35), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,35,61,0.35), transparent 55%),
+        linear-gradient(135deg, rgba(255,35,61,0.18), rgba(0,255,154,0.16));
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      position:relative; overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .sigil::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: conic-gradient(from 180deg, transparent, rgba(255,35,61,0.25), transparent, rgba(0,255,154,0.25), transparent);
+      animation: spin 9s linear infinite;
+      opacity:.85;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    .brand h1{
+      margin:0;
+      font-family: Cinzel, serif;
+      font-size: 16px;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand small{
+      display:block;
+      margin-top:2px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing:0.06em;
+    }
+    .actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .chipBtn, .chipLink{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(241,236,255,0.92);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .chipBtn:hover, .chipLink:hover{ transform: translateY(-1px); }
+    .chipBtn.red:hover{ border-color: rgba(255,35,61,0.35); background: rgba(255,35,61,0.08); }
+    .chipBtn.green:hover, .chipLink.green:hover{ border-color: rgba(0,255,154,0.35); background: rgba(0,255,154,0.08); }
+
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 18px 80px;
+    }
+
+    /* ===== TABLE STAGE ===== */
+    .stage{
+      position:relative;
+      border-radius: 22px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      box-shadow: 0 30px 90px var(--shadow);
+      min-height: 640px;
+      background:
+        radial-gradient(900px 520px at 50% 30%, rgba(0,0,0,0.12), rgba(0,0,0,0.78)),
+        url("images/poker-bg.jpg") center/cover no-repeat;
+    }
+    .stage::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(900px 520px at 50% 25%, rgba(0,255,154,0.08), transparent 60%),
+        radial-gradient(900px 520px at 50% 15%, rgba(255,35,61,0.10), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.70));
+      pointer-events:none;
+    }
+    .stage > *{ position:relative; z-index:2; }
+
+    /* Chip rack (top center) */
+    .rack{
+      position:absolute;
+      top:18px;
+      left:50%;
+      transform: translateX(-50%);
+      width: min(760px, 92%);
+      height: 96px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 10px 12px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+    }
+    .stacks{ display:flex; gap:10px; align-items:center; overflow:hidden; }
+    .stack{
+      width: 48px; height: 76px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.35));
+      position:relative;
+      overflow:hidden;
+    }
+    .stack::before{
+      content:"";
+      position:absolute; inset:-30%;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.0) 0 6px, rgba(255,255,255,0.08) 6px 8px);
+      opacity:0.35;
+      transform: rotate(12deg);
+    }
+    .stack.redGlow{ box-shadow: 0 0 18px rgba(255,35,61,0.18); }
+    .stack.greenGlow{ box-shadow: 0 0 18px rgba(0,255,154,0.14); }
+
+    .hud{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.22);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: rgba(241,236,255,0.90);
+      white-space:nowrap;
+    }
+    .pill b{ color: var(--green); }
+
+    /* Dealer hands (simple stylized arms) */
+    .dealerArms{
+      position:absolute;
+      top: 116px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(860px, 96%);
+      height: 180px;
+      pointer-events:none;
+      opacity:0.9;
+      filter: drop-shadow(0 16px 40px rgba(0,0,0,0.55));
+    }
+    .arm{
+      position:absolute;
+      width: 44%;
+      height: 56%;
+      top: 44px;
+      border-radius: 70px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.20), rgba(255,255,255,0.05) 55%, rgba(0,0,0,0.25));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .arm.left{ left: 2%; transform: rotate(8deg); }
+    .arm.right{ right: 2%; transform: rotate(-8deg); }
+    .hand{
+      position:absolute;
+      width: 20%;
+      height: 28%;
+      top: 96px;
+      border-radius: 28px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22), rgba(255,255,255,0.04) 60%, rgba(0,0,0,0.25));
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .hand.left{ left: 35%; transform: rotate(10deg); }
+    .hand.right{ right: 35%; transform: rotate(-10deg); }
+
+    /* Community cards area */
+    .board{
+      position:absolute;
+      left:50%;
+      bottom: 92px;
+      transform: translateX(-50%);
+      width: min(860px, 96%);
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      padding: 10px;
+      z-index:5;
+    }
+
+    /* Seats ring (proper placement) */
+    .seats{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:4;
+    }
+    .seat{
+      position:absolute;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.45);
+      border:1px solid rgba(255,255,255,0.2);
+      font-size:12px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    #seat1{ bottom:14px; left:50%; transform:translateX(-50%); }
+    #seat2{ left:10px; bottom:160px; }
+    #seat3{ left:10px; top:160px; }
+    #seat4{ top:26px; left:50%; transform:translateX(-50%); }
+    #seat5{ right:10px; top:160px; }
+    #seat6{ right:10px; bottom:160px; }
+    .seat.active{ box-shadow:0 0 20px rgba(0,255,154,.5); }
+    .dealerBtn{
+      width:22px;height:22px;
+      border-radius:999px;
+      display:inline-grid;
+      place-items:center;
+      font-weight:900;
+      font-size:12px;
+      color:#050408;
+      background: linear-gradient(180deg, rgba(0,255,154,0.95), rgba(0,255,154,0.60));
+      box-shadow: 0 0 18px rgba(0,255,154,.35);
+      border:1px solid rgba(255,255,255,0.18);
+    }
+
+    /* Pot zone */
+    .potZone{
+      position:absolute;
+      left:50%;
+      top: 58%;
+      transform: translate(-50%, -50%);
+      width: min(240px, 80%);
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.34);
+      backdrop-filter: blur(8px);
+      padding: 10px 12px;
+      text-align:center;
+      z-index:6;
+    }
+    .potZone .potLabel{
+      font-family: Cinzel, serif;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      font-size:12px;
+      opacity:0.85;
+    }
+    .potZone .potValue{
+      margin-top:4px;
+      font-size:14px;
+    }
+    .potZone b{ color: var(--green); }
+
+    /* Chip animation objects */
+    .chipFly{
+      position:absolute;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,0.22);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(255,35,61,0.95));
+      box-shadow: 0 0 16px rgba(255,35,61,0.18);
+      z-index:20;
+      pointer-events:none;
+      animation: chipMove 620ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    .chipFly.g{
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(0,255,154,0.92));
+      box-shadow: 0 0 16px rgba(0,255,154,0.16);
+    }
+    @keyframes chipMove{
+      from{ transform: translate(0,0) scale(1); opacity:1; }
+      to{ transform: translate(var(--dx), var(--dy)) scale(0.92); opacity:0.0; }
+    }
+
+    /* Card component */
+    .card3d{
+      width: 118px;
+      height: 164px;
+      perspective: 900px;
+    }
+    .cardInner{
+      width:100%; height:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transition: transform 650ms cubic-bezier(.2,.8,.2,1);
+      transform: translateY(-18px) rotateZ(-2deg);
+      opacity:0;
+    }
+    .dealIn .cardInner{
+      animation: dealIn 520ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes dealIn{
+      0%{ transform: translateY(-90px) translateX(0px) rotateZ(-18deg) scale(0.88); opacity:0; }
+      100%{ transform: translateY(0px) translateX(0px) rotateZ(-2deg) scale(1); opacity:1; }
+    }
+    .card3d.flip .cardInner{ transform: rotateY(180deg); opacity:1; }
+
+    .face, .back{
+      position:absolute; inset:0;
+      border-radius: 16px;
+      backface-visibility:hidden;
+      border:1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.50);
+      overflow:hidden;
+    }
+
+    .back{
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0,255,154,0.22), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,35,61,0.20), transparent 55%),
+        linear-gradient(135deg, rgba(255,35,61,0.14), rgba(0,255,154,0.12));
+    }
+    .back::after{
+      content:"VV";
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-family: Cinzel, serif;
+      letter-spacing:0.22em;
+      font-weight:700;
+      color: rgba(241,236,255,0.55);
+      text-shadow: 0 0 18px rgba(0,0,0,0.55);
+      transform: translateX(4px);
+    }
+
+    .face{
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.84));
+      transform: rotateY(180deg);
+      color:#111;
+    }
+    .face .corner{
+      position:absolute;
+      top:10px; left:10px;
+      font-weight:900;
+      font-size: 18px;
+      line-height:1.05;
+      letter-spacing:0.02em;
+    }
+    .face .corner .suit{ display:block; font-size: 18px; }
+    .face .pip{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-family: Cinzel, serif;
+      font-size: 44px;
+      opacity:0.92;
+    }
+    .red{ color:#b01020; }
+    .blk{ color:#111; }
+
+    /* Controls tray */
+    .controls{
+      position:absolute;
+      left: 18px;
+      bottom: 16px;
+      right: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      z-index:10;
+    }
+    .btn{
+      border-radius: 14px;
+      padding: 12px 14px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.28);
+      color: var(--text);
+      font-weight:900;
+      letter-spacing:0.10em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      user-select:none;
+      min-width: 168px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .btn.green:hover{ border-color: rgba(0,255,154,0.35); background: rgba(0,255,154,0.08); }
+    .btn.red:hover{ border-color: rgba(255,35,61,0.35); background: rgba(255,35,61,0.08); }
+
+    .log{
+      flex: 1;
+      min-width: 260px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      padding: 12px 12px;
+      color: rgba(241,236,255,0.90);
+      font-size: 13px;
+      line-height: 1.35;
+      min-height: 44px;
+    }
+    .log b{ color: var(--green); }
+
+    .betBar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      padding: 10px 12px;
+      border-radius: 14px;
+    }
+    .betBar label{
+      font-size:12px;
+      letter-spacing:0.10em;
+      text-transform:uppercase;
+      color: rgba(241,236,255,0.86);
+      font-weight:900;
+    }
+    .betBar input[type="range"]{ width: 160px; }
+    .betBar .pill{ margin:0; }
+
+    @media (max-width: 880px){
+      .card3d{ width: 92px; height: 130px; }
+      .face .pip{ font-size: 36px; }
+      .rack{ height:auto; padding:10px; }
+      .stack{ width: 44px; height: 70px; }
+      .btn{ min-width: 100%; }
+      .betBar{ width:100%; justify-content:space-between; }
+      .betBar input[type="range"]{ width: 180px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-bg bg-poker"></div>
+  <header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="sigil" aria-hidden="true"></div>
+      <div class="t">
+        <h1>Velvet Vault</h1>
+        <small>Neon Members Club</small>
+      </div>
+    </div>
+
+    <nav class="actions" aria-label="Primary">
+      <a class="chipLink" href="index.html">Home</a>
+      <a class="chipLink green" href="members.html">Lobby</a>
+      <a class="chipLink" href="slots.html">Slots</a>
+      <a class="chipLink" href="roulette.html">Roulette</a>
+      <a class="chipLink" href="blackjack.html">Blackjack</a>
+      <a class="chipLink" href="poker.html">Poker</a>
+      <a class="chipLink" href="ledger.html">Ledger</a>
+      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="stage" aria-label="Poker Table">
+
+    <!-- chip rack -->
+    <div class="rack">
+      <div class="stacks" aria-hidden="true">
+        <div class="stack greenGlow"></div>
+        <div class="stack redGlow"></div>
+        <div class="stack"></div>
+        <div class="stack greenGlow"></div>
+        <div class="stack redGlow"></div>
+        <div class="stack"></div>
+        <div class="stack greenGlow"></div>
+        <div class="stack redGlow"></div>
+      </div>
+
+      <div class="hud">
+        <div class="pill">Wallet: <b id="walletBal">—</b></div>
+        <div class="pill">Pot: <b id="potHud">0</b></div>
+        <div class="pill">To Call: <b id="toCallHud">0</b></div>
+      </div>
+    </div>
+
+    <!-- stylized dealer arms -->
+    <div class="dealerArms" aria-hidden="true">
+      <div class="arm left"></div>
+      <div class="arm right"></div>
+      <div class="hand left"></div>
+      <div class="hand right"></div>
+    </div>
+
+    <!-- community cards -->
+    <div class="board" id="board">
+      <div class="card3d" data-i="0"><div class="cardInner">
+        <div class="back"></div>
+        <div class="face"><div class="corner"></div><div class="pip"></div></div>
+      </div></div>
+      <div class="card3d" data-i="1"><div class="cardInner">
+        <div class="back"></div>
+        <div class="face"><div class="corner"></div><div class="pip"></div></div>
+      </div></div>
+      <div class="card3d" data-i="2"><div class="cardInner">
+        <div class="back"></div>
+        <div class="face"><div class="corner"></div><div class="pip"></div></div>
+      </div></div>
+      <div class="card3d" data-i="3"><div class="cardInner">
+        <div class="back"></div>
+        <div class="face"><div class="corner"></div><div class="pip"></div></div>
+      </div></div>
+      <div class="card3d" data-i="4"><div class="cardInner">
+        <div class="back"></div>
+        <div class="face"><div class="corner"></div><div class="pip"></div></div>
+      </div></div>
+    </div>
+
+    <!-- seats OUTSIDE board -->
+    <div class="seats" aria-hidden="true">
+      <div class="seat active" id="seat1"><span class="dealerBtn">D</span> You</div>
+      <div class="seat" id="seat2">AI-1</div>
+      <div class="seat" id="seat3">AI-2</div>
+      <div class="seat" id="seat4">AI-3</div>
+      <div class="seat" id="seat5">AI-4</div>
+      <div class="seat" id="seat6">AI-5</div>
+    </div>
+
+    <!-- pot zone (center) -->
+    <div class="potZone" id="potZone">
+      <div class="potLabel">POT</div>
+      <div class="potValue"><b id="pot">0</b> GOLD</div>
+    </div>
+
+    <!-- controls -->
+    <div class="controls">
+      <button class="btn green" id="dealBtn">Deal (Flop → Turn → River)</button>
+      <button class="btn" id="resetBtn">Reset</button>
+
+      <div class="betBar">
+        <label>Raise</label>
+        <input id="raiseSlider" type="range" min="50" max="500" step="50" value="100">
+        <div class="pill">Amt: <b id="raiseAmt">100</b></div>
+        <div class="pill">Stage: <b id="street">—</b></div>
+      </div>
+
+      <button class="btn" id="foldBtn">Fold</button>
+      <button class="btn green" id="callBtn">Call</button>
+      <button class="btn red" id="raiseBtn">Raise</button>
+
+      <div class="log" id="log">Awaiting the shuffle…</div>
+    </div>
+  </section>
+</main>
+  
+<script>
+
+/* ============================================
+   💎 VELVET VAULT — COMPLETE POKER ENGINE
+   ============================================ */
+
+/* ========= WALLET UI ========= */
+
+const walletBal = document.getElementById("walletBal");
+
+function renderWallet(){
+  if(!window.VaultEngine?.user) return;
+  walletBal.textContent =
+    window.VaultEngine.formatGold(
+      window.VaultEngine.getBalance()
+    );
+}
+
+const wWait = setInterval(()=>{
+  if(window.VaultEngine){
+    clearInterval(wWait);
+    window.VaultEngine.subscribe(renderWallet);
+    renderWallet();
+  }
+},100);
+
+
+/* ========= UI ELEMENTS ========= */
+
+const logEl      = document.getElementById("log");
+const dealBtn    = document.getElementById("dealBtn");
+const resetBtn   = document.getElementById("resetBtn");
+const foldBtn    = document.getElementById("foldBtn");
+const callBtn    = document.getElementById("callBtn");
+const raiseBtn   = document.getElementById("raiseBtn");
+const potEl      = document.getElementById("pot");
+const seat1      = document.getElementById("seat1");
+const potZone    = document.getElementById("potZone");
+
+
+/* ========= GAME STATE ========= */
+
+let pot = 0;
+let board = [];
+let players = [];
+
+
+/* ========= CARD SYSTEM ========= */
+
+const SUITS = ["♠","♥","♦","♣"];
+const RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+const VALUES = Object.fromEntries(RANKS.map((r,i)=>[r,i+2]));
+
+function draw(){
+  return {
+    r: RANKS[Math.floor(Math.random()*13)],
+    s: SUITS[Math.floor(Math.random()*4)]
+  };
+}
+
+
+/* ========= VEGAS HAND EVALUATOR ========= */
+
+function evaluate(cards){
+  const r = cards.map(c=>VALUES[c.r]).sort((a,b)=>b-a);
+  const counts = {};
+  r.forEach(v=>counts[v]=(counts[v]||0)+1);
+  const groups = Object.values(counts).sort((a,b)=>b-a);
+
+  if(groups[0]==4) return 7;
+  if(groups[0]==3 && groups[1]>=2) return 6;
+  if(groups[0]==3) return 3;
+  if(groups[0]==2 && groups[1]==2) return 2;
+  if(groups[0]==2) return 1;
+  return 0;
+}
+
+
+/* ========= VEGAS AI PLAYERS ========= */
+
+const vegasNames = [
+  "Mr Blackjack",
+  "Lady Mirage",
+  "Red Jack",
+  "Silk Dealer",
+  "Ghost Ace"
+];
+
+function createPlayers(){
+  players = [
+    {name:"You", ai:false, folded:false, hole:[draw(),draw()]},
+    ...vegasNames.map(n=>({
+      name:n,
+      ai:true,
+      folded:false,
+      hole:[draw(),draw()]
+    }))
+  ];
+}
+
+
+function aiDecision(p){
+
+  const strength = evaluate([...p.hole,...board]);
+  const bluff = Math.random()<0.15;
+
+  if(strength>=3){
+    bet(200 + Math.random()*200);
+    say(p,"raises aggressively.");
+  }
+  else if(strength>=1){
+    bet(100);
+    say(p,"calls coolly.");
+  }
+  else if(bluff){
+    bet(200);
+    say(p,"bluffs.");
+  }
+  else{
+    p.folded=true;
+    say(p,"folds.");
+  }
+}
+
+
+function say(p,msg){
+  logEl.innerHTML += `<br><b>${p.name}</b> ${msg}`;
+}
+
+
+/* ========= BETTING ========= */
+
+function bet(amount){
+  pot += Math.floor(amount);
+  potEl.textContent = pot;
+}
+
+
+/* ========= CHIP ANIMATION ========= */
+
+function chipBurst(){
+  if(!seat1 || !potZone) return;
+
+  const stage = document.querySelector(".stage");
+  const chip = document.createElement("div");
+  chip.className = "chipFly";
+  stage.appendChild(chip);
+  setTimeout(()=>chip.remove(),600);
+}
+
+
+/* ========= HAND FLOW ========= */
+
+function startHand(){
+
+  pot = 0;
+  board = [];
+  createPlayers();
+
+  logEl.textContent = "Shuffling cards…";
+
+  setTimeout(()=>{
+    board=[draw(),draw(),draw()];
+    logEl.innerHTML="Flop dealt.";
+    aiRound();
+  },1000);
+
+  setTimeout(()=>{
+    board.push(draw());
+    logEl.innerHTML+="<br>Turn.";
+    aiRound();
+  },2000);
+
+  setTimeout(()=>{
+    board.push(draw());
+    logEl.innerHTML+="<br>River.";
+    aiRound();
+    showdown();
+  },3000);
+}
+
+
+function aiRound(){
+  players.forEach(p=>{
+    if(p.ai && !p.folded) aiDecision(p);
+  });
+}
+
+
+/* ========= SHOWDOWN ========= */
+
+function showdown(){
+
+  let best=-1;
+  let winner=null;
+
+  players.forEach(p=>{
+    if(p.folded) return;
+    const score=evaluate([...p.hole,...board]);
+    if(score>best){
+      best=score;
+      winner=p;
+    }
+  });
+
+  if(!winner){
+    logEl.innerHTML+="<br>No winner.";
+    return;
+  }
+
+  logEl.innerHTML+=`<br><b>${winner.name}</b> wins ${pot} GOLD`;
+
+  if(winner.name=="You" && window.VaultEngine){
+    window.VaultEngine.credit(pot,"poker-win");
+  }
+}
+
+
+/* ========= PLAYER BUTTONS ========= */
+
+dealBtn.onclick=startHand;
+
+callBtn.onclick=()=>{
+  if(window.VaultEngine?.debit(100,"poker-call")){
+    bet(100);
+    chipBurst();
+    logEl.innerHTML+="<br>You call.";
+  }
+};
+
+raiseBtn.onclick=()=>{
+  if(window.VaultEngine?.debit(200,"poker-raise")){
+    bet(200);
+    chipBurst();
+    logEl.innerHTML+="<br>You raise.";
+  }
+};
+
+foldBtn.onclick=()=>{
+  logEl.innerHTML+="<br>You fold.";
+};
+
+resetBtn.onclick=()=>{
+  pot=0;
+  potEl.textContent=0;
+  logEl.textContent="Table reset.";
+};
+
+</script>
+</body>
+</html>

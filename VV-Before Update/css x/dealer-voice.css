@@ -1,0 +1,192 @@
+:root {
+  --vv-red: #ff233d;
+  --vv-green: #00ff9a;
+  --vv-text: #f1ecff;
+  --vv-line: rgba(255, 255, 255, 0.14);
+}
+
+.vvDealerLine {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%) translateY(14px);
+  z-index: 9996;
+  max-width: min(92vw, 560px);
+  width: max-content;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--vv-line);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.56));
+  color: var(--vv-text);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.58);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.vvDealerLine.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.vvDealerLine.tone-win {
+  border-color: rgba(0, 255, 154, 0.38);
+  box-shadow: 0 0 22px rgba(0, 255, 154, 0.2), 0 18px 44px rgba(0, 0, 0, 0.56);
+}
+
+.vvDealerLine.tone-alert {
+  border-color: rgba(255, 35, 61, 0.42);
+  box-shadow: 0 0 24px rgba(255, 35, 61, 0.22), 0 18px 44px rgba(0, 0, 0, 0.56);
+}
+
+.vvHelperLauncher {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 9997;
+  border: 1px solid var(--vv-line);
+  border-radius: 12px;
+  padding: 11px 14px;
+  background: rgba(0, 0, 0, 0.46);
+  color: var(--vv-text);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vvHelperLauncher[hidden] {
+  display: none;
+}
+
+.vvHelperBot {
+  position: fixed;
+  right: 14px;
+  bottom: 56px;
+  z-index: 9998;
+  width: min(360px, calc(100vw - 28px));
+  border-radius: 16px;
+  border: 1px solid var(--vv-line);
+  background: linear-gradient(180deg, rgba(4, 8, 14, 0.82), rgba(3, 5, 9, 0.78));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.62);
+  overflow: hidden;
+  display: none;
+}
+
+.vvHelperBot.is-open {
+  display: block;
+}
+
+.vvHelperHead {
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vvHelperHead b {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.vvHelperClose {
+  border: 0;
+  background: transparent;
+  color: var(--vv-text);
+  cursor: pointer;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.vvHelperBody {
+  padding: 12px;
+  font-size: 12px;
+  color: rgba(241, 236, 255, 0.9);
+}
+
+.vvHelperLinks {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vvHelperChip {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(241, 236, 255, 0.93);
+  text-decoration: none;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vvHelperFaq {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+}
+
+.vvHelperInputRow {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.vvHelperInputRow input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--vv-text);
+  padding: 8px 9px;
+}
+
+.vvHelperInputRow button {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 154, 0.3);
+  background: rgba(0, 255, 154, 0.1);
+  color: var(--vv-text);
+  padding: 8px 11px;
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.vvHelperReply {
+  margin: 8px 0 0;
+  color: rgba(241, 236, 255, 0.72);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+@media (max-width: 640px) {
+  .vvDealerLine {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    bottom: 12px;
+  }
+
+  .vvHelperBot {
+    right: 10px;
+    width: calc(100vw - 20px);
+  }
+
+  .vvHelperLauncher {
+    right: 10px;
+    bottom: 10px;
+  }
+}

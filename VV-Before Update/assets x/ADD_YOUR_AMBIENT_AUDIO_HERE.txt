@@ -1,0 +1,1 @@
+Place your real ambient audio here (e.g. velvet-ambient.mp3). The file in the original zip was empty (1 byte), so it was removed to prevent loading errors.

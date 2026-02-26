@@ -1,0 +1,14 @@
+body{
+ background:
+ radial-gradient(circle at top,#1a120a,#050408 70%),
+ url("../images/velvet-vault-hero.png") center/cover fixed no-repeat;
+}
+
+.btn-vault{
+ background:linear-gradient(135deg,#ff233d,#00ff9a);
+ border-radius:14px;
+ padding:12px 18px;
+ font-weight:800;
+ letter-spacing:.1em;
+ box-shadow:0 0 20px rgba(0,255,154,.4);
+}

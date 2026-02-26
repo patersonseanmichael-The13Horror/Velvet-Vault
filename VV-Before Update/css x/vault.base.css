@@ -1,0 +1,28 @@
+:root {
+  --gold:        #d4af37;
+  --text-light:  #eae6dc;
+  --bg-dark:     #080503;
+  --velvet-red:  #430909;
+  --card-glow:   0 0 12px rgba(212,175,55,.55);
+}
+
+/* ------------ GLOBAL RESET ------------ */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background:
+    linear-gradient(180deg,var(--velvet-red) 0%,var(--bg-dark) 45%) fixed,
+    url('/images/velvet-texture.jpg') center/cover fixed;
+}
+
+/* BRAND HEADING never clashes w/ BG */
+.logo{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:1.2rem;
+  text-shadow:var(--card-glow);
+}

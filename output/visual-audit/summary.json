@@ -1,0 +1,86 @@
+[
+  {
+    "page": "index.html",
+    "status": "ok",
+    "errorCount": 0,
+    "errors": [],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "login.html",
+    "status": "ok",
+    "errorCount": 1,
+    "errors": [
+      {
+        "type": "console.error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      }
+    ],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "members.html",
+    "status": "ok",
+    "errorCount": 1,
+    "errors": [
+      {
+        "type": "console.error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      }
+    ],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "slots.html",
+    "status": "ok",
+    "errorCount": 0,
+    "errors": [],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "roulette.html",
+    "status": "ok",
+    "errorCount": 0,
+    "errors": [],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "blackjack.html",
+    "status": "ok",
+    "errorCount": 1,
+    "errors": [
+      {
+        "type": "console.error",
+        "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+      }
+    ],
+    "requestFailedCount": 1,
+    "requestFails": [
+      {
+        "url": "http://127.0.0.1:4173/css/page-backgrounds.css",
+        "reason": "net::ERR_ABORTED"
+      }
+    ]
+  },
+  {
+    "page": "poker.html",
+    "status": "ok",
+    "errorCount": 0,
+    "errors": [],
+    "requestFailedCount": 0,
+    "requestFails": []
+  },
+  {
+    "page": "ledger.html",
+    "status": "ok",
+    "errorCount": 0,
+    "errors": [],
+    "requestFailedCount": 0,
+    "requestFails": []
+  }
+]
