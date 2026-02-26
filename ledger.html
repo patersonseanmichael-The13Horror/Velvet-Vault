@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Velvet Vault — Ledger</title>
 
+  <link rel="stylesheet" href="css/vv.tokens.css">
+  <link rel="stylesheet" href="css/vv.base.css">
+  <link rel="stylesheet" href="css/vv.components.css">
   <link rel="stylesheet" href="css/velvet.css">
   <script type="module" src="js/firebase-init.js"></script>
   <script type="module" src="js/guard.js"></script>
@@ -141,29 +144,8 @@
 </style>
 </head>
 <body>
-  <header>
-  <div class="topbar">
-    <div class="brand">
-      <div class="sigil" aria-hidden="true"></div>
-      <div class="t">
-        <h1>Velvet Vault</h1>
-        <small>Neon Members Club</small>
-      </div>
-    </div>
-
-    <nav class="actions" aria-label="Primary">
-      <a class="chipLink" href="index.html">Home</a>
-      <a class="chipLink green" href="members.html">Lobby</a>
-      <a class="chipLink" href="slots.html">Slots</a>
-      <a class="chipLink" href="roulette.html">Roulette</a>
-      <a class="chipLink" href="blackjack.html">Blackjack</a>
-      <a class="chipLink" href="poker.html">Poker</a>
-      <a class="chipLink" href="ledger.html">Ledger</a>
-      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
-    </nav>
-    <button class="hamburger" type="button" aria-label="Open menu">Menu</button>
-  </div>
-</header>
+  <meta name="vv-protected" content="true">
+  <header id="vv-topbar"></header>
   <div class="box">
     <div class="row">
       <div>
@@ -196,19 +178,9 @@
   </div>
 
   <script src="js/games/ledger.js" defer></script>
-
-
-<div class="mobile-drawer" aria-label="Mobile navigation">
-  <a href="index.html">Home</a>
-  <a href="members.html">Lobby</a>
-  <a href="slots.html">Slots</a>
-  <a href="roulette.html">Roulette</a>
-  <a href="blackjack.html">Blackjack</a>
-  <a href="poker.html">Poker</a>
-  <a href="ledger.html">Ledger</a>
-</div>
-
-
+<footer id="vv-footer"></footer>
+<script type="module" src="js/ui/topbar.js"></script>
+<script type="module" src="js/ui/footer.js"></script>
 <script src="js/nav.js"></script>
 
 </body>

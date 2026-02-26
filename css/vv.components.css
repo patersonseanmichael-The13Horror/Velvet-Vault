@@ -1,0 +1,85 @@
+.vv-card{
+  background: linear-gradient(180deg,var(--vv-panel),var(--vv-panel-2));
+  border:1px solid var(--vv-border);
+  border-radius: var(--vv-radius);
+  box-shadow: var(--vv-shadow);
+  padding: var(--vv-space-5);
+}
+
+.vv-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:44px;
+  padding:10px 16px;
+  border-radius: 999px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  border:1px solid rgba(255,255,255,0.16);
+  background:linear-gradient(135deg, rgba(255,35,61,0.8), rgba(0,255,154,0.7));
+  color:var(--vv-text);
+  box-shadow: var(--vv-glow);
+  cursor:pointer;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.vv-btn:hover{transform:translateY(-2px);}
+.vv-btn:active{transform:translateY(0);}
+.vv-btn.ghost{
+  background: rgba(255,255,255,0.06);
+  box-shadow:none;
+}
+
+.vv-nav{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:var(--vv-space-3);
+  padding:12px 0;
+}
+.vv-nav_links{
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+.vv-nav_links.is-open{display:flex;}
+.vv-topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(8,6,12,0.82), rgba(8,6,12,0.52));
+  border-bottom:1px solid var(--vv-border);
+}
+.vv-nav_toggle{
+  display:none;
+  border:1px solid var(--vv-border);
+  background:rgba(255,255,255,0.08);
+  color:var(--vv-text);
+  padding:10px 14px;
+  border-radius:var(--vv-radius);
+  font-weight:700;
+}
+.vv-chip{
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid var(--vv-border);
+  background:rgba(255,255,255,0.05);
+  color:var(--vv-text);
+  font-weight:700;
+  letter-spacing:0.05em;
+}
+.vv-chip.active{border-color:rgba(0,255,154,0.45); background:rgba(0,255,154,0.08);}
+
+.vv-footer{
+  margin-top: var(--vv-space-5);
+  padding: var(--vv-space-4);
+  border-top:1px solid var(--vv-border);
+  text-align:center;
+  color:var(--vv-muted);
+  background:rgba(0,0,0,0.35);
+}
+
+@media(max-width:900px){
+  .vv-nav_links{display:none; flex-direction:column; width:100%;}
+  .vv-nav_links.is-open{display:flex;}
+  .vv-nav_toggle{display:inline-flex; align-items:center; justify-content:center;}
+  .vv-nav{flex-direction:column; align-items:flex-start;}
+}

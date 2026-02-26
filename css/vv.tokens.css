@@ -1,0 +1,37 @@
+:root{
+  /* Palette */
+  --vv-bg:#050408;
+  --vv-panel:rgba(10,8,14,0.78);
+  --vv-panel-2:rgba(16,12,20,0.72);
+  --vv-text:#f1ecff;
+  --vv-muted:rgba(241,236,255,0.72);
+  --vv-border:rgba(255,255,255,0.12);
+  --vv-gold:#f6c46d;
+  --vv-red:#ff233d;
+  --vv-green:#00ff9a;
+
+  /* Effects */
+  --vv-radius:18px;
+  --vv-shadow:0 24px 60px rgba(0,0,0,0.55);
+  --vv-glow:0 0 24px rgba(0,255,154,0.30),0 0 24px rgba(255,35,61,0.28);
+
+  /* Typography */
+  --vv-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --vv-font-display: "Cinzel", "Inter", serif;
+
+  /* Space scale */
+  --vv-space-1:4px;
+  --vv-space-2:8px;
+  --vv-space-3:12px;
+  --vv-space-4:16px;
+  --vv-space-5:24px;
+  --vv-space-6:32px;
+
+  /* Font scale */
+  --vv-font-1:12px;
+  --vv-font-2:14px;
+  --vv-font-3:16px;
+  --vv-font-4:20px;
+  --vv-font-5:26px;
+  --vv-font-6:34px;
+}

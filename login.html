@@ -7,9 +7,9 @@
   <title>Velvet Vault — Login</title>
   <meta name="description" content="Velvet Vault members access."/>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/vv.tokens.css">
+  <link rel="stylesheet" href="css/vv.base.css">
+  <link rel="stylesheet" href="css/vv.components.css">
   <link rel="stylesheet" href="css/velvet.css">
 
   <style>
@@ -382,28 +382,7 @@
 </head>
 
 <body>
-<header>
-  <div class="topbar">
-    <div class="brand">
-      <div class="sigil" aria-hidden="true"></div>
-      <div class="t">
-        <h1>Velvet Vault</h1>
-        <small>Neon Members Club</small>
-      </div>
-    </div>
-    <nav class="actions" aria-label="Primary">
-      <a class="chipLink" href="index.html">Home</a>
-      <a class="chipLink green" href="members.html">Lobby</a>
-      <a class="chipLink" href="slots.html">Slots</a>
-      <a class="chipLink" href="roulette.html">Roulette</a>
-      <a class="chipLink" href="blackjack.html">Blackjack</a>
-      <a class="chipLink" href="poker.html">Poker</a>
-      <a class="chipLink" href="ledger.html">Ledger</a>
-      <button class="chipBtn red" id="logoutBtn" type="button">Logout</button>
-    </nav>
-    <button class="hamburger" type="button" aria-label="Open menu">Menu</button>
-  </div>
-</header>
+<header id="vv-topbar"></header>
 
   <div class="grain" aria-hidden="true"></div>
 
@@ -472,17 +451,9 @@
     </div>
   </div>
 
-<div class="mobile-drawer" aria-label="Mobile navigation">
-  <a href="index.html">Home</a>
-  <a href="members.html">Lobby</a>
-  <a href="slots.html">Slots</a>
-  <a href="roulette.html">Roulette</a>
-  <a href="blackjack.html">Blackjack</a>
-  <a href="poker.html">Poker</a>
-  <a href="ledger.html">Ledger</a>
-</div>
-
-
+<footer id="vv-footer"></footer>
+<script type="module" src="js/ui/topbar.js"></script>
+<script type="module" src="js/ui/footer.js"></script>
 <script src="js/nav.js"></script>
 
 </body>

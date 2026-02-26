@@ -10,9 +10,18 @@ function goToLogin() {
   }
 }
 
-// Demo-friendly: if Firebase auth is not available, allow the page to continue.
+// Determine if this page should be protected (opt-in via meta)
+const isProtected = (() => {
+  const meta = document.querySelector('meta[name="vv-protected"]');
+  return meta && String(meta.content || "").toLowerCase() === "true";
+})();
+
+// Demo-friendly: if Firebase auth is not available, allow the page to continue (even if protected).
 if (!auth) {
   console.info("[VelvetVault] Auth unavailable — running in demo mode (no redirect).");
+  guardResolved = true;
+} else if (!isProtected) {
+  // Auth exists but page is not protected; just bind logout if present.
   guardResolved = true;
 } else {
   (async () => {

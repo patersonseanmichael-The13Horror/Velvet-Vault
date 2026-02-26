@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700;800&display=swap");
+
+*{box-sizing:border-box;}
+html,body{min-height:100%;}
+body{
+  margin:0;
+  font-family: var(--vv-font-sans);
+  background:
+    radial-gradient(1100px 600px at 50% 12%, rgba(255,35,61,0.14), transparent 60%),
+    radial-gradient(900px 500px at 70% 55%, rgba(0,255,154,0.10), transparent 60%),
+    linear-gradient(180deg, #050408 0%, #020106 100%);
+  color: var(--vv-text);
+}
+a{color:var(--vv-green); text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+.vv-container{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  padding: var(--vv-space-5) var(--vv-space-4);
+}
+.vv-row{display:flex; gap:var(--vv-space-3); align-items:center; flex-wrap:wrap;}
+.vv-grid{display:grid; gap:var(--vv-space-4);}
+.vv-stack>*+*{margin-top:var(--vv-space-3);}
+.vv-center{display:grid; place-items:center;}
+
+h1,h2,h3,h4{font-family:var(--vv-font-display); letter-spacing:0.08em; margin:0;}
+p{margin:0 0 var(--vv-space-3);}
+
+:focus-visible{outline:2px solid var(--vv-green); outline-offset:3px;}
+
+img{max-width:100%; height:auto;}
+
+@media(max-width:900px){
+  .vv-container{padding: var(--vv-space-4) var(--vv-space-3);}
+}
+@media(max-width:600px){
+  body{font-size: var(--vv-font-2);}
+  h1{font-size:clamp(26px,6vw,34px);}
+}
