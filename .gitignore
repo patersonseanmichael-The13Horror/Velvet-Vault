@@ -17,3 +17,10 @@ node_modules/
 # OS / misc
 .DS_Store
 Thumbs.db
+
+# Velvet Vault archives / exports (keep repo lean)
+VV-Before Update/
+VelvetVault_FixPack_Audit/
+output/
+*.zip
+*.7z
