@@ -13,11 +13,18 @@
   <link rel="stylesheet" href="css/velvet.css">
   <link rel="stylesheet" href="css/rebirth.css">
   <link rel="stylesheet" href="css/pages/login.css">
+  <link rel="stylesheet" href="css/story.css">
 
   
 </head>
 
-<body>
+<body data-chapter="initiation">
+  <div class="vv-bg" aria-hidden="true">
+    <div class="vv-bg__layer layer-a"></div>
+    <div class="vv-bg__tint"></div>
+    <div class="vv-bg__vignette"></div>
+    <div class="vv-grain"></div>
+  </div>
 <header id="vv-topbar"></header>
 
   <div class="grain" aria-hidden="true"></div>
@@ -83,6 +90,7 @@
         <script type="module" src="js/firebase-init.js"></script>
         <script type="module" src="js/guard.js"></script>
         <script type="module" src="js/auth.js"></script>
+        <script src="js/story-engine.js"></script>
       </section>
     </div>
   </div>

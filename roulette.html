@@ -15,12 +15,19 @@
 <link rel="stylesheet" href="css/vv.components.css">
 <link rel="stylesheet" href="css/velvet.css">
 <link rel="stylesheet" href="css/rebirth.css">
+<link rel="stylesheet" href="css/story.css">
 <link rel="stylesheet" href="css/pages/roulette.css">
 
 
 </head>
 
-<body>
+<body data-chapter="games">
+  <div class="vv-bg" aria-hidden="true">
+    <div class="vv-bg__layer layer-a"></div>
+    <div class="vv-bg__tint"></div>
+    <div class="vv-bg__vignette"></div>
+    <div class="vv-grain"></div>
+  </div>
 <meta name="vv-protected" content="true">
 <header id="vv-topbar"></header>
 
@@ -88,6 +95,7 @@
 </main>
 
 <script src="js/games/roulette.js"></script>
+<script src="js/story-engine.js"></script>
 <footer id="vv-footer"></footer>
 <script type="module" src="js/ui/topbar.js"></script>
 <script type="module" src="js/ui/footer.js"></script>
