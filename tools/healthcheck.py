@@ -48,6 +48,7 @@ def is_external(ref: str) -> bool:
     )
 
 def norm_ref(ref: str) -> str:
+    # Strip query/hash
     ref = ref.split("#", 1)[0]
     ref = ref.split("?", 1)[0]
     return ref.strip()
@@ -68,12 +69,14 @@ def main() -> int:
         text = path.read_text(errors="ignore")
         head = text.split("</head>", 1)[0].lower()
 
+        # Duplicate CSS includes
         css_links = re.findall(r'<link[^>]+href="([^"]+)"', head, flags=re.I)
         css_norm = [norm_ref(x) for x in css_links if x]
         dups = {x for x in css_norm if css_norm.count(x) > 1}
         if dups:
-          print(f"[DUP CSS] {html}: " + ", ".join(sorted(dups)))
+            print(f"[DUP CSS] {html}: " + ", ".join(sorted(dups)))
 
+        # Validate refs
         refs = []
         for pat in REF_PATTERNS:
             refs.extend(pat.findall(text))
@@ -83,12 +86,16 @@ def main() -> int:
             ref = norm_ref(ref)
             if not ref or is_external(ref):
                 continue
+            # ignore in-page anchors / non-file routes
             if ref.startswith("#"):
                 continue
+            # only validate local relative paths
+            # treat absolute from root as relative
             ref_path = (ROOT / ref.lstrip("/")).resolve()
             try:
                 ref_path.relative_to(ROOT.resolve())
             except Exception:
+                # path escapes repo root — suspicious but skip hard fail
                 continue
             if not ref_path.exists():
                 missing.append(ref)
@@ -108,4 +115,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
