@@ -74,6 +74,19 @@
 
       <div class="cardBody">
         <div class="machine">
+          <div class="slotsTop">
+            <div class="slotsTitle">
+              <div class="kicker">Games Wing</div>
+              <h1>Slots — Themed Machines</h1>
+              <p class="sub">Pick a machine. Each has unique symbols, features, and vibe.</p>
+            </div>
+
+            <div class="slotsPicker">
+              <label class="pickLabel" for="machineSelect">Machine</label>
+              <select id="machineSelect" aria-label="Select slot machine"></select>
+              <button class="chipBtn" id="paytableBtn" type="button">Paytable</button>
+            </div>
+          </div>
 
           <div class="frame">
             <div class="reelsWrap">
@@ -92,6 +105,16 @@
                   <div class="cell" id="c3r1">◆</div>
                   <div class="cell" id="c3r2">◆</div>
                   <div class="cell" id="c3r3">◆</div>
+                </div>
+                <div class="reelCol" id="col4">
+                  <div class="cell" id="c4r1">◆</div>
+                  <div class="cell" id="c4r2">◆</div>
+                  <div class="cell" id="c4r3">◆</div>
+                </div>
+                <div class="reelCol" id="col5">
+                  <div class="cell" id="c5r1">◆</div>
+                  <div class="cell" id="c5r2">◆</div>
+                  <div class="cell" id="c5r3">◆</div>
                 </div>
               </div>
 
@@ -130,6 +153,42 @@
           </div>
 
           <div class="result" id="result">Awaiting signal…</div>
+
+          <!-- Paytable Modal -->
+          <div class="vvModal" id="paytableModal" aria-hidden="true">
+            <div class="vvModalCard" role="dialog" aria-modal="true" aria-label="Paytable">
+              <div class="vvModalHead">
+                <div>
+                  <div class="kicker" id="paytableKicker">Paytable</div>
+                  <h2 id="paytableTitle" style="margin:6px 0 0;">Machine</h2>
+                </div>
+                <button class="chipBtn" id="paytableClose" type="button">Close</button>
+              </div>
+              <div class="vvModalBody" id="paytableBody"></div>
+            </div>
+          </div>
+
+          <!-- Hold & Win Feature Modal -->
+          <div class="vvModal" id="holdWinModal" aria-hidden="true">
+            <div class="vvModalCard" role="dialog" aria-modal="true" aria-label="Hold and Win Feature">
+              <div class="vvModalHead">
+                <div>
+                  <div class="kicker">Feature</div>
+                  <h2 style="margin:6px 0 0;">Hold &amp; Win</h2>
+                  <p class="sub" style="margin:6px 0 0;">Coins lock. You have 3 respins to fill the grid.</p>
+                </div>
+                <button class="chipBtn" id="holdWinClose" type="button">Close</button>
+              </div>
+              <div class="vvModalBody">
+                <div class="holdWinTop">
+                  <div class="pill">Respins: <b id="respinsLeft">3</b></div>
+                  <div class="pill">Feature Total: <b id="holdWinTotal">0</b></div>
+                  <button class="btn primary" id="holdWinSpin" type="button">RESPIN</button>
+                </div>
+                <div class="holdWinGrid" id="holdWinGrid" aria-label="Hold and Win Grid"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
