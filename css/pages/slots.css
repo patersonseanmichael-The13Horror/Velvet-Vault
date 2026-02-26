@@ -524,3 +524,38 @@
     .actions, .nav{ display:none !important; }
     .hamburger{ display:inline-flex; align-items:center; justify-content:center; }
   }
+/* Phase: Story 7 cabinet skins */
+body[data-slot-skin="noir"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 28px rgba(255,35,64,0.10);
+}
+body[data-slot-skin="noir"] .reelCol{ background: rgba(0,0,0,0.34); }
+
+body[data-slot-skin="sakura"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(160,120,255,0.14), 0 0 18px rgba(0,255,154,0.10);
+}
+body[data-slot-skin="sakura"] .reelCol{ background: rgba(10,0,18,0.28); }
+
+body[data-slot-skin="pharaoh"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(255,210,122,0.16);
+}
+body[data-slot-skin="pharaoh"] .reelCol{ background: rgba(16,10,0,0.22); }
+
+body[data-slot-skin="heist"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(0,255,154,0.14);
+}
+body[data-slot-skin="heist"] .reelCol{ background: rgba(0,12,8,0.24); }
+
+body[data-slot-skin="crown"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(255,35,64,0.14);
+}
+body[data-slot-skin="crown"] .reelCol{ background: rgba(14,0,0,0.22); }
+
+body[data-slot-skin="abyss"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(0,180,255,0.14);
+}
+body[data-slot-skin="abyss"] .reelCol{ background: rgba(0,8,16,0.24); }
+
+body[data-slot-skin="clockwork"] .frame{
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45), 0 0 34px rgba(190,190,210,0.14);
+}
+body[data-slot-skin="clockwork"] .reelCol{ background: rgba(10,10,14,0.26); }
