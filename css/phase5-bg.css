@@ -1,0 +1,49 @@
+/* Velvet Vault — Phase 5: Image backgrounds + animated overlays
+   Additive: works with your existing story.css background system.
+*/
+
+/* Background image crossfade: we use two layers A/B and swap */
+.vv-bg__layer{
+  transition: opacity 900ms ease, transform 900ms ease, filter 900ms ease;
+}
+
+/* Subtle moving light streaks overlay */
+.vv-bg__streaks{
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  opacity: .18;
+  background:
+    linear-gradient(115deg,
+      transparent 0%,
+      rgba(255,35,64,0.00) 35%,
+      rgba(255,35,64,0.10) 45%,
+      rgba(0,255,154,0.08) 55%,
+      transparent 70%),
+    linear-gradient(65deg,
+      transparent 0%,
+      rgba(255,210,122,0.00) 38%,
+      rgba(255,210,122,0.10) 50%,
+      transparent 62%);
+  filter: blur(2px);
+  transform: translate3d(-6%, -4%, 0);
+  animation: vvStreakDrift 8s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes vvStreakDrift{
+  from { transform: translate3d(-6%, -4%, 0) rotate(-2deg); }
+  to   { transform: translate3d( 6%,  4%, 0) rotate( 2deg); }
+}
+
+/* Performance guards */
+@media (max-width: 640px){
+  .vv-bg__streaks{ opacity: .10; animation-duration: 12s; }
+  .vv-grain{ opacity: .07; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .vv-bg__streaks{ animation:none; opacity: .10; }
+  .vv-bg__layer{ transition:none; }
+}
+
