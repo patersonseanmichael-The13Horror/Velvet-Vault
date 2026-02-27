@@ -1,1 +1,0 @@
-Keep all image filenames lowercase and match paths exactly (GitHub Pages is case-sensitive). Recommended: roulette-board.jpg, roulette-wheel.png, poker-table.jpg, blackjack-table.jpg, velvet-vault-hero.png
