@@ -75,6 +75,48 @@ const autoBtn = document.getElementById("autoBtn");
 const stopAutoBtn = document.getElementById("stopAutoBtn");
 const autoCountEl = document.getElementById("autoCount");
 
+const missingSymbolAssets = new Set();
+
+function symbolAssetPath(symbolId) {
+  if (!machine.assetDir) return null;
+  const fileKey = machine.symbolImageMap?.[symbolId];
+  if (!fileKey) return null;
+
+  const path = `${machine.assetDir}/${fileKey}.webp`;
+  if (missingSymbolAssets.has(path)) return null;
+  return path;
+}
+
+function renderSymbolCell(cell, symbolId) {
+  const fallbackText = symbolId || "?";
+  const path = symbolAssetPath(symbolId);
+
+  cell.innerHTML = "";
+
+  if (!path) {
+    const span = document.createElement("span");
+    span.className = "symTxt";
+    span.textContent = fallbackText;
+    cell.appendChild(span);
+    return;
+  }
+
+  const img = document.createElement("img");
+  img.className = "symImg";
+  img.src = path;
+  img.alt = fallbackText;
+  img.loading = "lazy";
+  img.decoding = "async";
+  img.onerror = () => {
+    missingSymbolAssets.add(path);
+    const span = document.createElement("span");
+    span.className = "symTxt";
+    span.textContent = fallbackText;
+    cell.replaceChildren(span);
+  };
+  cell.appendChild(img);
+}
+
 machineNameEl.textContent = machine.name;
 machineDescEl.textContent = machine.description;
 machineIdLabelEl.textContent = machine.id;
@@ -220,7 +262,7 @@ function buildReels() {
       const cell = document.createElement("div");
       cell.className = "reel-cell";
       cell.dataset.row = String(row);
-      cell.textContent = randomSymbol();
+      renderSymbolCell(cell, randomSymbol());
       col.appendChild(cell);
       cells.push(cell);
     }
@@ -235,7 +277,7 @@ function renderGrid(grid) {
   for (let reel = 0; reel < 5; reel += 1) {
     for (let row = 0; row < 3; row += 1) {
       const value = grid[row][reel];
-      reelCells[reel][row].textContent = value;
+      renderSymbolCell(reelCells[reel][row], value);
     }
   }
 }
@@ -375,7 +417,7 @@ async function animateSpin(finalGrid) {
 
     const spinTimer = trackedInterval(() => {
       for (let row = 0; row < 3; row += 1) {
-        reelCells[reel][row].textContent = randomSymbol();
+        renderSymbolCell(reelCells[reel][row], randomSymbol());
       }
       tickCounter += 1;
       if (tickCounter % 3 === 0) spinTone();
@@ -386,7 +428,7 @@ async function animateSpin(finalGrid) {
       clearInterval(spinTimer);
       pendingIntervals.delete(spinTimer);
       for (let row = 0; row < 3; row += 1) {
-        reelCells[reel][row].textContent = finalGrid[row][reel];
+        renderSymbolCell(reelCells[reel][row], finalGrid[row][reel]);
       }
       col.classList.remove("spinning");
       col.classList.add("settle");

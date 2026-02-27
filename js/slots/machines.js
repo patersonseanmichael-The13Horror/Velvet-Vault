@@ -13,9 +13,49 @@ export const DEFAULT_PAYLINES = [
 
 const clonePaylines = () => DEFAULT_PAYLINES.map((line) => [...line]);
 
+const MACHINE_ASSET_DIRS = {
+  "machine-01": "images/symbols/velvet-noir",
+  "machine-02": "images/symbols/cyber-sakura",
+  "machine-03": "images/symbols/neon-pharaoh",
+  "machine-04": "images/symbols/emerald-heist",
+  "machine-05": "images/symbols/crimson-crown",
+  "machine-06": "images/symbols/abyssal-pearl",
+  "machine-07": "images/symbols/clockwork-vault"
+};
+
+const SYMBOL_IMAGE_SEQUENCE = ["L_A", "L_K", "L_Q", "L_J", "L_10", "P1", "P2", "P3", "P4"];
+
+function buildSymbolImageMap(symbols) {
+  const map = {};
+  let genericIdx = 0;
+
+  symbols.forEach((symbolId) => {
+    if (symbolId === "WILD") {
+      map[symbolId] = "WILD";
+      return;
+    }
+    if (symbolId === "SCAT" || symbolId === "SCATTER") {
+      map[symbolId] = "SCATTER";
+      return;
+    }
+    if (symbolId === "COIN" || symbolId === "COIN_MULT" || symbolId === "COIN_JP") {
+      map[symbolId] = symbolId;
+      return;
+    }
+
+    const seq = SYMBOL_IMAGE_SEQUENCE[Math.min(genericIdx, SYMBOL_IMAGE_SEQUENCE.length - 1)];
+    map[symbolId] = seq;
+    genericIdx += 1;
+  });
+
+  return map;
+}
+
 const cfg = (machine) => ({
   ...machine,
-  paylines: clonePaylines()
+  paylines: clonePaylines(),
+  assetDir: MACHINE_ASSET_DIRS[machine.id] || "",
+  symbolImageMap: buildSymbolImageMap(machine.symbols)
 });
 
 export const MACHINE_CONFIGS = [
