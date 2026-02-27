@@ -193,6 +193,51 @@
       transform-style: preserve-3d;
     }
 
+    /* ==========================================
+       Velvet Vault - Slots Cabinet Normalization
+       Forces true 5 reels x 3 rows layout
+       Supports .cell OR .reel-cell
+       ========================================== */
+
+    .reelsWrap,
+    .reelsWrap .reels{
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .reelCol{
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+      min-height: 0;
+      height: auto;
+    }
+
+    .reelCol .cell,
+    .reelCol .reel-cell{
+      height: 92px;
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 720px){
+      .reelsWrap,
+      .reelsWrap .reels{ gap: 8px; }
+      .reelCol{ gap: 6px; padding: 8px; }
+      .reelCol .cell,
+      .reelCol .reel-cell{
+        height: 72px;
+        min-height: 72px;
+      }
+    }
+
     .reels{
       display:grid;
       grid-template-columns: repeat(3, 1fr);

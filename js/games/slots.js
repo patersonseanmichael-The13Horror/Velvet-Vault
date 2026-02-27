@@ -59,6 +59,51 @@
   const paylinesWrap = document.getElementById("paylines");
   const reelsWrap = document.querySelector(".reelsWrap");
 
+  // Normalize DOM to guarantee 5x3 visible cabinet.
+  // Fixes the "~~~/~~" layout issue (wrong rows/wrapping).
+  function ensureCabinetDOM(){
+    if (!reelsWrap) return;
+
+    const reelGrid = reelsWrap.querySelector(".reels") || reelsWrap;
+    const existingCols = Array.from(reelGrid.querySelectorAll(".reelCol"));
+    const looksRight =
+      existingCols.length === REELS &&
+      existingCols.every(col => col.querySelectorAll(".cell,.reel-cell").length >= ROWS);
+
+    if (looksRight){
+      cols.length = 0;
+      cells.length = 0;
+      existingCols.forEach((col)=>{
+        cols.push(col);
+        const list = Array.from(col.querySelectorAll(".cell,.reel-cell")).slice(0, ROWS);
+        cells.push(list);
+      });
+      return;
+    }
+
+    reelGrid.innerHTML = "";
+    cols.length = 0;
+    cells.length = 0;
+
+    for (let r=0; r<REELS; r++){
+      const col = document.createElement("div");
+      col.className = "reelCol";
+      col.id = `col${r+1}`;
+      reelGrid.appendChild(col);
+      cols.push(col);
+
+      const colCells = [];
+      for (let row=0; row<ROWS; row++){
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.id = `c${r+1}r${row+1}`;
+        col.appendChild(cell);
+        colCells.push(cell);
+      }
+      cells.push(colCells);
+    }
+  }
+
   // --- Utility ---
   const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
   const rnd = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
@@ -350,6 +395,9 @@
   const ROWS = 3;
   let reelState = [];
 
+  // Normalize cabinet on startup.
+  ensureCabinetDOM();
+
   const STRIPS_BY_MACHINE = new Map();
 
   function buildStrip(weights){
@@ -420,7 +468,8 @@
       for (let row=0;row<ROWS;row++){
         const id = grid[row][r];
         const s = symbolById(id);
-        const el = cells[r][row];
+        const el = cells[r]?.[row];
+        if (!el) continue;
         el.textContent = s.glyph;
         el.classList.toggle("scatter", id===machine.ids.scatter);
         el.classList.toggle("coin", id===machine.ids.coin);
