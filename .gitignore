@@ -25,3 +25,4 @@ VelvetVault_FixPack_Audit/
 output/
 *.zip
 *.7z
+.vercel

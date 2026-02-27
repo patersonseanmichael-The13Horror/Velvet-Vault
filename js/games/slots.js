@@ -63,9 +63,8 @@
   const params = new URLSearchParams(window.location.search);
   const machineParam = params.get("m");
 
-  if(machineParam){
-    const page = document.querySelector(".slotsPage");
-    if(page) page.classList.add("gameMode");
+  if (machineParam) {
+    document.querySelector(".slotsPage")?.classList.add("gameMode");
   }
 
   // Normalize DOM to guarantee 5x3 visible cabinet.
