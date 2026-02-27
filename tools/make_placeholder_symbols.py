@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""
+Velvet Vault - Placeholder symbol generator (so wiring can be tested immediately)
+
+Creates:
+  images/symbols/<machine>/{L_A,L_K,L_Q,L_J,L_10,P1..P4,WILD,SCATTER,COIN,COIN_MULT,COIN_JP}.webp
+
+Run:
+  pip install pillow
+  python3 tools/make_placeholder_symbols.py
+"""
+
+from PIL import Image, ImageDraw
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "images" / "symbols"
+
+SYMS = ["L_A","L_K","L_Q","L_J","L_10","P1","P2","P3","P4","WILD","SCATTER","COIN","COIN_MULT","COIN_JP"]
+
+MACHINES = {
+  "velvet-noir": (20, 10, 20),
+  "cyber-sakura": (20, 15, 30),
+  "neon-pharaoh": (25, 18, 10),
+  "emerald-heist": (10, 25, 15),
+  "crimson-crown": (28, 10, 10),
+  "abyssal-pearl": (8, 18, 28),
+  "clockwork-vault": (18, 18, 22),
+}
+
+def clamp(x): return max(0, min(255, int(x)))
+
+def make_tile(bg_rgb, label):
+  size = 512
+  img = Image.new("RGBA", (size, size), (0,0,0,0))
+  d = ImageDraw.Draw(img)
+
+  r,g,b = bg_rgb
+  # Background gradient-ish blocks
+  d.rectangle([0,0,size,size], fill=(clamp(r*6),clamp(g*6),clamp(b*6),255))
+  d.ellipse([40,40,size-40,size-40], outline=(240, 210, 140, 160), width=10)
+  d.ellipse([72,72,size-72,size-72], outline=(255, 255, 255, 60), width=6)
+
+  # Simple "icon" placeholder
+  d.rounded_rectangle([140,170,372,342], radius=26, outline=(255,210,122,190), width=8, fill=(0,0,0,45))
+
+  # Label block (no font dependency): draw segmented bars representing letters
+  # This keeps it dependency-free.
+  # (Real icons replace these later.)
+  bars = max(3, min(10, len(label)))
+  x0 = 170
+  for i in range(bars):
+    d.rectangle([x0+i*18, 220, x0+i*18+10, 292], fill=(255,210,122,180))
+
+  return img
+
+def main():
+  OUT.mkdir(parents=True, exist_ok=True)
+  for machine, rgb in MACHINES.items():
+    mdir = OUT / machine
+    mdir.mkdir(parents=True, exist_ok=True)
+    for s in SYMS:
+      img = make_tile(rgb, s)
+      path = mdir / f"{s}.webp"
+      img.save(path, "WEBP", quality=88, method=6)
+      print("Wrote", path.relative_to(ROOT))
+  print("Done. Replace placeholders by running the sheet splitter later.")
+
+if __name__ == "__main__":
+  main()
