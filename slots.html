@@ -241,6 +241,28 @@
 <script type="module" src="js/ui/topbar.js"></script>
 <script type="module" src="js/ui/footer.js"></script>
 <script src="js/nav.js"></script>
+<script>
+  (function () {
+    function forceGameMode() {
+      try {
+        const machineParam = new URLSearchParams(window.location.search).get("m");
+        if (!machineParam) return;
+        document.querySelector(".slotsPage")?.classList.add("gameMode");
+      } catch (_) {}
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", forceGameMode, { once: true });
+    } else {
+      forceGameMode();
+    }
+
+    // Re-apply after async/template work.
+    requestAnimationFrame(forceGameMode);
+    setTimeout(forceGameMode, 0);
+    setTimeout(forceGameMode, 250);
+  })();
+</script>
 
 </body>
 </html>

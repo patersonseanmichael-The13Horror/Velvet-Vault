@@ -59,12 +59,21 @@
   const paylinesWrap = document.getElementById("paylines");
   const reelsWrap = document.querySelector(".reelsWrap");
 
-  // Enable full game mode if machine selected
-  const params = new URLSearchParams(window.location.search);
-  const machineParam = params.get("m");
+  // Enable full game mode if machine selected (run after DOM is ready)
+  function applyGameModeFromQuery(){
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const machineParam = params.get("m");
+      if (!machineParam) return;
+      const el = document.querySelector(".slotsPage");
+      if (el) el.classList.add("gameMode");
+    } catch(e){}
+  }
 
-  if (machineParam) {
-    document.querySelector(".slotsPage")?.classList.add("gameMode");
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", applyGameModeFromQuery, { once:true });
+  } else {
+    applyGameModeFromQuery();
   }
 
   // Normalize DOM to guarantee 5x3 visible cabinet.
