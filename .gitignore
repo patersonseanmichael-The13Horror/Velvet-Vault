@@ -1,21 +1,22 @@
+# Core ignores
 node_modules/
-.tmp_*
-/tmp/
+.env
+.DS_Store
 *.log
-# --- Velvet Vault ---
-# Build artefacts
-.next/
 dist/
 coverage/
 
-# Node
-node_modules/
+# Local temp
+.tmp_*
+/tmp/
 
-# Environment
+# Build artefacts
+.next/
+
+# Environment variants
 .env*
 
 # OS / misc
-.DS_Store
 Thumbs.db
 
 # Velvet Vault archives / exports (keep repo lean)
