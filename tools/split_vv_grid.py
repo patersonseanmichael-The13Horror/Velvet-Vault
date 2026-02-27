@@ -1,9 +1,7 @@
 from PIL import Image
 import os
-import sys
 
-# Usage:
-# python3 tools/split_vv_grid.py path/to/your/image.jpg
+INPUT = "velvet-vault-split.png"
 
 OUT_NAMES = [
     "arrival.webp",
@@ -16,15 +14,9 @@ OUT_NAMES = [
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python3 tools/split_vv_grid.py input.jpg")
-        sys.exit(1)
-
-    input_path = sys.argv[1]
-    img = Image.open(input_path).convert("RGB")
+    img = Image.open(INPUT).convert("RGB")
     width, height = img.size
 
-    # 2 columns × 3 rows
     cols = 2
     rows = 3
 
@@ -47,7 +39,7 @@ def main():
             print("Saved:", out_path)
             index += 1
 
-    print("Done.")
+    print("All backgrounds created successfully.")
 
 
 if __name__ == "__main__":
