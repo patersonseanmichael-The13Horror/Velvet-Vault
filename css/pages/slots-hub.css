@@ -1,0 +1,99 @@
+/* Velvet Vault - Slots Hub */
+.slotsHub{
+  width: min(1100px, calc(100% - 28px));
+  margin: 18px auto 46px;
+  display:grid;
+  gap: 14px;
+  position:relative;
+  z-index: 3;
+}
+
+.slotsHubHead{
+  display:flex;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap:wrap;
+  align-items:flex-end;
+}
+
+.slotsHubHead .kicker{
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:900;
+  font-size:11px;
+  color: rgba(241,236,255,0.76);
+}
+.slotsHubHead .sub{
+  color: rgba(241,236,255,0.70);
+}
+.slotsHubActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.slotsGrid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 880px){
+  .slotsGrid{ grid-template-columns: 1fr; }
+}
+
+.machineCard{
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 26px;
+  background: rgba(0,0,0,0.22);
+  box-shadow: 0 28px 90px rgba(0,0,0,0.38);
+  overflow:hidden;
+}
+.machineCardHead{
+  padding: 14px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap: 10px;
+}
+.machineTitle{
+  font-weight: 900;
+  letter-spacing:.06em;
+}
+.machineKey{
+  font-size: 11px;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  color: rgba(241,236,255,0.58);
+  margin-top: 4px;
+}
+.machineCardBody{
+  padding: 14px 14px 16px;
+}
+.machineDesc{
+  margin: 0 0 12px;
+  color: rgba(241,236,255,0.70);
+}
+.machineBadges{
+  display:flex;
+  gap: 8px;
+  flex-wrap:wrap;
+  margin-bottom: 12px;
+}
+.badge{
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-weight: 900;
+  letter-spacing:.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: rgba(241,236,255,0.82);
+}
+.machineActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+

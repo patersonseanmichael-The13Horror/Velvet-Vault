@@ -2,14 +2,37 @@ import { MACHINE_CONFIGS, getMachineConfig } from "./machines.js";
 import { SlotsEngine } from "./slots-engine.js";
 
 const params = new URLSearchParams(window.location.search);
-const requestedMachine = params.get("m");
+const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+const requestedMachine = hashParams.get("machine") || params.get("m") || getLastMachine();
 const machine = getMachineConfig(requestedMachine);
 const engine = new SlotsEngine(machine);
 
-if (requestedMachine !== machine.id) {
+if (
+  requestedMachine !== machine.id ||
+  params.get("m") !== machine.id ||
+  hashParams.get("machine") !== machine.id
+) {
   params.set("m", machine.id);
-  const next = `${window.location.pathname}?${params.toString()}`;
+  hashParams.set("machine", machine.id);
+  const next = `${window.location.pathname}?${params.toString()}#${hashParams.toString()}`;
   window.history.replaceState({}, "", next);
+}
+setLastMachine(machine.id);
+
+function getLastMachine() {
+  try {
+    return localStorage.getItem("vv_last_machine");
+  } catch (_) {
+    return null;
+  }
+}
+
+function setLastMachine(machineId) {
+  try {
+    localStorage.setItem("vv_last_machine", machineId);
+  } catch (_) {
+    // Ignore storage failures in private mode / restricted contexts.
+  }
 }
 
 const machineThemeCss = document.getElementById("machineThemeCss");
@@ -80,8 +103,9 @@ function renderMachineCards() {
   MACHINE_CONFIGS.forEach((m) => {
     const card = document.createElement("a");
     card.className = `machine-card ${m.id === machine.id ? "active" : ""}`.trim();
-    card.href = `slots.html?m=${m.id}`;
+    card.href = `slots.html?m=${encodeURIComponent(m.id)}#machine=${encodeURIComponent(m.id)}`;
     card.dataset.machine = m.id;
+    card.addEventListener("click", () => setLastMachine(m.id));
 
     const tokens = m.symbols.slice(0, 4).map((sym) => `<span class="token">${sym}</span>`).join("");
     card.innerHTML = `

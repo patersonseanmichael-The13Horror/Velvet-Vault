@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Velvet Vault - Slots</title>
+
+  <link rel="stylesheet" href="css/vv.tokens.css">
+  <link rel="stylesheet" href="css/vv.base.css">
+  <link rel="stylesheet" href="css/vv.components.css">
+  <link rel="stylesheet" href="css/velvet.css">
+  <link rel="stylesheet" href="css/rebirth.css">
+  <link rel="stylesheet" href="css/story.css">
+  <link rel="stylesheet" href="css/phase5-bg.css">
+  <link rel="stylesheet" href="css/phase6-effects.css">
+  <link rel="stylesheet" href="css/pages/slots-hub.css">
+</head>
+
+<body data-chapter="games">
+  <div class="vv-bg" aria-hidden="true">
+    <div class="vv-bg__layer layer-a"></div>
+    <div class="vv-bg__layer layer-b"></div>
+    <div class="vv-bg__tint"></div>
+    <div class="vv-bg__vignette"></div>
+    <div class="vv-bg__streaks"></div>
+    <div class="vv-grain"></div>
+  </div>
+
+  <main class="slotsHub">
+    <header class="slotsHubHead">
+      <div>
+        <div class="kicker">Games Wing</div>
+        <h1 style="margin:6px 0 0;">Slots</h1>
+        <p class="sub" style="margin:6px 0 0;">Choose your machine. Each follows the Velvet Vault storyline.</p>
+      </div>
+      <div class="slotsHubActions">
+        <a class="btn" href="members.html">Back to Members</a>
+        <a class="btn primary" href="slots.html?m=machine-01#machine=machine-01">Open Slots (Default)</a>
+      </div>
+    </header>
+
+    <section class="slotsGrid" id="slotsGrid" aria-label="Slot machines list">
+      <!-- populated by JS -->
+    </section>
+  </main>
+
+  <script src="js/phase6-effects.js"></script>
+  <script type="module" src="js/games/slots-hub.js"></script>
+</body>
+</html>
+
