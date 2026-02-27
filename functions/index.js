@@ -7,7 +7,9 @@
    ========================================================== */
 
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const cors = require("cors")({ origin: true });
 
 admin.initializeApp();
 
@@ -51,13 +53,47 @@ async function ensureUserDoc(uid) {
   return ref;
 }
 
+async function readBalance(uid) {
+  const ref = await ensureUserDoc(uid);
+  const snap = await ref.get();
+  return Number(snap.data()?.balance || 0);
+}
+
 // ---- Callable: Get balance ----
 exports.vvGetBalance = onCall({ cors: true }, async (request) => {
   const uid = requireAuth(request);
-  const ref = await ensureUserDoc(uid);
-  const snap = await ref.get();
-  const bal = Number(snap.data()?.balance || 0);
+  const bal = await readBalance(uid);
   return { balance: bal };
+});
+
+// ---- HTTP: Get balance (CORS + Bearer token) ----
+exports.vvGetBalanceHttp = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "GET" && req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    try {
+      const authHeader = String(req.headers.authorization || "");
+      if (!authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ error: "Missing bearer token" });
+        return;
+      }
+
+      const idToken = authHeader.slice("Bearer ".length).trim();
+      const decoded = await admin.auth().verifyIdToken(idToken);
+      const bal = await readBalance(decoded.uid);
+      res.status(200).json({ ok: true, balance: bal });
+    } catch (err) {
+      res.status(500).json({ error: err?.message || "Unknown error" });
+    }
+  });
 });
 
 // ---- Callable: Debit ----
