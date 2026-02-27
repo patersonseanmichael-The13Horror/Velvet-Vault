@@ -59,6 +59,15 @@
   const paylinesWrap = document.getElementById("paylines");
   const reelsWrap = document.querySelector(".reelsWrap");
 
+  // Enable full game mode if machine selected
+  const params = new URLSearchParams(window.location.search);
+  const machineParam = params.get("m");
+
+  if(machineParam){
+    const page = document.querySelector(".slotsPage");
+    if(page) page.classList.add("gameMode");
+  }
+
   // Normalize DOM to guarantee 5x3 visible cabinet.
   // Fixes the "~~~/~~" layout issue (wrong rows/wrapping).
   function ensureCabinetDOM(){
