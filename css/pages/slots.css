@@ -599,3 +599,22 @@ body[data-slot-skin="clockwork"] .reelCol{ background: rgba(10,10,14,0.26); }
 }
 .reelsWrap.tease-coins .reelCol{ animation: vvPulse .55s ease-in-out 1; }
 .reelsWrap.tease-scatters .reelCol{ animation: vvPulse .55s ease-in-out 1; }
+/* Image symbols inside slot cells */
+.reel-cell {
+  position: relative;
+  overflow: hidden;
+}
+
+.reel-cell .symImg {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+.reel-cell .symTxt {
+  position: relative;
+  z-index: 2;
+}
