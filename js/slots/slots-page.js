@@ -242,6 +242,9 @@ function bigWinTone() {
   trackedTimeout(() => beep(hz, 120, "sawtooth", 0.04), 90);
 }
 
+const REELS = 5;
+const ROWS = 3;
+
 const reelCells = [];
 const reelCols = [];
 
@@ -249,35 +252,46 @@ function randomSymbol() {
   return machine.symbols[Math.floor(Math.random() * machine.symbols.length)];
 }
 
-function buildReels() {
-  reelsEl.innerHTML = "";
+function ensureReelDOM() {
+  if (!reelsEl) return;
 
-  for (let reel = 0; reel < 5; reel += 1) {
+  // Hard rebuild to normalize into a strict 5x3 cabinet grid.
+  reelsEl.innerHTML = "";
+  reelCols.length = 0;
+  reelCells.length = 0;
+
+  for (let reel = 0; reel < REELS; reel += 1) {
     const col = document.createElement("div");
-    col.className = "reel-col";
+    col.className = "reel-col reelCol";
     col.dataset.reel = String(reel);
 
-    const cells = [];
-    for (let row = 0; row < 3; row += 1) {
+    const colCells = [];
+    for (let row = 0; row < ROWS; row += 1) {
       const cell = document.createElement("div");
-      cell.className = "reel-cell";
+      cell.className = "reel-cell cell";
       cell.dataset.row = String(row);
       renderSymbolCell(cell, randomSymbol());
       col.appendChild(cell);
-      cells.push(cell);
+      colCells.push(cell);
     }
 
     reelsEl.appendChild(col);
     reelCols.push(col);
-    reelCells.push(cells);
+    reelCells.push(colCells);
   }
 }
 
+function buildReels() {
+  ensureReelDOM();
+}
+
 function renderGrid(grid) {
-  for (let reel = 0; reel < 5; reel += 1) {
-    for (let row = 0; row < 3; row += 1) {
+  for (let reel = 0; reel < REELS; reel += 1) {
+    for (let row = 0; row < ROWS; row += 1) {
       const value = grid[row][reel];
-      renderSymbolCell(reelCells[reel][row], value);
+      const cell = reelCells[reel]?.[row];
+      if (!cell) continue;
+      renderSymbolCell(cell, value);
     }
   }
 }
@@ -311,7 +325,7 @@ function buildPaylineOverlay() {
   defs.appendChild(gradient);
   paylineSvgEl.appendChild(defs);
 
-  const xPoints = [10, 30, 50, 70, 90];
+  const xPoints = Array.from({ length: REELS }, (_, reel) => 10 + (reel * (80 / (REELS - 1))));
   const rowY = [16, 50, 84];
 
   machine.paylines.forEach((line, idx) => {
@@ -416,7 +430,7 @@ async function animateSpin(finalGrid) {
     let tickCounter = 0;
 
     const spinTimer = trackedInterval(() => {
-      for (let row = 0; row < 3; row += 1) {
+      for (let row = 0; row < ROWS; row += 1) {
         renderSymbolCell(reelCells[reel][row], randomSymbol());
       }
       tickCounter += 1;
@@ -427,7 +441,7 @@ async function animateSpin(finalGrid) {
     trackedTimeout(() => {
       clearInterval(spinTimer);
       pendingIntervals.delete(spinTimer);
-      for (let row = 0; row < 3; row += 1) {
+      for (let row = 0; row < ROWS; row += 1) {
         renderSymbolCell(reelCells[reel][row], finalGrid[row][reel]);
       }
       col.classList.remove("spinning");

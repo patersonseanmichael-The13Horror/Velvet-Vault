@@ -1,0 +1,42 @@
+diff --git a/css/pages/slots.css b/css/pages/slots.css
+--- a/css/pages/slots.css
++++ b/css/pages/slots.css
+@@ -21,4 +21,38 @@
+ .reel-cell .symTxt {
+   position: relative;
+   z-index: 2;
+ }
++
++/* --- FORCE TRUE 5x3 CABINET LAYOUT --- */
++/* 5 reels across */
++.reelsWrap{
++  display: grid !important;
++  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
++  gap: 12px !important;
++  align-items: stretch !important;
++}
++
++/* each reel column holds 3 symbols down */
++.reelCol{
++  display: grid !important;
++  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
++  gap: 10px !important;
++  padding: 10px !important;
++  min-height: 0 !important;
++}
++
++/* symbol cell sizing */
++.cell{
++  height: 92px !important;
++  min-height: 92px !important;
++  display: flex !important;
++  align-items: center !important;
++  justify-content: center !important;
++}
++
++/* Mobile scaling while keeping 5 reels visible */
++@media (max-width: 720px){
++  .reelsWrap{ gap: 8px !important; }
++  .reelCol{ gap: 6px !important; padding: 8px !important; }
++  .cell{ height: 72px !important; min-height: 72px !important; }
++}
