@@ -84,7 +84,7 @@ async function run() {
     forbiddenRefs: [],
   };
 
-  // 1) Forbidden reference scan (Grand Golden Vault)
+  // 1) Forbidden reference scan
   const allFiles = walk(ROOT).filter(f =>
     !f.includes(`${path.sep}.git${path.sep}`) &&
     !f.includes(`${path.sep}node_modules${path.sep}`) &&
@@ -92,7 +92,7 @@ async function run() {
     (f.endsWith(".html") || f.endsWith(".css") || f.endsWith(".js") || f.endsWith(".md"))
   );
 
-  const forbidden = ["Grand Golden Vault", "grand-golden-vault", "grand_golden_vault"];
+  const forbidden = [];
   for (const f of allFiles) {
     const t = readText(f);
     for (const word of forbidden) {

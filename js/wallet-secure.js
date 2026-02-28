@@ -53,6 +53,11 @@ function safeInt(x) {
   return Math.floor(n);
 }
 
+function safeStr(v, max = 120) {
+  if (typeof v !== "string") return "";
+  return v.trim().slice(0, max);
+}
+
 let state = {
   user: null,
   balance: 0,
@@ -94,9 +99,10 @@ function formatGold(n) {
 // Firebase wiring
 const db = getFirestore(app);
 const fx = getFunctions(app);
-const vvGetBalance = httpsCallable(fx, "vvGetBalance");
+const vvGetBalanceCallable = httpsCallable(fx, "vvGetBalanceCallable");
 const vvDebit = httpsCallable(fx, "vvDebit");
 const vvCredit = httpsCallable(fx, "vvCredit");
+const vvSpin = httpsCallable(fx, "vvSpin");
 
 let unsubUser = null;
 let unsubLedger = null;
@@ -167,7 +173,7 @@ onAuthStateChanged(auth, async (user) => {
 
   // Prime balance once (optional)
   try {
-    const res = await vvGetBalance();
+    const res = await vvGetBalanceCallable();
     const bal = safeInt(res.data?.balance || 0);
     state.balance = bal;
     setCache(bal);
@@ -216,6 +222,41 @@ async function credit(amount, note) {
   }
 }
 
+async function spin(request) {
+  if (!state.user) {
+    return { ok: false, error: "Not authenticated." };
+  }
+
+  const bet = safeInt(request?.bet);
+  const denom = safeInt(request?.denom || 1);
+  const configId = safeStr(request?.configId || "noir_paylines_5x3", 80);
+  const roundId = safeStr(request?.roundId || nowId(), 120);
+  const seed = safeStr(request?.seed || "", 120);
+
+  if (bet <= 0 || denom <= 0) {
+    return { ok: false, error: "Invalid bet/denom." };
+  }
+
+  try {
+    const res = await vvSpin({
+      bet,
+      denom,
+      configId,
+      roundId,
+      seed
+    });
+
+    const payload = res.data || {};
+    const bal = safeInt(payload.balance ?? state.balance);
+    state.balance = bal;
+    setCache(bal);
+    notify();
+    return payload;
+  } catch (err) {
+    return { ok: false, error: err?.message || "Spin failed." };
+  }
+}
+
 function getBalance() {
   return safeInt(state.balance);
 }
@@ -249,5 +290,6 @@ window.VaultEngine = {
   },
   subscribe,
   formatGold,
-  getLedger
+  getLedger,
+  spin
 };

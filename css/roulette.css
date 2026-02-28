@@ -108,7 +108,7 @@
       radial-gradient(1200px 700px at 50% 22%, rgba(0,255,154,0.10), transparent 60%),
       radial-gradient(1200px 700px at 50% 28%, rgba(255,35,61,0.10), transparent 62%),
       radial-gradient(900px 520px at 50% 45%, rgba(0,0,0,0.14), rgba(0,0,0,0.82)),
-      url("images/roulette-board.jpg") center/cover no-repeat,
+      url("../images/roulette-board.jpg") center/cover no-repeat,
       linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78));
   }
   .stage::before{
@@ -188,7 +188,7 @@
     background:
       radial-gradient(circle at 40% 35%, rgba(255,255,255,0.10), transparent 45%),
       radial-gradient(circle at 50% 60%, rgba(0,0,0,0.75), rgba(0,0,0,0.92)),
-      url("images/roulette-wheel.png") center/cover no-repeat;
+      url("../images/roulette-wheel.png") center/cover no-repeat;
     border:1px solid rgba(255,255,255,0.10);
     box-shadow:
       0 0 22px rgba(0,255,154,.18),
@@ -631,7 +631,7 @@
       radial-gradient(1200px 700px at 50% 22%, rgba(0,255,154,0.10), transparent 60%),
       radial-gradient(1200px 700px at 50% 28%, rgba(255,35,61,0.10), transparent 62%),
       radial-gradient(900px 520px at 50% 45%, rgba(0,0,0,0.14), rgba(0,0,0,0.82)),
-      url("images/roulette-board.jpg") center/cover no-repeat,
+      url("../images/roulette-board.jpg") center/cover no-repeat,
       linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78));
   }
 

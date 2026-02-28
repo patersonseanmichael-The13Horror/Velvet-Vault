@@ -212,7 +212,7 @@
     }
 
 .hero-left{
-  background: url("images/velvet-vault-hero.png") center/cover no-repeat;
+  background: url("../images/velvet-vault-hero.png") center/cover no-repeat;
   padding: 28px;
   min-height: 540px;
 }

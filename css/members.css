@@ -137,7 +137,7 @@
       overflow:hidden;
       background:
         radial-gradient(900px 520px at 50% 35%, rgba(0,0,0,0.20), rgba(0,0,0,0.78)),
-        url("images/velvet-vault-hero.png") center/cover no-repeat;
+        url("../images/velvet-vault-hero.png") center/cover no-repeat;
       box-shadow: 0 30px 80px var(--shadow);
       position:relative;
       min-height: 240px;

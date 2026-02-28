@@ -1,0 +1,28 @@
+{
+  "name": "@velvet/slot-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "velvet-slot-sim": "./dist/bin/sim.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev:sim": "node --enable-source-maps dist/bin/sim.js",
+    "sim": "npm run build && velvet-slot-sim --config ./src/config/sample.noirHeist.5x3.20l.json --spins 200000"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

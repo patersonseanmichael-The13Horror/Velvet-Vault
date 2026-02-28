@@ -64,3 +64,29 @@
 }
 .reelsWrap.tease-coins .reelCol{ animation: vvPulse .55s ease-in-out 1; }
 .reelsWrap.tease-scatters .reelCol{ animation: vvPulse .55s ease-in-out 1; }
+
+/* Override legacy fullscreen cabinet rules to keep controls visible and scrollable. */
+body{
+  display: block !important;
+  align-items: initial !important;
+  justify-content: initial !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+main.page.slotsPage{
+  position: relative !important;
+  inset: auto !important;
+  z-index: auto !important;
+}
+
+.slotsShell{
+  height: auto !important;
+}
+
+.reelsWrap{
+  width: 100% !important;
+  height: auto !important;
+  padding: 12px !important;
+  gap: 12px !important;
+}

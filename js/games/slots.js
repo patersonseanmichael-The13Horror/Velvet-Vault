@@ -59,23 +59,6 @@
   const paylinesWrap = document.getElementById("paylines");
   const reelsWrap = document.querySelector(".reelsWrap");
 
-  // Enable full game mode if machine selected (run after DOM is ready)
-  function applyGameModeFromQuery(){
-    try{
-      const params = new URLSearchParams(window.location.search);
-      const machineParam = params.get("m");
-      if (!machineParam) return;
-      const el = document.querySelector(".slotsPage");
-      if (el) el.classList.add("gameMode");
-    } catch(e){}
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", applyGameModeFromQuery, { once:true });
-  } else {
-    applyGameModeFromQuery();
-  }
-
   // Normalize DOM to guarantee 5x3 visible cabinet.
   // Fixes the "~~~/~~" layout issue (wrong rows/wrapping).
   function ensureCabinetDOM(){
@@ -343,6 +326,22 @@
     makeMachine_ClockworkVault(),
   ];
 
+  const SLOT_CONFIG_BY_MACHINE = {
+    velvet_noir: "noir_paylines_5x3",
+    cyber_sakura: "neon_ways_5x3",
+    neon_pharaoh: "ember_cascade_5x3",
+    emerald_heist: "royal_cluster_5x3",
+    crimson_crown: "noir_paylines_5x3",
+    abyssal_pearls: "neon_ways_5x3",
+    clockwork_vault: "ember_cascade_5x3",
+  };
+
+  const toInt = (n)=> {
+    const v = Number(n);
+    if (!Number.isFinite(v)) return 0;
+    return Math.floor(v);
+  };
+
   // --- Game state ---
   let balance = Number(balanceEl.textContent || "5000") || 5000;
   let bet = 150;
@@ -397,6 +396,10 @@
   holdWinModal.addEventListener("click", (e)=>{ if (e.target===holdWinModal) closeModal(holdWinModal); });
 
   function syncUI(){
+    if (window.VaultEngine && typeof window.VaultEngine.getBalance === "function"){
+      const latest = toInt(window.VaultEngine.getBalance());
+      if (latest >= 0) balance = latest;
+    }
     balanceEl.textContent = String(Math.floor(balance));
     betLabel.textContent = String(Math.floor(bet));
     lineBet = Math.max(1, Math.floor(bet / lines));
@@ -406,6 +409,54 @@
     autoCountEl.textContent = String(autoLeft);
   }
   function setResult(msg){ resultEl.textContent = msg; }
+
+  function currentServerConfigId(){
+    return SLOT_CONFIG_BY_MACHINE[machine.key] || "noir_paylines_5x3";
+  }
+
+  function hasServerSpin(){
+    return Boolean(
+      window.VaultEngine &&
+      typeof window.VaultEngine.spin === "function" &&
+      window.VaultEngine.user
+    );
+  }
+
+  function renderServerGrid(grid){
+    if (!Array.isArray(grid)) return;
+    for (let r=0;r<REELS;r++){
+      for (let row=0;row<ROWS;row++){
+        const id = String(grid[row]?.[r] || "");
+        const s = symbolById(id);
+        const el = cells[r]?.[row];
+        if (!el) continue;
+        el.textContent = s.glyph !== "?" ? s.glyph : (id ? id.slice(0, 2) : "?");
+        el.classList.toggle("scatter", id===machine.ids.scatter || id==="SCATTER" || id==="SCAT");
+        el.classList.toggle("coin", id===machine.ids.coin || id==="COIN");
+        el.classList.toggle("wild", id===machine.ids.wild || id==="WILD");
+      }
+    }
+  }
+
+  function applyServerHighlights(wins){
+    clearHighlights();
+    if (!Array.isArray(wins)) return;
+    for (const w of wins){
+      const line = Number(w?.lineIndex);
+      if (Number.isFinite(line)){
+        const pl = paylinesWrap.querySelector(`.payline[data-line="${line}"]`);
+        if (pl) pl.classList.add("on");
+      }
+      const positions = Array.isArray(w?.positions) ? w.positions : [];
+      for (const p of positions){
+        const reel = Number(p?.reel);
+        const row = Number(p?.row);
+        if (!Number.isInteger(reel) || !Number.isInteger(row)) continue;
+        const cell = cells[reel]?.[row];
+        if (cell) cell.classList.add("win");
+      }
+    }
+  }
 
   // --- Reel model ---
   const REELS = 5;
@@ -909,7 +960,86 @@
   // --- Spin flow ---
   stopBtn.addEventListener("click", ()=>{ stopRequested = true; });
 
+  async function doServerSpin(){
+    if (!hasServerSpin()) return false;
+    if (busy) return true;
+    if (celebrating){
+      cancelCelebration = true;
+      celebrating = false;
+      return true;
+    }
+
+    busy = true;
+    clearHighlights();
+    setResult("Spinning...");
+
+    const roundId = window.RoundEngine?.nextDebitId
+      ? window.RoundEngine.nextDebitId("slots")
+      : `slots_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+
+    const spinRequest = {
+      bet,
+      denom: 1,
+      configId: currentServerConfigId(),
+      roundId
+    };
+
+    resetReels();
+    const spinPromise = window.VaultEngine.spin(spinRequest);
+    await spinReels();
+
+    let payload = null;
+    try {
+      payload = await spinPromise;
+    } catch (err) {
+      payload = { ok: false, error: err?.message || "Spin failed." };
+    }
+
+    if (!payload || payload.ok !== true || !payload.spin){
+      setResult(payload?.error || "Spin failed.");
+      syncUI();
+      busy = false;
+      return true;
+    }
+
+    const spin = payload.spin;
+    renderServerGrid(spin.grid);
+    applyServerHighlights(spin.wins);
+
+    freeSpinsLeft = Math.max(0, toInt(spin.featureState?.freeSpinsRemaining));
+    inFreeSpins = freeSpinsLeft > 0;
+    freeSpinMult = Math.max(1, Number(spin.featureState?.freeSpinsMultiplier || 1));
+    lastMult = Math.max(1, Number(spin.totalMultiplier || 1));
+
+    balance = toInt(payload.balance ?? window.VaultEngine.getBalance() ?? balance);
+    syncUI();
+
+    const payout = toInt(spin.totalWin);
+    if (payout > 0){
+      setResult(`Win: +${payout} (Lines: ${Array.isArray(spin.wins) ? spin.wins.length : 0})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
+    } else {
+      setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
+    }
+
+    busy = false;
+    if (auto && autoLeft>0){
+      autoLeft--;
+      syncUI();
+      setTimeout(()=>doSpin(), 220);
+    } else if (auto && autoLeft<=0){
+      auto = false;
+      syncUI();
+    }
+
+    return true;
+  }
+
   async function doSpin(){
+    if (hasServerSpin()){
+      const handled = await doServerSpin();
+      if (handled) return;
+    }
+
     if (busy) return;
     if (celebrating){
       cancelCelebration = true;
@@ -1041,10 +1171,72 @@
     document.body.setAttribute("data-slot-skin", machine.skin?.skinKey || machine.key);
   }
 
+  function bindWallet(){
+    const attach = () => {
+      if (!window.VaultEngine) return false;
+      if (typeof window.VaultEngine.subscribe === "function"){
+        window.VaultEngine.subscribe((nextBalance)=>{
+          balance = toInt(nextBalance);
+          syncUI();
+        });
+      }
+      if (typeof window.VaultEngine.getBalance === "function"){
+        balance = toInt(window.VaultEngine.getBalance());
+      }
+      syncUI();
+      return true;
+    };
+
+    if (attach()) return;
+    let attempts = 0;
+    const t = setInterval(() => {
+      attempts += 1;
+      if (attach() || attempts > 60){
+        clearInterval(t);
+      }
+    }, 100);
+  }
+
+  window.render_game_to_text = function renderGameToText(){
+    const grid = getGrid();
+    return JSON.stringify({
+      coordinateSystem: "grid rows top->bottom (0..2), reels left->right (0..4)",
+      machine: machine.key,
+      busy,
+      auto,
+      autoLeft,
+      balance: toInt(balance),
+      bet: toInt(bet),
+      lineBet: toInt(lineBet),
+      freeSpinsLeft: toInt(freeSpinsLeft),
+      inFreeSpins,
+      lastMultiplier: Number(lastMult || 1),
+      grid,
+      result: resultEl.textContent || ""
+    });
+  };
+
+  window.advanceTime = function advanceTime(ms){
+    const frames = Math.max(1, Math.round(Number(ms || 0) / (1000 / 60)));
+    return new Promise((resolve) => {
+      let remaining = frames;
+      function tick(){
+        remaining -= 1;
+        if (remaining <= 0){
+          resolve();
+          return;
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  };
+
   // --- Init ---
   resetReels();
   renderGrid();
   setBet(150);
+  bindWallet();
   syncUI();
   applyMachineSkin();
   setResult("Ready.");

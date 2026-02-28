@@ -60,7 +60,7 @@
       position:relative;
       background:
         radial-gradient(900px 520px at 50% 35%, rgba(0,0,0,0.18), rgba(0,0,0,0.78)),
-        url("images/velvet-vault-hero.png") center/cover no-repeat;
+        url("../images/velvet-vault-hero.png") center/cover no-repeat;
       min-height: 520px;
     }
     .left::before{

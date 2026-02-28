@@ -116,7 +116,7 @@
     radial-gradient(1200px 700px at 50% 28%, rgba(255,35,61,0.10), transparent 62%),
     radial-gradient(900px 520px at 50% 45%, rgba(0,0,0,0.14), rgba(0,0,0,0.86)),
     linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78)),
-    url("images/blackjack-bg.jpg") center/cover no-repeat;
+    url("../images/blackjack-table.jpg") center/cover no-repeat;
 }
     .stage::before{
       content:"";

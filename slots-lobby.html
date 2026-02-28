@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Velvet Vault - Slots Lobby</title>
+  <meta name="vv-protected" content="true">
 
   <!-- Core styles already used across site -->
   <link rel="stylesheet" href="css/vv.tokens.css">
@@ -14,7 +15,8 @@
   <link rel="stylesheet" href="css/story.css">
   <link rel="stylesheet" href="css/phase5-bg.css">
   <link rel="stylesheet" href="css/phase6-effects.css">
-  <link rel="stylesheet" href="css/vv.foundation.css">
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/guard.js"></script>
 
   <style>
     .lobbyShell{
@@ -137,30 +139,13 @@
     </section>
   </main>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-
   <!-- Backgrounds + effects -->
   <script src="js/story-engine.js"></script>
   <script src="js/bg-preload.js"></script>
   <script src="js/story-progress.js"></script>
   <script src="js/phase6-effects.js"></script>
 
-  <!-- App guard -->
-  <script src="js/app/vv.firebase.js"></script>
-  <script src="js/app/vv.guard.js"></script>
-
   <script>
-    // Lock lobby to logged-in members only
-    window.VV?.requireAuth({
-      onGuest: ()=> location.href = "index.html",
-      onBanned: ()=> location.href = "index.html",
-      onAuthed: ()=> {}
-    });
-
     // 7 machines currently integrated
     const MACHINES = [
       {

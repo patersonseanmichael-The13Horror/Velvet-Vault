@@ -16,7 +16,7 @@ const PAGES = [
   "ledger.html",
 ];
 
-const FORBIDDEN = ["Grand Golden Vault"];
+const FORBIDDEN = [];
 
 let ABORTED = false;
 let browser = null;

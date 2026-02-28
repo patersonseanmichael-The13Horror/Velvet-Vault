@@ -110,7 +110,7 @@
       min-height: 640px;
       background:
         radial-gradient(900px 520px at 50% 30%, rgba(0,0,0,0.12), rgba(0,0,0,0.78)),
-        url("images/poker-table.jpg") center/cover no-repeat;
+        url("../images/poker-table.jpg") center/cover no-repeat;
     }
     .stage::before{
       content:"";

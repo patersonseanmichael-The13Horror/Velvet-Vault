@@ -9,7 +9,21 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const cors = require("cors")({ origin: true });
+const cors = require("cors");
+const { getSlotConfig } = require("./slots-configs");
+const { runSpin } = require("./slots-engine-runtime");
+
+const corsDefault = cors({ origin: true });
+const corsHandler = cors({
+  origin: [
+    "https://velvet-vault-alpha.vercel.app",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
+  ],
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false
+});
 
 admin.initializeApp();
 
@@ -59,16 +73,27 @@ async function readBalance(uid) {
   return Number(snap.data()?.balance || 0);
 }
 
-// ---- Callable: Get balance ----
-exports.vvGetBalance = onCall({ cors: true }, async (request) => {
-  const uid = requireAuth(request);
-  const bal = await readBalance(uid);
-  return { balance: bal };
+// ---- HTTP: Get balance (CORS preflight) ----
+exports.vvGetBalance = functions.https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
+    // IMPORTANT: handle preflight early
+    if (req.method === "OPTIONS") {
+      return res.status(204).send("");
+    }
+
+    try {
+      // TODO: your real balance logic here
+      // Example response:
+      return res.status(200).json({ ok: true, balance: 0 });
+    } catch (err) {
+      return res.status(500).json({ ok: false, error: err.message });
+    }
+  });
 });
 
 // ---- HTTP: Get balance (CORS + Bearer token) ----
 exports.vvGetBalanceHttp = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
+  corsDefault(req, res, async () => {
     if (req.method === "OPTIONS") {
       res.status(204).send("");
       return;
@@ -94,6 +119,159 @@ exports.vvGetBalanceHttp = functions.https.onRequest((req, res) => {
       res.status(500).json({ error: err?.message || "Unknown error" });
     }
   });
+});
+
+// ---- Callable: Get balance (compat for Firebase callable clients) ----
+exports.vvGetBalanceCallable = onCall({ cors: true }, async (request) => {
+  const uid = requireAuth(request);
+  const bal = await readBalance(uid);
+  return { ok: true, balance: bal };
+});
+
+// ---- Callable: Server-authoritative slot spin ----
+exports.vvSpin = onCall({ cors: true }, async (request) => {
+  const uid = requireAuth(request);
+  const bet = nAmount(request.data?.bet);
+  const denom = nAmount(request.data?.denom || 1);
+  const roundId = safeStr(request.data?.roundId || "", 120);
+  const requestedConfigId = safeStr(request.data?.configId || "noir_paylines_5x3", 80);
+  const seed = safeStr(request.data?.seed || "", 120);
+
+  if (!bet) throw new HttpsError("invalid-argument", "Invalid bet.");
+  if (!denom) throw new HttpsError("invalid-argument", "Invalid denom.");
+  if (!roundId) throw new HttpsError("invalid-argument", "roundId required.");
+
+  const config = getSlotConfig(requestedConfigId);
+  const game = safeStr(`slots-${config.id}`, 40);
+
+  const userRef = await ensureUserDoc(uid);
+  const slotStateRef = userRef.collection("slotStates").doc(config.id);
+  const roundRef = userRef.collection("slotRounds").doc(roundId);
+  const auditRef = userRef.collection("slotAudits").doc(roundId);
+  const debitLedgerRef = userRef.collection("ledger").doc();
+  const creditLedgerRef = userRef.collection("ledger").doc();
+
+  let responsePayload = null;
+
+  await db.runTransaction(async (tx) => {
+    const roundSnap = await tx.get(roundRef);
+    if (roundSnap.exists) {
+      const roundData = roundSnap.data() || {};
+      responsePayload = {
+        ok: true,
+        replay: true,
+        balance: Number(roundData.balanceAfter || 0),
+        spin: roundData.spin || null,
+        audit: roundData.audit || null
+      };
+      return;
+    }
+
+    const userSnap = await tx.get(userRef);
+    const cur = Number(userSnap.data()?.balance || 0);
+
+    if (cur < bet) {
+      throw new HttpsError("failed-precondition", "Insufficient funds.");
+    }
+
+    const slotStateSnap = await tx.get(slotStateRef);
+    const priorFeatureState = slotStateSnap.data()?.featureState || {
+      freeSpinsRemaining: 0,
+      freeSpinsMultiplier: 1,
+      activeBonusId: null,
+      totalBonusWin: 0
+    };
+
+    const computed = runSpin(config, {
+      bet,
+      denom,
+      roundId,
+      seed,
+      featureState: priorFeatureState
+    });
+
+    const payout = Number(computed.result.totalWin || 0);
+    const nextBalance = cur - bet + payout;
+
+    computed.audit.walletTransactionIds = [debitLedgerRef.id];
+    if (payout > 0) {
+      computed.audit.walletTransactionIds.push(creditLedgerRef.id);
+    }
+
+    tx.update(userRef, { balance: nextBalance, updatedAt: TS() });
+    tx.set(
+      slotStateRef,
+      {
+        configId: config.id,
+        featureState: computed.result.featureState,
+        updatedAt: TS()
+      },
+      { merge: true }
+    );
+
+    tx.set(debitLedgerRef, {
+      type: "debit",
+      amount: bet,
+      game,
+      roundId,
+      note: `slot-spin:${config.id}`,
+      createdAt: TS()
+    });
+
+    if (payout > 0) {
+      tx.set(creditLedgerRef, {
+        type: "credit",
+        amount: payout,
+        game,
+        roundId,
+        note: `slot-payout:${config.id}`,
+        createdAt: TS()
+      });
+    }
+
+    tx.set(
+      auditRef,
+      {
+        uid,
+        ...computed.audit,
+        createdAt: TS(),
+        updatedAt: TS()
+      },
+      { merge: true }
+    );
+
+    tx.set(
+      roundRef,
+      {
+        uid,
+        configId: config.id,
+        roundId,
+        bet,
+        denom,
+        payout,
+        balanceAfter: nextBalance,
+        spin: computed.result,
+        audit: computed.audit,
+        createdAt: TS(),
+        updatedAt: TS()
+      },
+      { merge: true }
+    );
+
+    responsePayload = {
+      ok: true,
+      replay: false,
+      balance: nextBalance,
+      spin: computed.result,
+      audit: computed.audit
+    };
+  });
+
+  if (!responsePayload) {
+    throw new HttpsError("internal", "Spin transaction failed.");
+  }
+
+  return responsePayload;
 });
 
 // ---- Callable: Debit ----

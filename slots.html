@@ -77,7 +77,7 @@
           <div class="slotsTop">
             <div class="slotsTitle">
               <div class="kicker">Games Wing</div>
-              <h1>Slots — Themed Machines</h1>
+              <h2>Slots — Themed Machines</h2>
               <p class="sub">Pick a machine. Each has unique symbols, features, and vibe.</p>
             </div>
 
@@ -234,6 +234,7 @@
   </div>
 </div>
 
+<script src="js/round.js" defer></script>
 <script src="js/games/slots.js" defer></script>
 <script src="js/story-engine.js"></script>
 <script src="js/story-progress.js"></script>
@@ -241,28 +242,6 @@
 <script type="module" src="js/ui/topbar.js"></script>
 <script type="module" src="js/ui/footer.js"></script>
 <script src="js/nav.js"></script>
-<script>
-  (function () {
-    function forceGameMode() {
-      try {
-        const machineParam = new URLSearchParams(window.location.search).get("m");
-        if (!machineParam) return;
-        document.querySelector(".slotsPage")?.classList.add("gameMode");
-      } catch (_) {}
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", forceGameMode, { once: true });
-    } else {
-      forceGameMode();
-    }
-
-    // Re-apply after async/template work.
-    requestAnimationFrame(forceGameMode);
-    setTimeout(forceGameMode, 0);
-    setTimeout(forceGameMode, 250);
-  })();
-</script>
 
 </body>
 </html>

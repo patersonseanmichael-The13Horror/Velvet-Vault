@@ -3,6 +3,8 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 const auth = window.vvAuth;
 const LOGIN_PATH = "login.html";
 let guardResolved = false;
+const urlParams = new URLSearchParams(window.location.search);
+const demoMode = urlParams.get("demo") === "1";
 
 function goToLogin() {
   if (!location.pathname.endsWith(LOGIN_PATH)) {
@@ -17,7 +19,10 @@ const isProtected = (() => {
 })();
 
 // Demo-friendly: if Firebase auth is not available, allow the page to continue (even if protected).
-if (!auth) {
+if (demoMode) {
+  console.info("[VelvetVault] Demo mode enabled via ?demo=1 (auth guard bypass).");
+  guardResolved = true;
+} else if (!auth) {
   console.info("[VelvetVault] Auth unavailable — running in demo mode (no redirect).");
   guardResolved = true;
 } else if (!isProtected) {
