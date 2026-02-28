@@ -1,3 +1,4 @@
+import { webcrypto } from "node:crypto";
 import type { RNG } from "../types.js";
 
 /**
@@ -6,7 +7,7 @@ import type { RNG } from "../types.js";
  * If you need broader compatibility, polyfill with `import { webcrypto } from "crypto"`.
  */
 export function createSecureRNG(): RNG {
-  const cryptoObj = globalThis.crypto;
+  const cryptoObj = globalThis.crypto ?? webcrypto;
   if (!cryptoObj?.getRandomValues) {
     throw new Error("Secure RNG unavailable: globalThis.crypto.getRandomValues not found.");
   }

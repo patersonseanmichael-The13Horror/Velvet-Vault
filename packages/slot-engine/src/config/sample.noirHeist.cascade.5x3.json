@@ -1,0 +1,73 @@
+{
+  "id": "noir_heist_cascade_5x3",
+  "version": "3.0.0",
+  "mode": "cascade",
+  "layout": { "reels": 5, "rows": 3 },
+  "reelSet": {
+    "reels": [
+      ["A","K","Q","J","10","W","A","K","Q","S","J","10","A","K","Q","J","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","W","Q","J","10","S","A","K","Q","J","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","W","J","10","A","K","Q","J","S","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","J","W","10","A","K","Q","J","10","S","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","J","10","W","A","K","Q","J","10","A","K","Q","S","B"]
+    ]
+  },
+  "paylines": {
+    "lines": [
+      [1,1,1,1,1],
+      [0,0,0,0,0],
+      [2,2,2,2,2],
+      [0,1,2,1,0],
+      [2,1,0,1,2]
+    ]
+  },
+  "paytable": {
+    "A": { "3": 5, "4": 20, "5": 80 },
+    "K": { "3": 4, "4": 15, "5": 60 },
+    "Q": { "3": 3, "4": 10, "5": 40 },
+    "J": { "3": 2, "4": 8, "5": 30 },
+    "10": { "3": 1, "4": 5, "5": 20 }
+  },
+  "wild": { "wildSymbol": "W" },
+  "scatter": {
+    "scatterSymbol": "S",
+    "paytable": { "3": 2, "4": 10, "5": 50 },
+    "triggers": [{ "count": 3, "type": "freespins", "value": 10 }]
+  },
+  "features": {
+    "freeSpins": {
+      "enabled": true,
+      "multiplierProgression": { "type": "increment", "start": 2, "step": 1, "cap": 10 }
+    },
+    "cascade": {
+      "enabled": true,
+      "removeWinningSymbols": true,
+      "multiplierProgression": { "type": "increment", "start": 1, "step": 0.5, "cap": 5 },
+      "maxSteps": 30
+    },
+    "bonus": {
+      "holdAndSpin": {
+        "enabled": true,
+        "bonusSymbol": "B",
+        "triggerCount": 6,
+        "respins": 3,
+        "landChance": 0.15,
+        "values": [
+          { "value": 1, "weight": 40 },
+          { "value": 2, "weight": 25 },
+          { "value": 5, "weight": 15 },
+          { "value": 10, "weight": 10 },
+          { "value": 20, "weight": 5 },
+          { "value": 50, "weight": 1 }
+        ]
+      }
+    },
+    "bonusBuy": {
+      "enabled": true,
+      "freeSpinsCostMultiplier": 50,
+      "bonusCostMultiplier": 80
+    },
+    "provablyFair": { "enabled": true }
+  },
+  "limits": { "maxWinMultiplier": 5000 }
+}

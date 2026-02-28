@@ -1,0 +1,71 @@
+{
+  "id": "noir_heist_cluster_5x3",
+  "version": "4.0.0",
+  "mode": "cluster",
+  "layout": { "reels": 5, "rows": 3 },
+  "reelSet": {
+    "reels": [
+      ["A","A","K","K","Q","Q","J","J","10","10","W","S","B","A","A","K","K","Q","Q","B"],
+      ["A","A","K","K","Q","Q","J","J","10","10","W","S","B","A","A","K","K","Q","Q","B"],
+      ["A","A","K","K","Q","Q","J","J","10","10","W","S","B","A","A","K","K","Q","Q","B"],
+      ["A","A","K","K","Q","Q","J","J","10","10","W","S","B","A","A","K","K","Q","Q","B"],
+      ["A","A","K","K","Q","Q","J","J","10","10","W","S","B","A","A","K","K","Q","Q","B"]
+    ]
+  },
+  "cluster": {
+    "enabled": true,
+    "minClusterSize": 4,
+    "adjacency": 4,
+    "symbols": "allPaytableSymbols",
+    "wildJoinsAll": false
+  },
+  "paytable": {
+    "A": { "4": 2, "5": 4, "6": 8, "7": 14, "8": 22, "9": 32, "10": 45, "12": 70, "15": 120 },
+    "K": { "4": 2, "5": 4, "6": 8, "7": 14, "8": 22, "9": 32, "10": 45, "12": 70, "15": 120 },
+    "Q": { "4": 2, "5": 4, "6": 8, "7": 14, "8": 22, "9": 32, "10": 45, "12": 70, "15": 120 },
+    "J": { "4": 1, "5": 3, "6": 6, "7": 10, "8": 16, "9": 24, "10": 36, "12": 55, "15": 90 },
+    "10": { "4": 1, "5": 3, "6": 6, "7": 10, "8": 16, "9": 24, "10": 36, "12": 55, "15": 90 },
+    "W": { "4": 4, "5": 8, "6": 16, "7": 28, "8": 44, "9": 64, "10": 90, "12": 140, "15": 220 }
+  },
+  "wild": { "wildSymbol": "W" },
+  "scatter": {
+    "scatterSymbol": "S",
+    "paytable": { "3": 2, "4": 10, "5": 50 },
+    "triggers": [{ "count": 3, "type": "freespins", "value": 10 }]
+  },
+  "features": {
+    "freeSpins": {
+      "enabled": true,
+      "multiplierProgression": { "type": "fixed", "value": 2 }
+    },
+    "clusterCascade": {
+      "enabled": true,
+      "multiplierProgression": { "type": "increment", "start": 1, "step": 1, "cap": 5 },
+      "maxSteps": 20
+    },
+    "bonus": {
+      "holdAndSpin": {
+        "enabled": true,
+        "bonusSymbol": "B",
+        "triggerCount": 6,
+        "respins": 3,
+        "landChance": 0.15,
+        "values": [
+          { "value": 1, "weight": 40 },
+          { "value": 2, "weight": 25 },
+          { "value": 5, "weight": 15 },
+          { "value": 10, "weight": 10 },
+          { "value": 20, "weight": 5 },
+          { "value": 50, "weight": 1 }
+        ]
+      }
+    },
+    "bonusBuy": {
+      "enabled": true,
+      "freeSpinsCostMultiplier": 50,
+      "bonusCostMultiplier": 80
+    },
+    "provablyFair": { "enabled": true }
+  },
+  "limits": { "maxWinMultiplier": 5000 }
+}

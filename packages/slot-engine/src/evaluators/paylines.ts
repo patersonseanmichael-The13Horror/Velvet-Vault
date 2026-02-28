@@ -30,6 +30,8 @@ function getLinePositions(line: number[], reels: number): Array<{ reel: number; 
  */
 export function evalPaylines(grid: Grid, config: MachineConfig, stake: number): LineWin[] {
   const { reels, rows } = config.layout;
+  const rules = config.paylines;
+  if (!rules) throw new ConfigError("config.paylines is required for mode=paylines");
   const scatter = config.scatter?.scatterSymbol;
   const wild = config.wild?.wildSymbol;
 
@@ -39,8 +41,8 @@ export function evalPaylines(grid: Grid, config: MachineConfig, stake: number): 
 
   const lineWins: LineWin[] = [];
 
-  for (let i = 0; i < config.paylines.lines.length; i++) {
-    const line = config.paylines.lines[i]!;
+  for (let i = 0; i < rules.lines.length; i++) {
+    const line = rules.lines[i]!;
     const pos = getLinePositions(line, reels);
 
     for (const p of pos) {

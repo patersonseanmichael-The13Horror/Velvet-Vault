@@ -1,7 +1,7 @@
 {
-  "id": "noir_heist_5x3",
-  "version": "2.0.0",
-  "mode": "paylines",
+  "id": "noir_heist_ways_5x3",
+  "version": "1.0.0",
+  "mode": "ways",
   "layout": { "reels": 5, "rows": 3 },
   "reelSet": {
     "reels": [
@@ -12,30 +12,7 @@
       ["A","K","Q","J","10","A","K","Q","J","10","W","A","K","Q","J","10","A","K","Q","S"]
     ]
   },
-  "paylines": {
-    "lines": [
-      [1,1,1,1,1],
-      [0,0,0,0,0],
-      [2,2,2,2,2],
-      [0,1,2,1,0],
-      [2,1,0,1,2],
-      [0,0,1,0,0],
-      [2,2,1,2,2],
-      [1,0,0,0,1],
-      [1,2,2,2,1],
-      [0,1,1,1,0],
-      [2,1,1,1,2],
-      [0,1,0,1,0],
-      [2,1,2,1,2],
-      [1,0,1,2,1],
-      [1,2,1,0,1],
-      [0,2,2,2,0],
-      [2,0,0,0,2],
-      [0,2,1,0,2],
-      [2,0,1,2,0],
-      [1,1,0,1,1]
-    ]
-  },
+  "ways": { "minCount": 3, "leftToRightOnly": true },
   "paytable": {
     "A": { "3": 5, "4": 20, "5": 80 },
     "K": { "3": 4, "4": 15, "5": 60 },
@@ -47,21 +24,10 @@
   "scatter": {
     "scatterSymbol": "S",
     "paytable": { "3": 2, "4": 10, "5": 50 },
-    "triggers": [
-      { "count": 3, "type": "freespins", "value": 10 },
-      { "count": 4, "type": "freespins", "value": 15 },
-      { "count": 5, "type": "freespins", "value": 25 }
-    ]
+    "triggers": [{ "count": 3, "type": "freespins", "value": 10 }]
   },
   "features": {
-    "freeSpins": {
-      "enabled": true,
-      "multiplierProgression": { "type": "increment", "start": 2, "step": 1, "cap": 10 }
-    },
-    "bonusBuy": {
-      "enabled": true,
-      "freeSpinsCostMultiplier": 50
-    }
+    "freeSpins": { "enabled": true, "multiplierProgression": { "type": "fixed", "value": 2 } }
   },
   "limits": { "maxWinMultiplier": 5000 }
 }

@@ -227,11 +227,12 @@ async function spin(request) {
     return { ok: false, error: "Not authenticated." };
   }
 
-  const bet = safeInt(request?.bet);
+  const bet = safeInt(request?.stake ?? request?.bet);
   const denom = safeInt(request?.denom || 1);
-  const configId = safeStr(request?.configId || "noir_paylines_5x3", 80);
+  const configId = safeStr(request?.machineId || request?.configId || "noir_paylines_5x3", 80);
   const roundId = safeStr(request?.roundId || nowId(), 120);
   const seed = safeStr(request?.seed || "", 120);
+  const featureState = request?.state && typeof request.state === "object" ? request.state : null;
 
   if (bet <= 0 || denom <= 0) {
     return { ok: false, error: "Invalid bet/denom." };
@@ -239,11 +240,14 @@ async function spin(request) {
 
   try {
     const res = await vvSpin({
+      stake: bet,
       bet,
       denom,
+      machineId: configId,
       configId,
       roundId,
-      seed
+      seed,
+      ...(featureState ? { state: featureState } : {})
     });
 
     const payload = res.data || {};

@@ -1,0 +1,94 @@
+{
+  "id": "noir_heist_factory_5x3",
+  "version": "6.0.0",
+  "mode": "cluster_cascade",
+  "layout": { "reels": 5, "rows": 3 },
+
+  "reelSet": {
+    "reels": [
+      ["A","K","Q","J","10","W","S","B","X","T"],
+      ["A","K","Q","J","10","W","S","B","X","T"],
+      ["A","K","Q","J","10","W","S","B","X","T"],
+      ["A","K","Q","J","10","W","S","B","X","T"],
+      ["A","K","Q","J","10","W","S","B","X","T"]
+    ]
+  },
+
+  "factoryProfiles": {
+    "base": {
+      "reels": [
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 28 }, { "id": "J", "weight": 26 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 22 }, { "id": "A", "weight": 18 },
+          { "id": "W", "weight": 3 }, { "id": "S", "weight": 2 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 1 }, { "id": "T", "weight": 1 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 28 }, { "id": "J", "weight": 26 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 22 }, { "id": "A", "weight": 18 },
+          { "id": "W", "weight": 3 }, { "id": "S", "weight": 2 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 1 }, { "id": "T", "weight": 1 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 28 }, { "id": "J", "weight": 26 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 22 }, { "id": "A", "weight": 18 },
+          { "id": "W", "weight": 3 }, { "id": "S", "weight": 2 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 1 }, { "id": "T", "weight": 1 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 28 }, { "id": "J", "weight": 26 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 22 }, { "id": "A", "weight": 18 },
+          { "id": "W", "weight": 3 }, { "id": "S", "weight": 2 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 1 }, { "id": "T", "weight": 1 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 28 }, { "id": "J", "weight": 26 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 22 }, { "id": "A", "weight": 18 },
+          { "id": "W", "weight": 3 }, { "id": "S", "weight": 2 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 1 }, { "id": "T", "weight": 1 }
+        ]}}
+      ]
+    },
+
+    "refill": {
+      "reels": [
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 30 }, { "id": "J", "weight": 28 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 20 }, { "id": "A", "weight": 14 },
+          { "id": "W", "weight": 2 }, { "id": "S", "weight": 1 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 2 }, { "id": "T", "weight": 2 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 30 }, { "id": "J", "weight": 28 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 20 }, { "id": "A", "weight": 14 },
+          { "id": "W", "weight": 2 }, { "id": "S", "weight": 1 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 2 }, { "id": "T", "weight": 2 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 30 }, { "id": "J", "weight": 28 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 20 }, { "id": "A", "weight": 14 },
+          { "id": "W", "weight": 2 }, { "id": "S", "weight": 1 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 2 }, { "id": "T", "weight": 2 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 30 }, { "id": "J", "weight": 28 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 20 }, { "id": "A", "weight": 14 },
+          { "id": "W", "weight": 2 }, { "id": "S", "weight": 1 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 2 }, { "id": "T", "weight": 2 }
+        ]}},
+        { "type": "weights", "weights": { "symbols": [
+          { "id": "10", "weight": 30 }, { "id": "J", "weight": 28 }, { "id": "Q", "weight": 24 }, { "id": "K", "weight": 20 }, { "id": "A", "weight": 14 },
+          { "id": "W", "weight": 2 }, { "id": "S", "weight": 1 }, { "id": "B", "weight": 1 }, { "id": "X", "weight": 2 }, { "id": "T", "weight": 2 }
+        ]}}
+      ]
+    }
+  },
+
+  "paytable": {
+    "A": { "5": 2, "6": 3, "7": 5, "8": 8, "9": 12, "10": 20, "11": 30, "12": 50, "13": 80, "14": 120, "15": 200 },
+    "K": { "5": 2, "6": 3, "7": 4, "8": 7, "9": 10, "10": 15, "11": 25, "12": 40, "13": 60, "14": 90, "15": 150 },
+    "Q": { "5": 1, "6": 2, "7": 3, "8": 5, "9": 8, "10": 12, "11": 18, "12": 30, "13": 45, "14": 70, "15": 120 },
+    "J": { "5": 1, "6": 2, "7": 3, "8": 4, "9": 6, "10": 10, "11": 15, "12": 25, "13": 40, "14": 60, "15": 100 },
+    "10": { "5": 1, "6": 2, "7": 2, "8": 3, "9": 5, "10": 7, "11": 10, "12": 18, "13": 30, "14": 45, "15": 80 }
+  },
+
+  "wild": { "wildSymbol": "W" },
+
+  "scatter": {
+    "scatterSymbol": "S",
+    "paytable": { "3": 2, "4": 10, "5": 50 },
+    "triggers": [{ "count": 3, "type": "freespins", "value": 10 }]
+  },
+
+  "features": {
+    "cluster": { "enabled": true, "minClusterSize": 5, "adjacency": 4, "symbols": "allPaytableSymbols", "wildJoinsAll": false },
+    "clusterCascade": { "enabled": true, "multiplierProgression": { "type": "increment", "start": 1, "step": 0.5, "cap": 5 }, "maxSteps": 30 },
+    "clusterSpecials": { "enabled": true, "bombSymbol": "X", "bombRadius": 1, "wildBombSymbol": "WX", "wildBombRadius": 2, "transformSymbol": "T", "transformRadius": 1, "transformTo": "A" },
+    "freeSpins": { "enabled": true, "multiplierProgression": { "type": "fixed", "value": 2 } },
+    "provablyFair": { "enabled": true }
+  },
+
+  "limits": { "maxWinMultiplier": 5000 }
+}

@@ -12,7 +12,8 @@
     }
   },
   "bin": {
-    "velvet-slot-sim": "./dist/bin/sim.js"
+    "velvet-slot-sim": "./dist/bin/sim.js",
+    "velvet-slot-calibrate": "./dist/bin/calibrate.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -23,6 +24,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/node": "^25.3.2",
     "typescript": "^5.6.3"
   }
 }

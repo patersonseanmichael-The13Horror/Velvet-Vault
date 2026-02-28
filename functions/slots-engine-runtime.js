@@ -73,9 +73,10 @@ function normalizeFeatureState(state) {
   if (!state || typeof state !== "object") {
     return { freeSpinsRemaining: 0, freeSpinsMultiplier: 1, activeBonusId: null, totalBonusWin: 0 };
   }
+  const multiplier = state.freeSpinsMultiplier ?? state.freeSpinWinMultiplier;
   return {
     freeSpinsRemaining: Math.max(0, Math.floor(Number(state.freeSpinsRemaining) || 0)),
-    freeSpinsMultiplier: Math.max(1, Number(state.freeSpinsMultiplier || 1)),
+    freeSpinsMultiplier: Math.max(1, Number(multiplier || 1)),
     activeBonusId: state.activeBonusId || null,
     totalBonusWin: Math.max(0, Math.floor(Number(state.totalBonusWin) || 0))
   };
@@ -563,5 +564,6 @@ function runSpin(config, request) {
 }
 
 module.exports = {
+  normalizeFeatureState,
   runSpin
 };

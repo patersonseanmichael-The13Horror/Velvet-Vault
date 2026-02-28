@@ -1,4 +1,5 @@
 import type { Grid, MachineConfig, RNG, SymbolId } from "../types.js";
+import { sampleSymbol } from "../factory/symbolFactory.js";
 import { ConfigError } from "../errors.js";
 
 export function validateReelSet(config: MachineConfig): void {
@@ -19,6 +20,26 @@ export function sampleGrid(config: MachineConfig, rng: RNG): Grid {
 
   const { reels, rows } = config.layout;
   const grid: SymbolId[][] = [];
+
+  const hasBaseFactory = Boolean(config.factoryProfiles?.base);
+
+  if (hasBaseFactory) {
+    for (let r = 0; r < reels; r++) {
+      const col: SymbolId[] = [];
+      for (let row = 0; row < rows; row++) {
+        col.push(
+          sampleSymbol({
+            machine: config,
+            rng,
+            reelIndex: r,
+            ctx: { profile: "base", reelIndex: r }
+          })
+        );
+      }
+      grid.push(col);
+    }
+    return grid;
+  }
 
   for (let r = 0; r < reels; r++) {
     const strip = config.reelSet.reels[r]!;

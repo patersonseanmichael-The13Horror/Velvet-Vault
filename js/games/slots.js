@@ -358,6 +358,8 @@
   let freeSpinsLeft = 0;
   let inFreeSpins = false;
   let freeSpinMult = 1.0;
+  let serverFeatureState = null;
+  let serverFeatureStateMachineId = "";
 
   let machine = MACHINES[0];
 
@@ -374,6 +376,8 @@
     machineSelect.addEventListener("change", ()=>{
       const m = MACHINES.find(x=>x.key===machineSelect.value) || MACHINES[0];
       machine = m;
+      serverFeatureState = null;
+      serverFeatureStateMachineId = "";
       applyMachineSkin();
       clearHighlights();
       renderRandomGrid();
@@ -978,11 +982,14 @@
       : `slots_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 
     const spinRequest = {
-      bet,
+      stake: bet,
       denom: 1,
-      configId: currentServerConfigId(),
+      machineId: currentServerConfigId(),
       roundId
     };
+    if (serverFeatureState && serverFeatureStateMachineId === spinRequest.machineId){
+      spinRequest.state = serverFeatureState;
+    }
 
     resetReels();
     const spinPromise = window.VaultEngine.spin(spinRequest);
@@ -1003,12 +1010,15 @@
     }
 
     const spin = payload.spin;
+    const nextState = payload.nextState || spin.featureState || null;
     renderServerGrid(spin.grid);
     applyServerHighlights(spin.wins);
 
-    freeSpinsLeft = Math.max(0, toInt(spin.featureState?.freeSpinsRemaining));
+    serverFeatureState = nextState;
+    serverFeatureStateMachineId = payload.machineId || spin.configId || currentServerConfigId();
+    freeSpinsLeft = Math.max(0, toInt(nextState?.freeSpinsRemaining));
     inFreeSpins = freeSpinsLeft > 0;
-    freeSpinMult = Math.max(1, Number(spin.featureState?.freeSpinsMultiplier || 1));
+    freeSpinMult = Math.max(1, Number((nextState?.freeSpinsMultiplier ?? nextState?.freeSpinWinMultiplier ?? 1)));
     lastMult = Math.max(1, Number(spin.totalMultiplier || 1));
 
     balance = toInt(payload.balance ?? window.VaultEngine.getBalance() ?? balance);

@@ -11,7 +11,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const { getSlotConfig } = require("./slots-configs");
-const { runSpin } = require("./slots-engine-runtime");
+const { normalizeFeatureState, runSpin } = require("./slots-engine-runtime");
 
 const corsDefault = cors({ origin: true });
 const corsHandler = cors({
@@ -48,6 +48,25 @@ function nAmount(x) {
 function safeStr(s, max = 200) {
   if (typeof s !== "string") return "";
   return s.trim().slice(0, max);
+}
+
+function hasOwn(obj, key) {
+  return Boolean(obj) && Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function featureStateMatches(a, b) {
+  return (
+    Number(a?.freeSpinsRemaining || 0) === Number(b?.freeSpinsRemaining || 0) &&
+    Number(a?.freeSpinsMultiplier || 1) === Number(b?.freeSpinsMultiplier || 1)
+  );
+}
+
+function toClientFeatureState(state) {
+  const normalized = normalizeFeatureState(state);
+  return {
+    ...normalized,
+    freeSpinWinMultiplier: normalized.freeSpinsMultiplier
+  };
 }
 
 async function ensureUserDoc(uid) {
@@ -131,11 +150,15 @@ exports.vvGetBalanceCallable = onCall({ cors: true }, async (request) => {
 // ---- Callable: Server-authoritative slot spin ----
 exports.vvSpin = onCall({ cors: true }, async (request) => {
   const uid = requireAuth(request);
-  const bet = nAmount(request.data?.bet);
+  const bet = nAmount(request.data?.stake ?? request.data?.bet);
   const denom = nAmount(request.data?.denom || 1);
   const roundId = safeStr(request.data?.roundId || "", 120);
-  const requestedConfigId = safeStr(request.data?.configId || "noir_paylines_5x3", 80);
+  const requestedConfigId = safeStr(request.data?.machineId || request.data?.configId || "noir_paylines_5x3", 80);
   const seed = safeStr(request.data?.seed || "", 120);
+  const hasRequestedState = hasOwn(request.data, "state") || hasOwn(request.data, "featureState");
+  const requestedState = hasRequestedState
+    ? normalizeFeatureState(hasOwn(request.data, "state") ? request.data.state : request.data.featureState)
+    : null;
 
   if (!bet) throw new HttpsError("invalid-argument", "Invalid bet.");
   if (!denom) throw new HttpsError("invalid-argument", "Invalid denom.");
@@ -161,27 +184,22 @@ exports.vvSpin = onCall({ cors: true }, async (request) => {
         ok: true,
         replay: true,
         balance: Number(roundData.balanceAfter || 0),
+        machineId: roundData.machineId || roundData.configId || roundData.spin?.configId || config.id,
+        state: toClientFeatureState(roundData.state),
+        nextState: toClientFeatureState(roundData.nextState || roundData.spin?.featureState),
+        stakeCharged: Number(roundData.stakeCharged ?? roundData.spin?.stakeCharged ?? roundData.bet ?? 0),
         spin: roundData.spin || null,
         audit: roundData.audit || null
       };
       return;
     }
 
-    const userSnap = await tx.get(userRef);
-    const cur = Number(userSnap.data()?.balance || 0);
-
-    if (cur < bet) {
-      throw new HttpsError("failed-precondition", "Insufficient funds.");
-    }
-
     const slotStateSnap = await tx.get(slotStateRef);
-    const priorFeatureState = slotStateSnap.data()?.featureState || {
-      freeSpinsRemaining: 0,
-      freeSpinsMultiplier: 1,
-      activeBonusId: null,
-      totalBonusWin: 0
-    };
-
+    const storedFeatureState = normalizeFeatureState(slotStateSnap.data()?.featureState);
+    if (hasRequestedState && slotStateSnap.exists && !featureStateMatches(requestedState, storedFeatureState)) {
+      throw new HttpsError("failed-precondition", "Feature state mismatch. Refresh and retry.");
+    }
+    const priorFeatureState = requestedState || storedFeatureState;
     const computed = runSpin(config, {
       bet,
       denom,
@@ -189,11 +207,22 @@ exports.vvSpin = onCall({ cors: true }, async (request) => {
       seed,
       featureState: priorFeatureState
     });
+    const stakeCharged = Number(computed.result.stakeCharged || 0);
+
+    const userSnap = await tx.get(userRef);
+    const cur = Number(userSnap.data()?.balance || 0);
+
+    if (cur < stakeCharged) {
+      throw new HttpsError("failed-precondition", "Insufficient funds.");
+    }
 
     const payout = Number(computed.result.totalWin || 0);
-    const nextBalance = cur - bet + payout;
+    const nextBalance = cur - stakeCharged + payout;
 
-    computed.audit.walletTransactionIds = [debitLedgerRef.id];
+    computed.audit.walletTransactionIds = [];
+    if (stakeCharged > 0) {
+      computed.audit.walletTransactionIds.push(debitLedgerRef.id);
+    }
     if (payout > 0) {
       computed.audit.walletTransactionIds.push(creditLedgerRef.id);
     }
@@ -209,14 +238,16 @@ exports.vvSpin = onCall({ cors: true }, async (request) => {
       { merge: true }
     );
 
-    tx.set(debitLedgerRef, {
-      type: "debit",
-      amount: bet,
-      game,
-      roundId,
-      note: `slot-spin:${config.id}`,
-      createdAt: TS()
-    });
+    if (stakeCharged > 0) {
+      tx.set(debitLedgerRef, {
+        type: "debit",
+        amount: stakeCharged,
+        game,
+        roundId,
+        note: `slot-spin:${config.id}`,
+        createdAt: TS()
+      });
+    }
 
     if (payout > 0) {
       tx.set(creditLedgerRef, {
@@ -245,11 +276,16 @@ exports.vvSpin = onCall({ cors: true }, async (request) => {
       {
         uid,
         configId: config.id,
+        machineId: config.id,
         roundId,
         bet,
+        stake: bet,
+        stakeCharged,
         denom,
         payout,
         balanceAfter: nextBalance,
+        state: priorFeatureState,
+        nextState: computed.result.featureState,
         spin: computed.result,
         audit: computed.audit,
         createdAt: TS(),
@@ -262,6 +298,10 @@ exports.vvSpin = onCall({ cors: true }, async (request) => {
       ok: true,
       replay: false,
       balance: nextBalance,
+      machineId: config.id,
+      state: toClientFeatureState(priorFeatureState),
+      nextState: toClientFeatureState(computed.result.featureState),
+      stakeCharged,
       spin: computed.result,
       audit: computed.audit
     };

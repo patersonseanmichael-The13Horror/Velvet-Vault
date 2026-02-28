@@ -1,0 +1,48 @@
+{
+  "id": "noir_heist_cluster_cascade_5x3",
+  "version": "4.0.0",
+  "mode": "cluster_cascade",
+  "layout": { "reels": 5, "rows": 3 },
+  "reelSet": {
+    "reels": [
+      ["A","K","Q","J","10","W","A","K","Q","S","J","10","A","K","Q","J","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","W","Q","J","10","S","A","K","Q","J","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","W","J","10","A","K","Q","J","S","10","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","J","W","10","A","K","Q","J","10","S","A","K","Q","B"],
+      ["A","K","Q","J","10","A","K","Q","J","10","W","A","K","Q","J","10","A","K","Q","S","B"]
+    ]
+  },
+  "paytable": {
+    "A": { "5": 2, "6": 3, "7": 5, "8": 8, "9": 12, "10": 20, "11": 30, "12": 50, "13": 80, "14": 120, "15": 200 },
+    "K": { "5": 2, "6": 3, "7": 4, "8": 7, "9": 10, "10": 15, "11": 25, "12": 40, "13": 60, "14": 90, "15": 150 },
+    "Q": { "5": 1, "6": 2, "7": 3, "8": 5, "9": 8, "10": 12, "11": 18, "12": 30, "13": 45, "14": 70, "15": 120 },
+    "J": { "5": 1, "6": 2, "7": 3, "8": 4, "9": 6, "10": 10, "11": 15, "12": 25, "13": 40, "14": 60, "15": 100 },
+    "10": { "5": 1, "6": 2, "7": 2, "8": 3, "9": 5, "10": 7, "11": 10, "12": 18, "13": 30, "14": 45, "15": 80 }
+  },
+  "wild": { "wildSymbol": "W" },
+  "scatter": {
+    "scatterSymbol": "S",
+    "paytable": { "3": 2, "4": 10, "5": 50 },
+    "triggers": [{ "count": 3, "type": "freespins", "value": 10 }]
+  },
+  "features": {
+    "cluster": {
+      "enabled": true,
+      "minClusterSize": 5,
+      "adjacency": 4,
+      "symbols": "allPaytableSymbols",
+      "wildJoinsAll": false
+    },
+    "clusterCascade": {
+      "enabled": true,
+      "multiplierProgression": { "type": "increment", "start": 1, "step": 0.5, "cap": 5 },
+      "maxSteps": 30
+    },
+    "freeSpins": {
+      "enabled": true,
+      "multiplierProgression": { "type": "fixed", "value": 2 }
+    },
+    "provablyFair": { "enabled": true }
+  },
+  "limits": { "maxWinMultiplier": 5000 }
+}
