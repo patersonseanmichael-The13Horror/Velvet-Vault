@@ -13,6 +13,9 @@ coverage/
 # Build artefacts
 .next/
 
+# Firebase Functions build output
+functions/lib/
+
 # Environment variants
 .env*
 
@@ -26,3 +29,11 @@ output/
 *.zip
 *.7z
 .vercel
+.vscode/
+
+# Local admin SDK credentials
+server/serviceAccountKey.json
+
+# Local slot-engine tuning artifacts
+packages/slot-engine/cluster_sim.csv
+packages/slot-engine/tuned.smoke.json

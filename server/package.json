@@ -1,0 +1,13 @@
+{
+  "name": "velvet-vault-server-tools",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start:atomic-wallet": "node atomicWalletServer.js",
+    "start:slot-server": "node slotServer.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase-admin": "^12.7.0"
+  }
+}

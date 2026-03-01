@@ -102,6 +102,9 @@ const fx = getFunctions(app);
 const vvGetBalanceCallable = httpsCallable(fx, "vvGetBalanceCallable");
 const vvDebit = httpsCallable(fx, "vvDebit");
 const vvCredit = httpsCallable(fx, "vvCredit");
+const vvReserveBet = httpsCallable(fx, "vvReserveBet");
+const vvSettleBet = httpsCallable(fx, "vvSettleBet");
+const vvCancelBet = httpsCallable(fx, "vvCancelBet");
 const vvSpin = httpsCallable(fx, "vvSpin");
 
 let unsubUser = null;
@@ -222,6 +225,70 @@ async function credit(amount, note) {
   }
 }
 
+async function reserveBet(request) {
+  if (!state.user) {
+    throw new Error("Not authenticated.");
+  }
+
+  const amount = safeInt(request?.amount);
+  const roundId = safeStr(request?.roundId || nowId(), 120);
+  const meta = request?.meta && typeof request.meta === "object" ? request.meta : null;
+
+  const res = await vvReserveBet({ roundId, amount, meta });
+  const payload = res.data || {};
+  if (typeof payload.balance === "number") {
+    state.balance = safeInt(payload.balance);
+    setCache(state.balance);
+    notify();
+  }
+  return payload;
+}
+
+async function settleBet(request) {
+  if (!state.user) {
+    throw new Error("Not authenticated.");
+  }
+
+  const payout = safeInt(request?.payout);
+  const roundId = safeStr(request?.roundId || "", 120);
+  const meta = request?.meta && typeof request.meta === "object" ? request.meta : null;
+
+  if (!roundId) {
+    throw new Error("roundId required.");
+  }
+
+  const res = await vvSettleBet({ roundId, payout, meta });
+  const payload = res.data || {};
+  if (typeof payload.balance === "number") {
+    state.balance = safeInt(payload.balance);
+    setCache(state.balance);
+    notify();
+  }
+  return payload;
+}
+
+async function cancelBet(request) {
+  if (!state.user) {
+    throw new Error("Not authenticated.");
+  }
+
+  const roundId = safeStr(request?.roundId || "", 120);
+  const reason = safeStr(request?.reason || "", 120);
+
+  if (!roundId) {
+    throw new Error("roundId required.");
+  }
+
+  const res = await vvCancelBet({ roundId, reason });
+  const payload = res.data || {};
+  if (typeof payload.balance === "number") {
+    state.balance = safeInt(payload.balance);
+    setCache(state.balance);
+    notify();
+  }
+  return payload;
+}
+
 async function spin(request) {
   if (!state.user) {
     return { ok: false, error: "Not authenticated." };
@@ -279,6 +346,7 @@ function subscribe(fn) {
 
 // Export global (backwards compatible)
 window.VaultEngine = {
+  mode: "secure",
   get user() { return state.user; },
   getBalance,
   debit: (amt, note) => {
@@ -295,5 +363,8 @@ window.VaultEngine = {
   subscribe,
   formatGold,
   getLedger,
+  reserveBet,
+  settleBet,
+  cancelBet,
   spin
 };

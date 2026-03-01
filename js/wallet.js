@@ -3,6 +3,7 @@ const LEGACY_KEYS = ["vv_wallet_balance", "vault_wallet_balance", "walletBalance
 const LEDGER_KEY = "vv_wallet_ledger_v1";
 const DEFAULT_BALANCE = 10000;
 const subscribers = new Set();
+const localRounds = new Map();
 
 // Try to load the server-authoritative wallet first; fall back to local cache.
 (async function initWallet() {
@@ -114,13 +115,13 @@ function getBalance() {
   return readWallet();
 }
 
-function debit(amount) {
+function debit(amount, note = "") {
   const spend = toInt(amount);
   if (spend <= 0) return false;
   const current = readWallet();
   if (spend > current) return false;
   const next = writeWallet(current - spend);
-  appendLedger("debit", spend, "", next);
+  appendLedger("debit", spend, note, next);
   return true;
 }
 
@@ -143,26 +144,99 @@ function subscribe(handler) {
   return () => subscribers.delete(handler);
 }
 
+async function reserveBet(request) {
+  const roundId = String(request?.roundId || "").trim();
+  const amount = toInt(request?.amount);
+  if (!roundId) throw new Error("roundId required");
+
+  const existing = localRounds.get(roundId);
+  if (existing) {
+    return { ok: true, status: existing.status || "reserved", existing: true, amount: existing.amount || 0 };
+  }
+
+  if (amount > 0) {
+    const ok = debit(amount, `reserve|roundId=${roundId}`);
+    if (!ok) throw new Error("Insufficient funds");
+  }
+
+  localRounds.set(roundId, {
+    amount,
+    status: "reserved",
+    meta: request?.meta ?? null
+  });
+
+  return {
+    ok: true,
+    status: "reserved",
+    amount,
+    balance: readWallet()
+  };
+}
+
+async function settleBet(request) {
+  const roundId = String(request?.roundId || "").trim();
+  const payout = toInt(request?.payout);
+  if (!roundId) throw new Error("roundId required");
+
+  const round = localRounds.get(roundId);
+  if (!round) return { ok: true, status: "noop", balance: readWallet() };
+  if (round.status === "settled") return { ok: true, status: "settled", existing: true, balance: readWallet() };
+  if (round.status !== "reserved") return { ok: true, status: round.status || "noop", balance: readWallet() };
+
+  if (payout > 0) {
+    credit(payout, `settle|roundId=${roundId}`);
+  }
+
+  round.status = "settled";
+  round.payout = payout;
+  localRounds.set(roundId, round);
+
+  return {
+    ok: true,
+    status: "settled",
+    balance: readWallet()
+  };
+}
+
+async function cancelBet(request) {
+  const roundId = String(request?.roundId || "").trim();
+  if (!roundId) throw new Error("roundId required");
+
+  const round = localRounds.get(roundId);
+  if (!round) return { ok: true, status: "noop", balance: readWallet() };
+  if (round.status === "cancelled") return { ok: true, status: "cancelled", existing: true, balance: readWallet() };
+  if (round.status === "settled") return { ok: true, status: "settled", existing: true, balance: readWallet() };
+
+  if (toInt(round.amount) > 0) {
+    credit(round.amount, `cancel|roundId=${roundId}`);
+  }
+
+  round.status = "cancelled";
+  localRounds.set(roundId, round);
+
+  return {
+    ok: true,
+    status: "cancelled",
+    balance: readWallet()
+  };
+}
+
 function initLocalWallet() {
   if (!window.VaultEngine) {
     window.VaultEngine = {
+      mode: "local",
       get user() {
         return window.vvAuth?.currentUser || { uid: "local-user" };
       },
       getBalance,
-      debit: (amount, note) => {
-        const spend = toInt(amount);
-        if (spend <= 0) return false;
-        const current = readWallet();
-        if (spend > current) return false;
-        const next = writeWallet(current - spend);
-        appendLedger("debit", spend, note, next);
-        return true;
-      },
+      debit,
       credit,
       subscribe,
       formatGold,
-      getLedger: () => readLedger()
+      getLedger: () => readLedger(),
+      reserveBet,
+      settleBet,
+      cancelBet
     };
   }
 

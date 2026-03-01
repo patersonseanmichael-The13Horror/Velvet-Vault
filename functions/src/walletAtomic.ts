@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { assertInt, assertString, requireAuthed } from "./utils";
+import { ensureUserDoc } from "./walletStore";
 
 type ReserveReq = { roundId: string; amount: number; meta?: unknown };
 type SettleReq = { roundId: string; payout: number; meta?: unknown };
@@ -9,10 +10,10 @@ type CancelReq = { roundId: string; reason?: string };
 export const vvReserveBet = functions.https.onCall(async (data: ReserveReq, context) => {
   const uid = requireAuthed(context);
   assertString("roundId", data?.roundId);
-  assertInt("amount", data?.amount, { min: 1 });
+  assertInt("amount", data?.amount, { min: 0, allowZero: true });
 
   const db = getFirestore();
-  const userRef = db.doc(`users/${uid}`);
+  const userRef = await ensureUserDoc(uid);
   const roundRef = userRef.collection("rounds").doc(data.roundId);
   const ledgerCol = userRef.collection("ledger");
 
@@ -65,10 +66,17 @@ export const vvReserveBet = functions.https.onCall(async (data: ReserveReq, cont
         roundId: data.roundId,
         meta: data.meta ?? null,
         actorUid: uid,
+        balanceAfter: balance - data.amount,
+        lockedAfter: locked + data.amount,
         ts: FieldValue.serverTimestamp()
       });
 
-      return { ok: true, status: "reserved" };
+      return {
+        ok: true,
+        status: "reserved",
+        balance: balance - data.amount,
+        locked: locked + data.amount
+      };
     },
     { maxAttempts: 3 }
   );
@@ -80,7 +88,7 @@ export const vvSettleBet = functions.https.onCall(async (data: SettleReq, contex
   assertInt("payout", data?.payout, { min: 0, allowZero: true });
 
   const db = getFirestore();
-  const userRef = db.doc(`users/${uid}`);
+  const userRef = await ensureUserDoc(uid);
   const roundRef = userRef.collection("rounds").doc(data.roundId);
   const ledgerCol = userRef.collection("ledger");
 
@@ -102,7 +110,7 @@ export const vvSettleBet = functions.https.onCall(async (data: SettleReq, contex
 
       const round = roundSnap.data() as Record<string, unknown>;
       if (round.status === "settled") {
-        return { ok: true, status: "settled", existing: true };
+        return { ok: true, status: "settled", existing: true, balance, locked };
       }
       if (round.status !== "reserved") {
         throw new functions.https.HttpsError(
@@ -136,6 +144,8 @@ export const vvSettleBet = functions.https.onCall(async (data: SettleReq, contex
         roundId: data.roundId,
         meta: data.meta ?? null,
         actorUid: uid,
+        balanceAfter: balance + data.payout,
+        lockedAfter: locked - amount,
         ts: FieldValue.serverTimestamp()
       });
 
@@ -146,11 +156,18 @@ export const vvSettleBet = functions.https.onCall(async (data: SettleReq, contex
           roundId: data.roundId,
           meta: data.meta ?? null,
           actorUid: uid,
+          balanceAfter: balance + data.payout,
+          lockedAfter: locked - amount,
           ts: FieldValue.serverTimestamp()
         });
       }
 
-      return { ok: true, status: "settled" };
+      return {
+        ok: true,
+        status: "settled",
+        balance: balance + data.payout,
+        locked: locked - amount
+      };
     },
     { maxAttempts: 3 }
   );
@@ -161,7 +178,7 @@ export const vvCancelBet = functions.https.onCall(async (data: CancelReq, contex
   assertString("roundId", data?.roundId);
 
   const db = getFirestore();
-  const userRef = db.doc(`users/${uid}`);
+  const userRef = await ensureUserDoc(uid);
   const roundRef = userRef.collection("rounds").doc(data.roundId);
   const ledgerCol = userRef.collection("ledger");
 
@@ -169,7 +186,7 @@ export const vvCancelBet = functions.https.onCall(async (data: CancelReq, contex
     async (tx) => {
       const userSnap = await tx.get(userRef);
       if (!userSnap.exists) {
-        return { ok: true, status: "noop" };
+        return { ok: true, status: "noop", balance: 0, locked: 0 };
       }
       const user = userSnap.data() as Record<string, unknown>;
 
@@ -178,15 +195,15 @@ export const vvCancelBet = functions.https.onCall(async (data: CancelReq, contex
 
       const roundSnap = await tx.get(roundRef);
       if (!roundSnap.exists) {
-        return { ok: true, status: "noop" };
+        return { ok: true, status: "noop", balance, locked };
       }
 
       const round = roundSnap.data() as Record<string, unknown>;
       if (round.status === "cancelled") {
-        return { ok: true, status: "cancelled", existing: true };
+        return { ok: true, status: "cancelled", existing: true, balance, locked };
       }
       if (round.status === "settled") {
-        return { ok: true, status: "settled", existing: true };
+        return { ok: true, status: "settled", existing: true, balance, locked };
       }
       if (round.status !== "reserved") {
         throw new functions.https.HttpsError(
@@ -218,10 +235,17 @@ export const vvCancelBet = functions.https.onCall(async (data: CancelReq, contex
         roundId: data.roundId,
         reason: data.reason ?? null,
         actorUid: uid,
+        balanceAfter: balance + amount,
+        lockedAfter: locked - amount,
         ts: FieldValue.serverTimestamp()
       });
 
-      return { ok: true, status: "cancelled" };
+      return {
+        ok: true,
+        status: "cancelled",
+        balance: balance + amount,
+        locked: locked - amount
+      };
     },
     { maxAttempts: 3 }
   );
