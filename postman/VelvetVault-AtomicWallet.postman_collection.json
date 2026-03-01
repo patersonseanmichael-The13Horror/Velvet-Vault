@@ -1,0 +1,82 @@
+{
+  "info": {
+    "name": "VelvetVault Atomic Wallet",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Reserve Bet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{FUNCTIONS_URL}}/vvReserveBet",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\"roundId\":\"r1\",\"amount\":1000,\"meta\":{\"game\":\"slots\"}}\n}\n"
+        }
+      }
+    },
+    {
+      "name": "Settle Bet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{FUNCTIONS_URL}}/vvSettleBet",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\"roundId\":\"r1\",\"payout\":1500,\"meta\":{\"game\":\"slots\"}}\n}\n"
+        }
+      }
+    },
+    {
+      "name": "Cancel Bet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{FUNCTIONS_URL}}/vvCancelBet",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\"roundId\":\"r2\",\"reason\":\"spin_failed\"}\n}\n"
+        }
+      }
+    },
+    {
+      "name": "Admin Credit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{FUNCTIONS_URL}}/adminCredit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\"uid\":\"TARGET_UID\",\"amount\":5000,\"reason\":\"manual\"}\n}\n"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "FUNCTIONS_URL",
+      "value": "https://us-central1-YOUR_PROJECT.cloudfunctions.net"
+    }
+  ]
+}
