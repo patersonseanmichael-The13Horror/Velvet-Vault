@@ -412,29 +412,42 @@
     autoLabel.textContent = auto ? "ON" : "OFF";
     autoCountEl.textContent = String(autoLeft);
   }
+  function syncControls(){
+    const canSpin = !busy && !celebrating;
+    const canAdjustBet = !busy && !celebrating && !auto;
+    const canStop = busy && auto && !stopRequested;
+
+    spinBtn.disabled = !canSpin;
+    betUp.disabled = !canAdjustBet;
+    betDown.disabled = !canAdjustBet;
+    maxBtn.disabled = !canAdjustBet;
+    machineSelect.disabled = !canAdjustBet;
+
+    autoBtn.disabled = busy || celebrating;
+    stopBtn.disabled = !canStop;
+  }
   function setResult(msg){ resultEl.textContent = msg; }
 
   function currentServerConfigId(){
     return SLOT_CONFIG_BY_MACHINE[machine.key] || "noir_paylines_5x3";
   }
 
-  const slotServerUrl = typeof window.VV_SLOT_SERVER_URL === "string"
-    ? window.VV_SLOT_SERVER_URL.trim().replace(/\/+$/, "")
-    : "";
-
-  function currentSlotServerEndpoint(){
-    if (!slotServerUrl) return "";
-    return /\/spin$/i.test(slotServerUrl) ? slotServerUrl : `${slotServerUrl}/spin`;
+  function currentSlotServerUrl(){
+    return window.VVAtomicSpin?.resolveSlotServerUrl
+      ? window.VVAtomicSpin.resolveSlotServerUrl(window.VV_SLOT_SERVER_URL)
+      : String(window.VV_SLOT_SERVER_URL || "").trim().replace(/\/+$/, "");
   }
 
   function hasAtomicServerSpin(){
     return Boolean(
+      window.VVAtomicSpin &&
+      typeof window.VVAtomicSpin.atomicSpin === "function" &&
       window.VaultEngine &&
       typeof window.VaultEngine.reserveBet === "function" &&
       typeof window.VaultEngine.settleBet === "function" &&
       typeof window.VaultEngine.cancelBet === "function" &&
       window.vvAuth?.currentUser &&
-      currentSlotServerEndpoint()
+      currentSlotServerUrl()
     );
   }
 
@@ -443,50 +456,6 @@
       return window.crypto.randomUUID();
     }
     return `seed_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
-  }
-
-  async function currentIdToken(){
-    const user = window.vvAuth?.currentUser;
-    if (!user || typeof user.getIdToken !== "function") {
-      throw new Error("Missing Firebase session.");
-    }
-    return user.getIdToken();
-  }
-
-  async function requestAtomicSpin(spinRequest){
-    const endpoint = currentSlotServerEndpoint();
-    if (!endpoint) {
-      throw new Error("Slot server not configured.");
-    }
-
-    const idToken = await currentIdToken();
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${idToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        machineId: spinRequest.machineId,
-        stake: spinRequest.stake,
-        roundId: spinRequest.roundId,
-        clientSeed: spinRequest.clientSeed,
-        ...(spinRequest.state ? { state: spinRequest.state } : {})
-      })
-    });
-
-    let payload = null;
-    try {
-      payload = await response.json();
-    } catch {
-      payload = null;
-    }
-
-    if (!response.ok || !payload || payload.ok !== true || !payload.outcome) {
-      throw new Error(payload?.error || `Slot server error (${response.status})`);
-    }
-
-    return payload;
   }
 
   function renderServerGrid(grid){
@@ -709,39 +678,44 @@
     if (!res.wins.length) return;
     celebrating = true;
     cancelCelebration = false;
+    syncControls();
 
-    await animateCountUp(payout, "Win: +");
-    if (cancelCelebration) { celebrating = false; return; }
-    await sleep(120);
+    try {
+      await animateCountUp(payout, "Win: +");
+      if (cancelCelebration) return;
+      await sleep(120);
 
-    for (const w of res.wins){
-      if (cancelCelebration) break;
+      for (const w of res.wins){
+        if (cancelCelebration) break;
+        clearPaylineCycle();
+        clearCellWin();
+
+        const pl = paylinesWrap.querySelector(`.payline[data-line=\"${w.line}\"]`);
+        if (pl){
+          pl.classList.add("on");
+          pl.classList.add("cycle");
+        }
+
+        const pattern = PAYLINES[w.line];
+        for (let r=0;r<w.count;r++){
+          const row = pattern[r];
+          cells[r][row].classList.add("win");
+        }
+
+        const symGlyph = symbolById(w.symId).glyph;
+        setResult(`Line ${w.line+1}: ${symGlyph} ×${w.count}  (+${w.pay * lastMult | 0})`);
+        await sleep(420);
+      }
+
       clearPaylineCycle();
-      clearCellWin();
-
-      const pl = paylinesWrap.querySelector(`.payline[data-line=\"${w.line}\"]`);
-      if (pl){
-        pl.classList.add("on");
-        pl.classList.add("cycle");
+      applyHighlights(res);
+      if (!cancelCelebration){
+        setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
       }
-
-      const pattern = PAYLINES[w.line];
-      for (let r=0;r<w.count;r++){
-        const row = pattern[r];
-        cells[r][row].classList.add("win");
-      }
-
-      const symGlyph = symbolById(w.symId).glyph;
-      setResult(`Line ${w.line+1}: ${symGlyph} ×${w.count}  (+${w.pay * lastMult | 0})`);
-      await sleep(420);
+    } finally {
+      celebrating = false;
+      syncControls();
     }
-
-    clearPaylineCycle();
-    applyHighlights(res);
-    if (!cancelCelebration){
-      setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
-    }
-    celebrating = false;
   }
 
   // --- Reel realism ---
@@ -1025,121 +999,112 @@
   maxBtn.addEventListener("click", ()=>setBet(BET_STEPS[BET_STEPS.length-1]));
 
   // --- Spin flow ---
-  stopBtn.addEventListener("click", ()=>{ stopRequested = true; });
-
   async function doAtomicServerSpin(){
     if (!hasAtomicServerSpin()) return false;
     if (busy) return true;
     if (celebrating){
       cancelCelebration = true;
       celebrating = false;
+      syncControls();
       return true;
     }
 
     busy = true;
-    clearHighlights();
-    setResult("Reserving wager...");
-
-    const roundId = window.RoundEngine?.nextDebitId
-      ? window.RoundEngine.nextDebitId("slots")
-      : `slots_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-
-    const reserveAmount = freeSpinsLeft > 0 ? 0 : bet;
-    const spinRequest = {
-      stake: bet,
-      denom: 1,
-      machineId: currentServerConfigId(),
-      roundId,
-      clientSeed: makeClientSeed()
-    };
-    if (serverFeatureState && serverFeatureStateMachineId === spinRequest.machineId){
-      spinRequest.state = serverFeatureState;
-    }
-
-    let payload = null;
-    let reserved = false;
-    let settled = false;
-    try {
-      if (reserveAmount > 0 && balance < reserveAmount){
-        throw new Error("Insufficient funds.");
-      }
-      const reserveRes = await window.VaultEngine.reserveBet({
-        roundId,
-        amount: reserveAmount,
-        meta: { game: "slots", machineId: spinRequest.machineId }
-      });
-      reserved = true;
-      balance = toInt(reserveRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
-      syncUI();
-
-      resetReels();
-      setResult("Spinning...");
-      const spinPromise = requestAtomicSpin(spinRequest);
-      await spinReels();
-      payload = await spinPromise;
-
-      const outcome = payload.outcome || {};
-      const payout = toInt(outcome.totalPayout ?? outcome.totalWin);
-      const settleRes = await window.VaultEngine.settleBet({
-        roundId,
-        payout,
-        meta: { game: "slots", machineId: spinRequest.machineId }
-      });
-      settled = true;
-      balance = toInt(settleRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
-    } catch (err) {
-      if (reserved && !settled) {
-        try {
-          const cancelRes = await window.VaultEngine.cancelBet({
-            roundId,
-            reason: "spin_failed"
-          });
-          balance = toInt(cancelRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
-        } catch {}
-      }
-      payload = { ok: false, error: err?.message || "Spin failed." };
-    }
-
-    if (!payload || payload.ok !== true || !payload.outcome){
-      setResult(payload?.error || "Spin failed.");
-      syncUI();
-      busy = false;
-      return true;
-    }
-
-    const spin = payload.outcome;
-    const nextState = spin.featureState || null;
-    renderServerGrid(spin.grid || spin.finalGrid);
-    applyServerHighlights(spin.wins);
-
-    serverFeatureState = nextState || null;
-    serverFeatureStateMachineId = payload.machineId || spin.configId || currentServerConfigId();
-    freeSpinsLeft = Math.max(0, toInt(nextState?.freeSpinsRemaining));
-    inFreeSpins = freeSpinsLeft > 0;
-    freeSpinMult = Math.max(1, Number((nextState?.freeSpinsMultiplier ?? nextState?.freeSpinWinMultiplier ?? 1)));
-    lastMult = Math.max(1, Number(spin.totalMultiplier || 1));
-
-    balance = toInt(window.VaultEngine.getBalance() ?? balance);
+    stopRequested = false;
     syncUI();
+    syncControls();
 
-    const payout = toInt(spin.totalPayout ?? spin.totalWin);
-    if (payout > 0){
-      setResult(`Win: +${payout} (Lines: ${Array.isArray(spin.wins) ? spin.wins.length : 0})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
-    } else {
-      setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
-    }
+    try {
+      clearHighlights();
+      setResult("Reserving wager...");
 
-    busy = false;
-    if (auto && autoLeft>0){
-      autoLeft--;
+      const roundId = window.RoundEngine?.nextDebitId
+        ? window.RoundEngine.nextDebitId("slots")
+        : `slots_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+
+      const spinRequest = {
+        stake: bet,
+        denom: 1,
+        machineId: currentServerConfigId(),
+        roundId,
+        clientSeed: makeClientSeed()
+      };
+      if (serverFeatureState && serverFeatureStateMachineId === spinRequest.machineId){
+        spinRequest.state = serverFeatureState;
+      }
+
+      let payload = null;
+      try {
+        if (freeSpinsLeft <= 0 && balance < bet){
+          throw new Error("Insufficient funds.");
+        }
+
+        resetReels();
+        setResult("Spinning...");
+        const spinPromise = window.VVAtomicSpin.atomicSpin({
+          VaultEngine: window.VaultEngine,
+          auth: window.vvAuth,
+          slotServerUrl: currentSlotServerUrl(),
+          machineId: spinRequest.machineId,
+          stakeCents: spinRequest.stake,
+          roundId: spinRequest.roundId,
+          clientSeed: spinRequest.clientSeed,
+          featureState: spinRequest.state || null,
+          freeSpin: freeSpinsLeft > 0
+        });
+        await spinReels();
+        payload = await spinPromise;
+      } catch (err) {
+        payload = { ok: false, error: err?.message || "Spin failed." };
+      }
+
+      if (!payload || payload.ok !== true || !payload.outcome){
+        setResult(payload?.error || "Spin failed.");
+        syncUI();
+        return true;
+      }
+
+      const spin = payload.outcome;
+      const nextState = spin.featureState || null;
+      renderServerGrid(spin.grid || spin.finalGrid);
+      applyServerHighlights(spin.wins);
+
+      serverFeatureState = nextState || null;
+      serverFeatureStateMachineId = payload.machineId || spin.configId || currentServerConfigId();
+      freeSpinsLeft = Math.max(0, toInt(nextState?.freeSpinsRemaining));
+      inFreeSpins = freeSpinsLeft > 0;
+      freeSpinMult = Math.max(1, Number((nextState?.freeSpinsMultiplier ?? nextState?.freeSpinWinMultiplier ?? 1)));
+      lastMult = Math.max(1, Number(spin.totalMultiplier || 1));
+
+      balance = toInt(window.VaultEngine.getBalance() ?? balance);
       syncUI();
-      setTimeout(()=>doSpin(), 220);
-    } else if (auto && autoLeft<=0){
-      auto = false;
-      syncUI();
-    }
 
-    return true;
+      const payout = toInt(spin.totalPayout ?? spin.totalWin);
+      if (payout > 0){
+        setResult(`Win: +${payout} (Lines: ${Array.isArray(spin.wins) ? spin.wins.length : 0})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
+      } else {
+        setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
+      }
+
+      if (auto && autoLeft>0){
+        autoLeft--;
+        syncUI();
+        setTimeout(()=>doSpin(), 220);
+      } else if (auto && autoLeft<=0){
+        auto = false;
+        syncUI();
+      }
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setResult("Spin failed.");
+      return true;
+    } finally {
+      busy = false;
+      syncUI();
+      syncControls();
+    }
   }
 
   async function doSpin(){
@@ -1151,7 +1116,7 @@
     if (window.VaultEngine?.mode === "secure"){
       if (!window.VaultEngine.user) {
         setResult("Connecting to the vault...");
-      } else if (!currentSlotServerEndpoint()) {
+      } else if (!currentSlotServerUrl()) {
         setResult("Slot server not configured.");
       } else {
         setResult("Atomic wallet unavailable.");
@@ -1163,77 +1128,92 @@
     if (celebrating){
       cancelCelebration = true;
       celebrating = false;
-      return;
+      syncControls();
+      return true;
     }
     busy = true;
-    clearHighlights();
-
-    const cost = bet;
-    if (!inFreeSpins){
-      if (balance < cost){
-        setResult("Not enough balance.");
-        busy = false;
-        return;
-      }
-      balance -= cost;
-    } else {
-      freeSpinsLeft = Math.max(0, freeSpinsLeft-1);
-      if (freeSpinsLeft===0){
-        inFreeSpins = false;
-        freeSpinMult = 1.0;
-      }
-    }
+    stopRequested = false;
     syncUI();
+    syncControls();
 
-    resetReels();
-    await spinReels();
+    try {
+      clearHighlights();
 
-    const grid = getGrid();
-    const res = evalLines(grid);
-
-    const sc = res.scatters;
-    const co = res.coins;
-    if (reelsWrap){
-      reelsWrap.classList.remove("tease-coins","tease-scatters");
-      if (sc === 2){
-        reelsWrap.classList.add("tease-scatters");
-        setTimeout(()=>reelsWrap.classList.remove("tease-scatters"), 600);
+      const cost = bet;
+      if (!inFreeSpins){
+        if (balance < cost){
+          setResult("Not enough balance.");
+          return true;
+        }
+        balance -= cost;
+      } else {
+        freeSpinsLeft = Math.max(0, freeSpinsLeft-1);
+        if (freeSpinsLeft===0){
+          inFreeSpins = false;
+          freeSpinMult = 1.0;
+        }
       }
-      if (co === 5){
-        reelsWrap.classList.add("tease-coins");
-        setTimeout(()=>reelsWrap.classList.remove("tease-coins"), 600);
+      syncUI();
+
+      resetReels();
+      await spinReels();
+
+      const grid = getGrid();
+      const res = evalLines(grid);
+
+      const sc = res.scatters;
+      const co = res.coins;
+      if (reelsWrap){
+        reelsWrap.classList.remove("tease-coins","tease-scatters");
+        if (sc === 2){
+          reelsWrap.classList.add("tease-scatters");
+          setTimeout(()=>reelsWrap.classList.remove("tease-scatters"), 600);
+        }
+        if (co === 5){
+          reelsWrap.classList.add("tease-coins");
+          setTimeout(()=>reelsWrap.classList.remove("tease-coins"), 600);
+        }
       }
-    }
 
-    if (res.scatters >= 3){
-      awardFreeSpins(res.scatters);
-    }
-    if (res.coins >= 6){
-      startHoldWin(grid);
-    }
-
-    lastMult = inFreeSpins ? freeSpinMult : 1.0;
-    const payout = Math.floor(res.win * lastMult);
-    if (payout > 0){
-      balance += payout;
-      syncUI();
-      applyHighlights(res);
-      setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
-      if (!hw && res.wins.length <= 4){
-        await ladderCelebrate(grid, res, payout);
+      if (res.scatters >= 3){
+        awardFreeSpins(res.scatters);
       }
-    } else {
-      setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
-    }
+      if (res.coins >= 6){
+        startHoldWin(grid);
+      }
 
-    busy = false;
-    if (auto && autoLeft>0){
-      autoLeft--;
+      lastMult = inFreeSpins ? freeSpinMult : 1.0;
+      const payout = Math.floor(res.win * lastMult);
+      if (payout > 0){
+        balance += payout;
+        syncUI();
+        applyHighlights(res);
+        setResult(`Win: +${payout} (Lines: ${res.wins.length})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
+        if (!hw && res.wins.length <= 4){
+          await ladderCelebrate(grid, res, payout);
+        }
+      } else {
+        setResult(inFreeSpins ? `No win • Free Spins left: ${freeSpinsLeft}` : "No win.");
+      }
+
+      if (auto && autoLeft>0){
+        autoLeft--;
+        syncUI();
+        setTimeout(()=>doSpin(), 220);
+      } else if (auto && autoLeft<=0){
+        auto = false;
+        syncUI();
+      }
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setResult("Spin failed.");
+      return true;
+    } finally {
+      busy = false;
       syncUI();
-      setTimeout(()=>doSpin(), 220);
-    } else if (auto && autoLeft<=0){
-      auto = false;
-      syncUI();
+      syncControls();
     }
   }
 
@@ -1243,19 +1223,25 @@
     auto = !auto;
     if (auto){
       autoLeft = 25;
+      stopRequested = false;
       syncUI();
+      syncControls();
       doSpin();
     } else {
       autoLeft = 0;
+      stopRequested = false;
       syncUI();
+      syncControls();
     }
   });
 
   stopBtn.addEventListener("click", ()=>{
-    auto = false; autoLeft = 0;
+    auto = false;
+    autoLeft = 0;
     stopRequested = true;
     cancelCelebration = true;
     syncUI();
+    syncControls();
   });
 
   // --- Paytable render ---
@@ -1357,6 +1343,7 @@
   setBet(150);
   bindWallet();
   syncUI();
+  syncControls();
   applyMachineSkin();
   setResult("Ready.");
 })();
