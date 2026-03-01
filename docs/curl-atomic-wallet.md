@@ -10,7 +10,7 @@ firebase.auth().currentUser.getIdToken().then((token) => console.log(token));
 Set shell vars:
 
 ```bash
-export ID_TOKEN="paste_firebase_id_token_here"
+export ID_TOKEN="AIzaSyC3qIWUSeO5r9uGBV7NrwdHNVKZ2BbQ2B8"
 export PROJECT="the-velvet-vault-11bd2"
 export REGION="us-central1"
 ```
