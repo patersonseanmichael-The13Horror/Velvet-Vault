@@ -3,6 +3,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "start": "node slotServer.js",
     "start:atomic-wallet": "node atomicWalletServer.js",
     "start:slot-server": "node slotServer.js"
   },
