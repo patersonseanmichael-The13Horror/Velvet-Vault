@@ -418,12 +418,75 @@
     return SLOT_CONFIG_BY_MACHINE[machine.key] || "noir_paylines_5x3";
   }
 
-  function hasServerSpin(){
+  const slotServerUrl = typeof window.VV_SLOT_SERVER_URL === "string"
+    ? window.VV_SLOT_SERVER_URL.trim().replace(/\/+$/, "")
+    : "";
+
+  function currentSlotServerEndpoint(){
+    if (!slotServerUrl) return "";
+    return /\/spin$/i.test(slotServerUrl) ? slotServerUrl : `${slotServerUrl}/spin`;
+  }
+
+  function hasAtomicServerSpin(){
     return Boolean(
       window.VaultEngine &&
-      typeof window.VaultEngine.spin === "function" &&
-      window.VaultEngine.user
+      typeof window.VaultEngine.reserveBet === "function" &&
+      typeof window.VaultEngine.settleBet === "function" &&
+      typeof window.VaultEngine.cancelBet === "function" &&
+      window.vvAuth?.currentUser &&
+      currentSlotServerEndpoint()
     );
+  }
+
+  function makeClientSeed(){
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return `seed_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  async function currentIdToken(){
+    const user = window.vvAuth?.currentUser;
+    if (!user || typeof user.getIdToken !== "function") {
+      throw new Error("Missing Firebase session.");
+    }
+    return user.getIdToken();
+  }
+
+  async function requestAtomicSpin(spinRequest){
+    const endpoint = currentSlotServerEndpoint();
+    if (!endpoint) {
+      throw new Error("Slot server not configured.");
+    }
+
+    const idToken = await currentIdToken();
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${idToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        machineId: spinRequest.machineId,
+        stake: spinRequest.stake,
+        roundId: spinRequest.roundId,
+        clientSeed: spinRequest.clientSeed,
+        ...(spinRequest.state ? { state: spinRequest.state } : {})
+      })
+    });
+
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch {
+      payload = null;
+    }
+
+    if (!response.ok || !payload || payload.ok !== true || !payload.outcome) {
+      throw new Error(payload?.error || `Slot server error (${response.status})`);
+    }
+
+    return payload;
   }
 
   function renderServerGrid(grid){
@@ -964,8 +1027,8 @@
   // --- Spin flow ---
   stopBtn.addEventListener("click", ()=>{ stopRequested = true; });
 
-  async function doServerSpin(){
-    if (!hasServerSpin()) return false;
+  async function doAtomicServerSpin(){
+    if (!hasAtomicServerSpin()) return false;
     if (busy) return true;
     if (celebrating){
       cancelCelebration = true;
@@ -975,56 +1038,91 @@
 
     busy = true;
     clearHighlights();
-    setResult("Spinning...");
+    setResult("Reserving wager...");
 
     const roundId = window.RoundEngine?.nextDebitId
       ? window.RoundEngine.nextDebitId("slots")
       : `slots_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 
+    const reserveAmount = freeSpinsLeft > 0 ? 0 : bet;
     const spinRequest = {
       stake: bet,
       denom: 1,
       machineId: currentServerConfigId(),
-      roundId
+      roundId,
+      clientSeed: makeClientSeed()
     };
     if (serverFeatureState && serverFeatureStateMachineId === spinRequest.machineId){
       spinRequest.state = serverFeatureState;
     }
 
-    resetReels();
-    const spinPromise = window.VaultEngine.spin(spinRequest);
-    await spinReels();
-
     let payload = null;
+    let reserved = false;
+    let settled = false;
     try {
+      if (reserveAmount > 0 && balance < reserveAmount){
+        throw new Error("Insufficient funds.");
+      }
+      const reserveRes = await window.VaultEngine.reserveBet({
+        roundId,
+        amount: reserveAmount,
+        meta: { game: "slots", machineId: spinRequest.machineId }
+      });
+      reserved = true;
+      balance = toInt(reserveRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
+      syncUI();
+
+      resetReels();
+      setResult("Spinning...");
+      const spinPromise = requestAtomicSpin(spinRequest);
+      await spinReels();
       payload = await spinPromise;
+
+      const outcome = payload.outcome || {};
+      const payout = toInt(outcome.totalPayout ?? outcome.totalWin);
+      const settleRes = await window.VaultEngine.settleBet({
+        roundId,
+        payout,
+        meta: { game: "slots", machineId: spinRequest.machineId }
+      });
+      settled = true;
+      balance = toInt(settleRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
     } catch (err) {
+      if (reserved && !settled) {
+        try {
+          const cancelRes = await window.VaultEngine.cancelBet({
+            roundId,
+            reason: "spin_failed"
+          });
+          balance = toInt(cancelRes?.balance ?? window.VaultEngine.getBalance() ?? balance);
+        } catch {}
+      }
       payload = { ok: false, error: err?.message || "Spin failed." };
     }
 
-    if (!payload || payload.ok !== true || !payload.spin){
+    if (!payload || payload.ok !== true || !payload.outcome){
       setResult(payload?.error || "Spin failed.");
       syncUI();
       busy = false;
       return true;
     }
 
-    const spin = payload.spin;
-    const nextState = payload.nextState || spin.featureState || null;
-    renderServerGrid(spin.grid);
+    const spin = payload.outcome;
+    const nextState = spin.featureState || null;
+    renderServerGrid(spin.grid || spin.finalGrid);
     applyServerHighlights(spin.wins);
 
-    serverFeatureState = nextState;
+    serverFeatureState = nextState || null;
     serverFeatureStateMachineId = payload.machineId || spin.configId || currentServerConfigId();
     freeSpinsLeft = Math.max(0, toInt(nextState?.freeSpinsRemaining));
     inFreeSpins = freeSpinsLeft > 0;
     freeSpinMult = Math.max(1, Number((nextState?.freeSpinsMultiplier ?? nextState?.freeSpinWinMultiplier ?? 1)));
     lastMult = Math.max(1, Number(spin.totalMultiplier || 1));
 
-    balance = toInt(payload.balance ?? window.VaultEngine.getBalance() ?? balance);
+    balance = toInt(window.VaultEngine.getBalance() ?? balance);
     syncUI();
 
-    const payout = toInt(spin.totalWin);
+    const payout = toInt(spin.totalPayout ?? spin.totalWin);
     if (payout > 0){
       setResult(`Win: +${payout} (Lines: ${Array.isArray(spin.wins) ? spin.wins.length : 0})${inFreeSpins?` • Free Spins left: ${freeSpinsLeft}`:""}`);
     } else {
@@ -1045,9 +1143,20 @@
   }
 
   async function doSpin(){
-    if (hasServerSpin()){
-      const handled = await doServerSpin();
+    if (hasAtomicServerSpin()){
+      const handled = await doAtomicServerSpin();
       if (handled) return;
+    }
+
+    if (window.VaultEngine?.mode === "secure"){
+      if (!window.VaultEngine.user) {
+        setResult("Connecting to the vault...");
+      } else if (!currentSlotServerEndpoint()) {
+        setResult("Slot server not configured.");
+      } else {
+        setResult("Atomic wallet unavailable.");
+      }
+      return;
     }
 
     if (busy) return;
