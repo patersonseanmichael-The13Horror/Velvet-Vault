@@ -8,7 +8,9 @@
     "start:slot-server": "node slotServer.js"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "express": "^4.21.2",
+    "express-rate-limit": "^8.2.1",
     "firebase-admin": "^12.7.0"
   }
 }
