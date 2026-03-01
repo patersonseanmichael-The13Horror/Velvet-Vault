@@ -54,7 +54,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json({ limit: "64kb" }));
+app.use(express.json({ limit: "10kb" }));
 app.use("/spin", spinLimiter);
 
 function safeInt(value, min = 0) {

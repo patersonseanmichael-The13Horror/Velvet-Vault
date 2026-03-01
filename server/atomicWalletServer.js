@@ -1,26 +1,21 @@
 const admin = require("firebase-admin");
 const { randomUUID } = require("crypto");
-const fs = require("fs");
-const path = require("path");
 
-function loadServiceAccount() {
-  const configuredPath = process.env.GOOGLE_APPLICATION_CREDENTIALS
-    ? path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-    : path.join(__dirname, "serviceAccountKey.json");
-
-  if (!fs.existsSync(configuredPath)) {
-    throw new Error(
-      `Missing service account key. Expected ${configuredPath}. ` +
-      "Set GOOGLE_APPLICATION_CREDENTIALS or place server/serviceAccountKey.json locally."
-    );
+function loadServiceAccountFromEnv() {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_JSON");
   }
 
-  return require(configuredPath);
+  try {
+    return JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  } catch (error) {
+    throw new Error(`Invalid FIREBASE_SERVICE_ACCOUNT_JSON: ${error.message}`);
+  }
 }
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(loadServiceAccount())
+    credential: admin.credential.cert(loadServiceAccountFromEnv())
   });
 }
 
