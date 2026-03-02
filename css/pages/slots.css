@@ -90,3 +90,125 @@ main.page.slotsPage{
   padding: 12px !important;
   gap: 12px !important;
 }
+
+:root{
+  --vv-neon-pink: rgba(255, 0, 170, 0.22);
+  --vv-neon-cyan: rgba(0, 255, 255, 0.18);
+  --vv-gold-soft: rgba(255, 210, 120, 0.22);
+  --vv-gold-rim: rgba(255, 210, 120, 0.14);
+}
+
+/* Ensure background layers stay behind everything */
+#vvBrandGlow{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.0;
+}
+
+/* (1) SIGN GLOW PULSE (right side): subtle bloom in the area where the background sign sits */
+#vvBrandGlow{
+  opacity: 1;
+  background:
+    radial-gradient(circle at 84% 52%, var(--vv-gold-soft), transparent 34%),
+    radial-gradient(circle at 86% 50%, var(--vv-neon-pink), transparent 42%),
+    radial-gradient(circle at 82% 58%, var(--vv-neon-cyan), transparent 45%);
+  filter: blur(14px);
+  mix-blend-mode: screen;
+  animation: vvBrandPulse 4.8s ease-in-out infinite;
+}
+
+@keyframes vvBrandPulse{
+  0%   { opacity: 0.22; transform: scale(1.00); }
+  50%  { opacity: 0.42; transform: scale(1.02); }
+  100% { opacity: 0.22; transform: scale(1.00); }
+}
+
+/* Keep your app/slot UI above background layers */
+#app, .slotsShell, .main, .page, .container{
+  position: relative;
+  z-index: 1;
+}
+
+/* (2) SOFT GOLD RIM LIGHT on slot container */
+.slotsShell{
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 1px rgba(255, 210, 120, 0.12),
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 42px rgba(255, 210, 120, 0.06);
+  background-clip: padding-box;
+}
+
+/* (3) ANIMATED NEON BORDER FRAME (pseudo-element) */
+.slotsShell::before{
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255,0,170,0.55),
+    rgba(0,255,255,0.55),
+    rgba(255,210,120,0.40),
+    rgba(255,0,170,0.55)
+  );
+  filter: blur(6px);
+  opacity: 0.35;
+  animation: vvFrameSpin 10s linear infinite;
+}
+
+@keyframes vvFrameSpin{
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Optional: sharper inner frame */
+.slotsShell::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 210, 120, 0.10),
+    inset 0 0 24px rgba(255, 0, 170, 0.06),
+    inset 0 0 24px rgba(0, 255, 255, 0.05);
+  opacity: 0.85;
+}
+
+/* (4) LUXURY HOVER MICRO-ANIMATIONS */
+button, .btn, a, .vvButton, .control, .chip{
+  transition: transform 160ms ease, filter 160ms ease, box-shadow 220ms ease, opacity 160ms ease;
+  will-change: transform;
+}
+
+button:hover, .btn:hover, .vvButton:hover, .control:hover, .chip:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+}
+
+button:active, .btn:active, .vvButton:active, .control:active, .chip:active{
+  transform: translateY(0px) scale(0.99);
+  filter: brightness(0.98);
+}
+
+button:disabled, .btn:disabled, .vvButton:disabled{
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+
+/* Reduce motion accessibility */
+@media (prefers-reduced-motion: reduce){
+  #vvBrandGlow{ animation: none; }
+  .slotsShell::before{ animation: none; }
+  button, .btn, a, .vvButton, .control, .chip{ transition: none; }
+}
