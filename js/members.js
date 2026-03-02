@@ -135,9 +135,12 @@
   }
 
   let selectedDepositCents = 0;
+  function hasDepositProof(){
+    return Boolean(depositProof?.files && depositProof.files[0]);
+  }
   function setDepositSelected(cents){
     selectedDepositCents = cents;
-    btnSubmitDeposit.disabled = !selectedDepositCents;
+    btnSubmitDeposit.disabled = !(selectedDepositCents && hasDepositProof());
   }
 
   document.addEventListener("click", (e)=>{

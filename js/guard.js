@@ -60,20 +60,22 @@ if (demoMode) {
 }
 
 function bindLogoutButton() {
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (!logoutBtn || logoutBtn.dataset.vvLogoutBound === "1") return;
-  logoutBtn.dataset.vvLogoutBound = "1";
+  const buttons = document.querySelectorAll("#logoutBtn, #btnLogout");
+  for (const logoutBtn of buttons) {
+    if (!logoutBtn || logoutBtn.dataset.vvLogoutBound === "1") continue;
+    logoutBtn.dataset.vvLogoutBound = "1";
 
-  logoutBtn.addEventListener("click", async () => {
-    if (auth) {
-      try {
-        await signOut(auth);
-      } catch (error) {
-        console.warn("[VelvetVault] Sign out failed:", error);
+    logoutBtn.addEventListener("click", async () => {
+      if (auth) {
+        try {
+          await signOut(auth);
+        } catch (error) {
+          console.warn("[VelvetVault] Sign out failed:", error);
+        }
       }
-    }
-    goToLogin();
-  });
+      goToLogin();
+    });
+  }
 }
 
 bindLogoutButton();
