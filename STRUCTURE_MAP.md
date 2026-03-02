@@ -4,10 +4,8 @@
   index.html
   login.html
   members.html
-  roulette.html
-  poker.html
-  blackjack.html
   slots.html
+  promotions.html
   ledger.html
 
 /css
@@ -19,17 +17,12 @@
   wallet.js
   auth.js
   /games
-    roulette.js
-    poker.js
-    blackjack.js
     slots.js
 
 /images
   velvet-vault-hero.png
-  roulette-wheel.png
-  roulette-board.jpg
-  poker-table.jpg
-  blackjack-table.jpg
+  /bg
+    vip-noir-bg.webp
 
 /assets
   velvet-ambient.mp3 (optional)

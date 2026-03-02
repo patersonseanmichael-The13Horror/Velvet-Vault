@@ -10,11 +10,9 @@
     widget.style.display = "block";
     body.innerHTML =
       `Need a hand? Use the quick links below.<div class="vvHelperLinks">
-        <a class="vvLinkChip" href="members.html">Lobby</a>
+        <a class="vvLinkChip" href="members.html">Members</a>
         <a class="vvLinkChip" href="slots.html?m=machine-01">Slots</a>
-        <a class="vvLinkChip" href="roulette.html">Roulette</a>
-        <a class="vvLinkChip" href="blackjack.html">Blackjack</a>
-        <a class="vvLinkChip" href="poker.html">Poker</a>
+        <a class="vvLinkChip" href="promotions.html">Promotions</a>
         <a class="vvLinkChip" href="ledger.html">Ledger</a>
       </div>
       <div style="margin-top:10px; color:rgba(241,236,255,0.75); font-size:12px;">

@@ -10,9 +10,6 @@ const PAGES = [
   "login.html",
   "members.html",
   "slots.html",
-  "roulette.html",
-  "blackjack.html",
-  "poker.html",
   "ledger.html",
 ];
 

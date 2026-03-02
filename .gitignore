@@ -31,6 +31,8 @@ output/
 .venv/
 .vercel/
 .vscode/
+node_modules (1)/
+output/visual-audit/
 *.json
 
 # Local admin SDK credentials

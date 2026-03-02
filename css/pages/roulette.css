@@ -1,5 +1,2 @@
-/* Wrapper for Phase-2 page structure.
-   Keep your real page CSS in /css/roulette.css
-*/
+/* Legacy wrapper for retired page CSS. */
 @import url("../roulette.css");
-

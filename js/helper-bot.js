@@ -20,10 +20,6 @@
       reply: "Use Slots Lobby cards to pick a machine profile. Auto-spin stops when funds are below bet."
     },
     {
-      test: /roulette|blackjack|poker/i,
-      reply: "Table games are in the Lobby quick links. Wallet debits on bet, credits on wins."
-    },
-    {
       test: /ledger|history|statement/i,
       reply: "Ledger lists recent debit/credit entries with timestamps and post-transaction balance."
     },
@@ -92,11 +88,9 @@
     body.innerHTML = `
       <div>Use quick links or ask a short question.</div>
       <div class="vvHelperLinks">
-        <a class="vvHelperChip" href="members.html">Lobby</a>
+        <a class="vvHelperChip" href="members.html">Members</a>
         <a class="vvHelperChip" href="slots.html?m=machine-01">Slots</a>
-        <a class="vvHelperChip" href="roulette.html">Roulette</a>
-        <a class="vvHelperChip" href="blackjack.html">Blackjack</a>
-        <a class="vvHelperChip" href="poker.html">Poker</a>
+        <a class="vvHelperChip" href="promotions.html">Promotions</a>
         <a class="vvHelperChip" href="ledger.html">Ledger</a>
         <button class="vvHelperChip" id="vvHelperLogout" type="button">Logout</button>
       </div>
@@ -120,7 +114,7 @@
       const q = (qInput?.value || "").trim();
       if (!reply) return;
       if (!q) {
-        reply.textContent = "Try: wallet, login, slots, roulette, blackjack, poker, ledger, logout.";
+        reply.textContent = "Try: wallet, login, slots, ledger, promotions, logout.";
         return;
       }
       const hit = faq.find((f) => f.test.test(q));

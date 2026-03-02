@@ -23,9 +23,6 @@ HTML_FILES = [
     "login.html",
     "members.html",
     "ledger.html",
-    "roulette.html",
-    "blackjack.html",
-    "poker.html",
     "slots.html",
 ]
 

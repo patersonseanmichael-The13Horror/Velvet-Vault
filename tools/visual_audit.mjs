@@ -3,7 +3,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const base = 'http://127.0.0.1:4173';
-const pages = ['index.html','login.html','members.html','slots.html','roulette.html','blackjack.html','poker.html','ledger.html'];
+const pages = ['index.html','login.html','members.html','slots.html','ledger.html'];
 const outDir = 'output/visual-audit';
 fs.mkdirSync(outDir, { recursive: true });
 

@@ -24,7 +24,7 @@ Validation notes:
 - Static missing-path check across all HTML href/src paths reports no missing local files.
 - Could not run local HTTP server in this sandbox (permission denied on bind), so live browser/network page-load sweep was not possible here.
 - Ran live Playwright runtime sweep after starting local HTTP server with approval:
-  - `index.html`, `login.html`, `members.html`, `slots.html`, `roulette.html`, `blackjack.html`, `poker.html`, `ledger.html` returned HTTP 200 and no console/page/request errors.
+  - `index.html`, `login.html`, `members.html`, `slots.html`, `ledger.html` returned HTTP 200 and no console/page/request errors.
   - Guard redirects occurred on protected pages; behavior was timing-sensitive before patch.
 - Patched `js/guard.js` to enforce deterministic auth checks:
   - waits for `auth.authStateReady()` when available,
@@ -81,9 +81,6 @@ Feature add pass (2026-02-25):
 - Updated pages to load new modules/styles:
   - members.html
   - slots.html
-  - roulette.html
-  - blackjack.html
-  - poker.html
 - Replaced members helper/manual script tags with new additive modules to prevent duplicate listeners.
 - Dealer voice notes:
   - Uses WebAudio fallback and arms only after user interaction.
@@ -91,7 +88,7 @@ Feature add pass (2026-02-25):
 - Playwright audit (mocked Firebase modules, mobile viewport 390x844):
   - Console errors: 0
   - Page errors: 0
-  - Horizontal overflow: none across index/login/members/slots/roulette/blackjack/poker/ledger
+  - Horizontal overflow: none across index/login/members/slots/ledger
   - One benign requestfailed on login run due immediate redirect to members aborting an image request.
 - Follow-up fix: helper bot now forces visibility for pre-existing members helper mount (inline `display:none` compatibility).
 - Final verification pass:
