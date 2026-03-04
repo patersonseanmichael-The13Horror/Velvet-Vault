@@ -984,3 +984,134 @@ body.vv-modal-open{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ============================================================
+   VG LAYOUT CLASSES — vv-layout-5x3 / vv-layout-6x4
+   Applied by slots.js applySlotLayout() to body, .vv-slots-stage,
+   .vv-cabinet, .cabinetViewport, .reelWindow, .reelsWrap.
+   Pre-allocate worst-case (6x4) height so no layout shift occurs.
+   ============================================================ */
+
+/* --- Base variables (worst-case pre-allocation) --- */
+:root {
+  --vv-layout-reels: 5;
+  --vv-layout-rows: 3;
+  --vv-symbol-scale: 1;
+  --vv-ghost-reels: 0;
+  --vv-ghost-rows: 0;
+  --vv-reel-min-h: calc(4 * 80px + 3 * 10px + 20px);
+}
+
+/* --- 5x3 layout (base) --- */
+.vv-layout-5x3 .reelsWrap {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  min-height: var(--vv-reel-min-h) !important;
+}
+.vv-layout-5x3 .reelCol {
+  grid-template-rows: repeat(3, 92px) !important;
+}
+.vv-layout-5x3 .cell {
+  height: 92px !important;
+  min-height: 92px !important;
+}
+
+/* --- 6x4 layout (feature) --- */
+.vv-layout-6x4 .reelsWrap {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  min-height: var(--vv-reel-min-h) !important;
+}
+.vv-layout-6x4 .reelCol {
+  grid-template-rows: repeat(4, 80px) !important;
+}
+.vv-layout-6x4 .cell {
+  height: 80px !important;
+  min-height: 80px !important;
+}
+.vv-layout-6x4 .symImg {
+  transform: scale(var(--vv-symbol-scale, 0.88)) !important;
+  transform-origin: center center !important;
+}
+
+/* --- Smooth transition between layouts --- */
+.reelsWrap {
+  transition: grid-template-columns 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.reelCol {
+  transition:
+    grid-template-rows 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    filter 180ms ease !important;
+}
+
+/* --- Payline overlays always above symbols --- */
+.vv-layout-5x3 .vvWinLine,
+.vv-layout-6x4 .vvWinLine,
+.vv-layout-5x3 .paylineOverlay,
+.vv-layout-6x4 .paylineOverlay {
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+/* --- Modals always above layout --- */
+.vv-layout-5x3 .vvModal,
+.vv-layout-6x4 .vvModal,
+.vv-layout-5x3 .vvOverlayFrame,
+.vv-layout-6x4 .vvOverlayFrame {
+  z-index: 2000 !important;
+}
+
+/* --- Cabinet viewport: stable --- */
+.vv-layout-5x3 .cabinetViewport,
+.vv-layout-6x4 .cabinetViewport {
+  overflow: hidden !important;
+  contain: layout paint !important;
+}
+
+/* --- Reel window: no overflow --- */
+.vv-layout-5x3 .reelWindow,
+.vv-layout-6x4 .reelWindow {
+  overflow: hidden !important;
+}
+
+/* --- Mobile: scale down 6x4 gracefully --- */
+@media (max-width: 720px) {
+  .vv-layout-6x4 .reelCol {
+    grid-template-rows: repeat(4, 64px) !important;
+  }
+  .vv-layout-6x4 .cell {
+    height: 64px !important;
+    min-height: 64px !important;
+  }
+  .vv-layout-6x4 .reelsWrap {
+    gap: 6px !important;
+  }
+}
+
+/* ============================================================
+   VG NOIR VIP THEME — applied when vfxTheme = "noir"
+   ============================================================ */
+.vv-vfx-noir-vip .cabinetViewport {
+  background:
+    linear-gradient(180deg, rgba(10, 7, 18, 0.96), rgba(5, 4, 10, 0.98)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 181, 106, 0.12),
+    inset 0 0 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(214, 181, 106, 0.06) !important;
+}
+.vv-vfx-noir-vip .reelWindow {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(214, 181, 106, 0.06), transparent 40%),
+    linear-gradient(180deg, rgba(6, 5, 12, 0.94), rgba(8, 7, 14, 0.97)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 181, 106, 0.1),
+    inset 0 0 40px rgba(0, 0, 0, 0.5) !important;
+}
+.vv-vfx-noir-vip .reelCol {
+  background:
+    linear-gradient(180deg, rgba(214, 181, 106, 0.04), rgba(214, 181, 106, 0.01)),
+    rgba(10, 8, 16, 0.72) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 181, 106, 0.08),
+    inset 0 0 24px rgba(0, 0, 0, 0.32) !important;
+}

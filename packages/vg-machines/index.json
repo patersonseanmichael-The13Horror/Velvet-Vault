@@ -3,9 +3,9 @@
   "machines": [
     {
       "id": "VG-01",
-      "slug": "velvet-grade-01",
-      "title": "Velvet Grade 01",
-      "subtitle": "Noir cabinet, 5x3 base / 6x4 feature.",
+      "slug": "high-society",
+      "title": "High Society",
+      "subtitle": "Noir cabinet. 5\u00d73 base \u2014 expands to 6\u00d74 in feature.",
       "machineId": "velvet_noir",
       "layout": {
         "base": {
