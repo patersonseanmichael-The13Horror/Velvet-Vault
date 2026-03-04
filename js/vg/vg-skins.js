@@ -18,7 +18,8 @@
 /** Map of VG machine IDs to their symbol skin manifest paths */
 const VG_SKIN_MANIFESTS = {
   "VG-01": "packages/vg-machines/VG-01.symbols.json",
-  "VG-02": "packages/vg-machines/VG-02.symbols.json"
+  "VG-02": "packages/vg-machines/VG-02.symbols.json",
+  "VG-03": "packages/vg-machines/VG-03.symbols.json"
 };
 
 /** In-memory cache so we only fetch each manifest once per session */
@@ -149,7 +150,7 @@ export async function applyVGSkin(machine, vgMachine) {
  */
 export function removeVGSkin() {
   // Remove all known skin classes
-  document.body.classList.remove("vv-vfx-noir-vip", "vv-vfx-neon-syndicate");
+  document.body.classList.remove("vv-vfx-noir-vip", "vv-vfx-neon-syndicate", "vv-theme-vg-03");
   delete document.body.dataset.vgSkin;
   // Reset CSS variables to defaults
   document.documentElement.style.removeProperty("--vg-accent");

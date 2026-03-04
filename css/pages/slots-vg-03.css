@@ -1,0 +1,457 @@
+/*
+ * css/pages/slots-vg-03.css
+ *
+ * VG-03 Neon Dynasty — Aurora Silk Theme
+ *
+ * All rules are scoped to body.vv-theme-vg-03 or body[data-vg-skin="VG-03"]
+ * to ensure zero bleed into other machines.
+ *
+ * Theme palette:
+ *   --vg-accent:    #00e5cc  (aurora teal)
+ *   --vg-secondary: #9b5de5  (aurora violet)
+ *   --vg-glow:      #00e5cc
+ *   --vg-jade:      #00c896
+ *   --vg-silk:      rgba(0, 229, 204, 0.08)
+ *
+ * Layers (z-index):
+ *   symbols        10
+ *   FX             20
+ *   HUD            30
+ *   overlay        40
+ *   modals       1900
+ */
+
+/* ============================================================
+   0. CSS CUSTOM PROPERTIES (VG-03 defaults)
+   ============================================================ */
+body.vv-theme-vg-03 {
+  --vg-accent:    #00e5cc;
+  --vg-secondary: #9b5de5;
+  --vg-glow:      #00e5cc;
+  --vg-jade:      #00c896;
+  --vg-silk:      rgba(0, 229, 204, 0.08);
+  --vg-aurora-1:  rgba(0, 229, 204, 0.18);
+  --vg-aurora-2:  rgba(155, 93, 229, 0.18);
+  --vg-aurora-3:  rgba(0, 200, 150, 0.12);
+}
+
+/* ============================================================
+   1. AURORA SWEEP ANIMATION (cabinet frame accent)
+   ============================================================ */
+@keyframes vvAuroraSweep {
+  0%   { background-position: 0% 50%; opacity: 0.18; }
+  50%  { background-position: 100% 50%; opacity: 0.28; }
+  100% { background-position: 0% 50%; opacity: 0.18; }
+}
+
+@keyframes vvAuroraRibbon {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes vvDynastySettle {
+  0%   { transform: translateY(0); }
+  18%  { transform: translateY(-5px); }
+  36%  { transform: translateY(3px); }
+  54%  { transform: translateY(-2px); }
+  72%  { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes vvAuroraFrameBurst {
+  0%   { opacity: 0; transform: scale(0.92); }
+  15%  { opacity: 1; transform: scale(1.03); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.98); }
+}
+
+@keyframes vvLotusGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--vg-accent)) drop-shadow(0 0 12px var(--vg-secondary)); }
+  50%       { filter: drop-shadow(0 0 14px var(--vg-accent)) drop-shadow(0 0 28px var(--vg-secondary)); }
+}
+
+@keyframes vvAuroraShimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ============================================================
+   2. CABINET — aurora silk background + border
+   ============================================================ */
+body.vv-theme-vg-03 .vv-slots-cabinet,
+body[data-vg-skin="VG-03"] .vv-slots-cabinet {
+  border-color: var(--vg-accent) !important;
+  box-shadow:
+    0 0 18px rgba(0, 229, 204, 0.35),
+    0 0 40px rgba(155, 93, 229, 0.18),
+    inset 0 0 30px rgba(0, 229, 204, 0.06) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Aurora sweep overlay on cabinet */
+body.vv-theme-vg-03 .vv-slots-cabinet::before,
+body[data-vg-skin="VG-03"] .vv-slots-cabinet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--vg-aurora-1) 0%,
+    transparent 30%,
+    var(--vg-aurora-2) 60%,
+    transparent 80%,
+    var(--vg-aurora-3) 100%
+  );
+  background-size: 300% 300%;
+  animation: vvAuroraSweep 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   3. REEL WINDOW — teal border + aurora glow
+   ============================================================ */
+body.vv-theme-vg-03 .vv-reel-window,
+body[data-vg-skin="VG-03"] .vv-reel-window {
+  border-color: var(--vg-accent) !important;
+  box-shadow:
+    0 0 12px rgba(0, 229, 204, 0.4),
+    inset 0 0 16px rgba(0, 229, 204, 0.08) !important;
+}
+
+/* Spinning reel — enhanced blur */
+body.vv-theme-vg-03 .vv-reel-col.vv-is-spinning .vv-sym-img,
+body[data-vg-skin="VG-03"] .vv-reel-col.vv-is-spinning .vv-sym-img {
+  filter: blur(2.8px) brightness(0.85) !important;
+  transition: filter 0.08s linear;
+}
+
+/* Anticipation glow — teal */
+body.vv-theme-vg-03 .vv-reel-col.vv-anticipate,
+body[data-vg-skin="VG-03"] .vv-reel-col.vv-anticipate {
+  box-shadow: 0 0 22px rgba(0, 229, 204, 0.7) !important;
+}
+
+/* Bounce-settle on reel stop */
+body.vv-theme-vg-03 .vv-reel-col.vv-settled .vv-sym-img,
+body[data-vg-skin="VG-03"] .vv-reel-col.vv-settled .vv-sym-img {
+  animation: vvDynastySettle 0.45s ease-out forwards;
+}
+
+/* ============================================================
+   4. SYMBOL IMAGES — aurora neon glow per tier
+   ============================================================ */
+body.vv-theme-vg-03 .vv-sym-img,
+body[data-vg-skin="VG-03"] .vv-sym-img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px var(--vg-accent));
+  transition: filter 0.2s ease;
+  z-index: 10;
+}
+
+/* Premium tier — teal aurora halo */
+body.vv-theme-vg-03 .vv-sym-cell[data-tier="premium"] .vv-sym-img,
+body[data-vg-skin="VG-03"] .vv-sym-cell[data-tier="premium"] .vv-sym-img {
+  filter:
+    drop-shadow(0 0 6px var(--vg-accent))
+    drop-shadow(0 0 14px rgba(0, 229, 204, 0.5)) !important;
+}
+
+/* Mid tier — violet aurora halo */
+body.vv-theme-vg-03 .vv-sym-cell[data-tier="mid"] .vv-sym-img,
+body[data-vg-skin="VG-03"] .vv-sym-cell[data-tier="mid"] .vv-sym-img {
+  filter:
+    drop-shadow(0 0 5px var(--vg-secondary))
+    drop-shadow(0 0 10px rgba(155, 93, 229, 0.4)) !important;
+}
+
+/* Win cell — jade pulse */
+body.vv-theme-vg-03 .vv-sym-cell.vv-win-cell,
+body[data-vg-skin="VG-03"] .vv-sym-cell.vv-win-cell {
+  background: radial-gradient(ellipse at center, rgba(0, 229, 204, 0.18) 0%, transparent 70%) !important;
+  animation: vvLotusGlow 1.2s ease-in-out infinite !important;
+}
+
+/* ============================================================
+   5. HUD — teal accent
+   ============================================================ */
+body.vv-theme-vg-03 .vv-hud-balance,
+body.vv-theme-vg-03 .vv-hud-win,
+body[data-vg-skin="VG-03"] .vv-hud-balance,
+body[data-vg-skin="VG-03"] .vv-hud-win {
+  color: var(--vg-accent) !important;
+  text-shadow: 0 0 8px rgba(0, 229, 204, 0.6) !important;
+}
+
+body.vv-theme-vg-03 .vv-hud-label,
+body[data-vg-skin="VG-03"] .vv-hud-label {
+  color: rgba(0, 229, 204, 0.6) !important;
+}
+
+/* ============================================================
+   6. SPIN BUTTON — aurora teal
+   ============================================================ */
+body.vv-theme-vg-03 #spinBtn,
+body[data-vg-skin="VG-03"] #spinBtn {
+  background: linear-gradient(135deg, #00c896 0%, #00e5cc 50%, #7b2fff 100%) !important;
+  box-shadow: 0 0 18px rgba(0, 229, 204, 0.5) !important;
+  border-color: var(--vg-accent) !important;
+}
+
+body.vv-theme-vg-03 #spinBtn:hover:not(:disabled),
+body[data-vg-skin="VG-03"] #spinBtn:hover:not(:disabled) {
+  box-shadow: 0 0 28px rgba(0, 229, 204, 0.75) !important;
+}
+
+/* ============================================================
+   7. WIN-TIER OVERLAY — aurora gradient (VG-03 unique)
+   ============================================================ */
+body.vv-theme-vg-03 .vv-win-frame,
+body[data-vg-skin="VG-03"] .vv-win-frame {
+  background: linear-gradient(
+    160deg,
+    rgba(0, 20, 30, 0.97) 0%,
+    rgba(0, 60, 70, 0.95) 40%,
+    rgba(30, 0, 60, 0.97) 100%
+  ) !important;
+  border: 1.5px solid var(--vg-accent) !important;
+  box-shadow:
+    0 0 30px rgba(0, 229, 204, 0.3),
+    0 0 60px rgba(155, 93, 229, 0.15),
+    inset 0 0 20px rgba(0, 229, 204, 0.06) !important;
+  animation: vvAuroraFrameBurst 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+/* Win tier labels */
+body.vv-theme-vg-03 .vv-win-frame .vv-win-tier-label,
+body[data-vg-skin="VG-03"] .vv-win-frame .vv-win-tier-label {
+  background: linear-gradient(90deg, var(--vg-accent), var(--vg-secondary), var(--vg-accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: vvAuroraShimmer 3s linear infinite;
+  text-shadow: none !important;
+}
+
+/* BIG */
+body.vv-theme-vg-03 .vv-win-frame[data-tier="big"] .vv-win-tier-label,
+body[data-vg-skin="VG-03"] .vv-win-frame[data-tier="big"] .vv-win-tier-label {
+  color: var(--vg-jade) !important;
+  -webkit-text-fill-color: var(--vg-jade);
+  background: none;
+  text-shadow: 0 0 12px rgba(0, 200, 150, 0.7) !important;
+}
+
+/* SUPER */
+body.vv-theme-vg-03 .vv-win-frame[data-tier="super"] .vv-win-tier-label,
+body[data-vg-skin="VG-03"] .vv-win-frame[data-tier="super"] .vv-win-tier-label {
+  color: var(--vg-accent) !important;
+  -webkit-text-fill-color: var(--vg-accent);
+  background: none;
+  text-shadow: 0 0 16px rgba(0, 229, 204, 0.8) !important;
+}
+
+/* HUGE */
+body.vv-theme-vg-03 .vv-win-frame[data-tier="huge"] .vv-win-tier-label,
+body[data-vg-skin="VG-03"] .vv-win-frame[data-tier="huge"] .vv-win-tier-label {
+  background: linear-gradient(90deg, var(--vg-accent) 0%, #fff 50%, var(--vg-secondary) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: vvAuroraShimmer 2s linear infinite;
+  text-shadow: none !important;
+}
+
+/* EXTRAVAGANT */
+body.vv-theme-vg-03 .vv-win-frame[data-tier="extravagant"],
+body[data-vg-skin="VG-03"] .vv-win-frame[data-tier="extravagant"] {
+  animation: vvAuroraFrameBurst 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+             vvAuroraSweep 3s ease-in-out 0.55s infinite !important;
+}
+
+body.vv-theme-vg-03 .vv-win-frame[data-tier="extravagant"] .vv-win-tier-label,
+body[data-vg-skin="VG-03"] .vv-win-frame[data-tier="extravagant"] .vv-win-tier-label {
+  background: linear-gradient(90deg, var(--vg-accent), var(--vg-secondary), #fff, var(--vg-jade), var(--vg-accent));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: vvAuroraShimmer 1.8s linear infinite;
+  text-shadow: none !important;
+}
+
+/* ============================================================
+   8. FEATURE FRAMES — aurora ribbon edge
+   ============================================================ */
+body.vv-theme-vg-03 .vv-feature-frame,
+body[data-vg-skin="VG-03"] .vv-feature-frame {
+  background: linear-gradient(
+    160deg,
+    rgba(0, 15, 25, 0.97) 0%,
+    rgba(0, 50, 60, 0.95) 50%,
+    rgba(20, 0, 50, 0.97) 100%
+  ) !important;
+  border: 1.5px solid var(--vg-accent) !important;
+  box-shadow:
+    0 0 24px rgba(0, 229, 204, 0.35),
+    0 0 50px rgba(155, 93, 229, 0.15) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Aurora ribbon animated edge */
+body.vv-theme-vg-03 .vv-feature-frame::after,
+body[data-vg-skin="VG-03"] .vv-feature-frame::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--vg-accent), var(--vg-secondary), var(--vg-jade), transparent);
+  animation: vvAuroraRibbon 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Feature frame title text */
+body.vv-theme-vg-03 .vv-feature-frame .vv-frame-title,
+body[data-vg-skin="VG-03"] .vv-feature-frame .vv-frame-title {
+  color: var(--vg-accent) !important;
+  text-shadow: 0 0 14px rgba(0, 229, 204, 0.8) !important;
+}
+
+body.vv-theme-vg-03 .vv-feature-frame .vv-frame-subtitle,
+body[data-vg-skin="VG-03"] .vv-feature-frame .vv-frame-subtitle {
+  color: var(--vg-secondary) !important;
+  text-shadow: 0 0 8px rgba(155, 93, 229, 0.6) !important;
+}
+
+/* Lotus badge glow on feature frames */
+body.vv-theme-vg-03 .vv-feature-frame .vv-frame-badge,
+body[data-vg-skin="VG-03"] .vv-feature-frame .vv-frame-badge {
+  filter: drop-shadow(0 0 10px var(--vg-accent)) drop-shadow(0 0 20px var(--vg-secondary));
+  animation: vvLotusGlow 1.8s ease-in-out infinite;
+}
+
+/* Hold & Win locked cells — jade teal */
+body.vv-theme-vg-03 .vv-hold-cell.vv-locked,
+body[data-vg-skin="VG-03"] .vv-hold-cell.vv-locked {
+  background: rgba(0, 200, 150, 0.15) !important;
+  border-color: var(--vg-jade) !important;
+  box-shadow: 0 0 12px rgba(0, 200, 150, 0.5) !important;
+}
+
+/* ============================================================
+   9. JADE COIN DROP (Hold & Win drops)
+   ============================================================ */
+@keyframes vvJadeCoinDrop {
+  0%   { transform: translateY(-60px) scale(0.6) rotate(-15deg); opacity: 0; }
+  30%  { opacity: 1; }
+  70%  { transform: translateY(0) scale(1) rotate(5deg); opacity: 1; }
+  85%  { transform: translateY(-8px) scale(1.05) rotate(-2deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.85; }
+}
+
+body.vv-theme-vg-03 .vv-coin-drop,
+body[data-vg-skin="VG-03"] .vv-coin-drop {
+  animation: vvJadeCoinDrop 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+body.vv-theme-vg-03 .vv-coin-drop::before,
+body[data-vg-skin="VG-03"] .vv-coin-drop::before {
+  background: radial-gradient(circle, var(--vg-jade) 30%, var(--vg-accent) 70%) !important;
+  box-shadow: 0 0 8px rgba(0, 200, 150, 0.7) !important;
+}
+
+/* ============================================================
+   10. EVENT FRAME BURST (Phase 5 — feature start moment)
+   ============================================================ */
+.vv-aurora-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 229, 204, 0.22) 0%,
+    transparent 35%,
+    rgba(155, 93, 229, 0.18) 65%,
+    transparent 100%
+  );
+  background-size: 300% 300%;
+  pointer-events: none;
+  z-index: 20;
+  border-radius: inherit;
+}
+
+.vv-frame-vg-03 {
+  border: 1.5px solid var(--vg-accent, #00e5cc);
+  box-shadow:
+    0 0 20px rgba(0, 229, 204, 0.4),
+    0 0 40px rgba(155, 93, 229, 0.2);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.vv-overlay-vg-03 {
+  background: linear-gradient(
+    160deg,
+    rgba(0, 20, 30, 0.96) 0%,
+    rgba(0, 50, 60, 0.94) 50%,
+    rgba(20, 0, 50, 0.96) 100%
+  );
+  border: 1.5px solid var(--vg-accent, #00e5cc);
+  box-shadow:
+    0 0 30px rgba(0, 229, 204, 0.3),
+    0 0 60px rgba(155, 93, 229, 0.15);
+}
+
+/* Event frame burst element — injected by JS for 900ms */
+.vv-event-burst-vg03 {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 229, 204, 0.12) 0%,
+    rgba(155, 93, 229, 0.08) 40%,
+    transparent 70%
+  );
+  animation: vvAuroraFrameBurst 0.9s ease-out forwards;
+}
+
+/* Frame shimmer on win overlay */
+.vv-win-shimmer-vg03 {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 229, 204, 0.15) 30%,
+    rgba(155, 93, 229, 0.1) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: vvAuroraShimmer 1.5s linear infinite;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* ============================================================
+   11. Z-INDEX ENFORCEMENT
+   ============================================================ */
+body.vv-theme-vg-03 .vv-sym-img          { z-index: 10; }
+body.vv-theme-vg-03 .vv-reel-fx          { z-index: 20; }
+body.vv-theme-vg-03 .vv-slots-hud        { z-index: 30; }
+body.vv-theme-vg-03 .vv-win-frame,
+body.vv-theme-vg-03 .vv-feature-frame    { z-index: 40; }
+body.vv-theme-vg-03 .vv-modal            { z-index: 1900; }

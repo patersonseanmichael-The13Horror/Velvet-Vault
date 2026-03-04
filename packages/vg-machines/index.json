@@ -84,7 +84,7 @@
       "id": "VG-03",
       "slug": "neon-dynasty",
       "title": "Neon Dynasty",
-      "subtitle": "A dynasty built on neon and ambition.",
+      "subtitle": "Aurora Silk \u2022 Dynasty Grid",
       "machineId": "neon_pharaoh",
       "layout": {
         "base": {
@@ -103,8 +103,10 @@
       },
       "theme": {
         "vfxTheme": "neon",
-        "frameTheme": "Neon",
-        "soundTheme": "Neon"
+        "frameTheme": "vg-03",
+        "soundTheme": "lux-neon",
+        "accentColor": "#00e5cc",
+        "secondaryColor": "#9b5de5"
       },
       "tiersCents": {
         "bigMin": 1000,
@@ -113,11 +115,13 @@
         "extravagantMin": 10000
       },
       "assets": {
-        "cardImage": "images/slots/vg/VG-03/card.png",
-        "logoImage": "images/slots/vg/VG-03/logo.png",
-        "symbolPackPath": "images/slots/vg/VG-03/symbols"
+        "card": "images/slots/vg/VG-03/card.png",
+        "logo": "images/slots/vg/VG-03/logo.png",
+        "symbols": "images/slots/vg/VG-03/symbols"
       },
-      "machineIdAlias": "TODO_MAP_UNIQUE"
+      "machineIdAlias": "TODO_MAP_UNIQUE",
+      "symbolsManifest": "packages/vg-machines/VG-03.symbols.json",
+      "lobbyBadge": "Luxury Neon"
     },
     {
       "id": "VG-04",

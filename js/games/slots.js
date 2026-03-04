@@ -632,6 +632,10 @@
     const isNeonSyndicate = activeVGMachine?.id === "VG-02"
       || activeVGMachine?.theme?.vfxTheme === "neon";
     document.body.classList.toggle("vv-vfx-neon-syndicate", Boolean(isNeonSyndicate));
+    // VG-03 Neon Dynasty — aurora silk theme class
+    const isDynasty = activeVGMachine?.id === "VG-03"
+      || activeVGMachine?.theme?.frameTheme === "vg-03";
+    document.body.classList.toggle("vv-theme-vg-03", Boolean(isDynasty));
   }
 
   function applySlotLayout(mode = "base", reason = "") {
@@ -974,15 +978,20 @@
     featureFrameStageEl.innerHTML = "";
     document.body.classList.add("vv-overlay-open");
 
+    // VG-03 Neon Dynasty — text overrides for feature frames
+    const isVG03 = activeVGMachine?.id === "VG-03";
+
     if (kind === "hold-win"){
       setFeatureClass("holdwin");
       featureFrameEl.classList.add("vvOverlayFrame--hold");
       featureFrameEl.style.setProperty("--vv-frame-art", `url("${FRAME_ASSETS.feature.holdWin}")`);
-      featureFrameTitleEl.textContent = "HOLD & WIN";
-      if (featureFrameDetailEl) featureFrameDetailEl.textContent = "Private vault coins lock in under the noir lights.";
+      featureFrameTitleEl.textContent = isVG03 ? "LOTUS LOCK" : "HOLD & WIN";
+      if (featureFrameDetailEl) featureFrameDetailEl.textContent = isVG03
+        ? "6 DROPS — jade coins lock into the dynasty grid."
+        : "Private vault coins lock in under the noir lights.";
       for (let i = 0; i < 6; i += 1){
         const coin = document.createElement("span");
-        coin.className = "vvFeatureCoin";
+        coin.className = isVG03 ? "vvFeatureCoin vv-coin-drop" : "vvFeatureCoin";
         coin.style.animationDelay = `${i * 110}ms`;
         featureFrameStageEl.appendChild(coin);
       }
@@ -991,8 +1000,10 @@
       setFeatureClass("freespins");
       featureFrameEl.classList.add("vvOverlayFrame--free");
       featureFrameEl.style.setProperty("--vv-frame-art", `url("${FRAME_ASSETS.feature.freeSpins}")`);
-      featureFrameTitleEl.textContent = "FREE SPINS COMPLETE";
-      if (featureFrameDetailEl) featureFrameDetailEl.textContent = `House lights settle at ${formatMoney(detail.totalWin || 0)}.`;
+      featureFrameTitleEl.textContent = isVG03 ? "DYNASTY SPINS COMPLETE" : "FREE SPINS COMPLETE";
+      if (featureFrameDetailEl) featureFrameDetailEl.textContent = isVG03
+        ? `Aurora settles at ${formatMoney(detail.totalWin || 0)}.`
+        : `House lights settle at ${formatMoney(detail.totalWin || 0)}.`;
       const chip = document.createElement("span");
       chip.className = "vvFeatureChip vvFeatureChip--summary";
       chip.textContent = formatMoney(detail.totalWin || 0);
@@ -1002,8 +1013,12 @@
       setFeatureClass("freespins");
       featureFrameEl.classList.add("vvOverlayFrame--free");
       featureFrameEl.style.setProperty("--vv-frame-art", `url("${FRAME_ASSETS.feature.freeSpins}")`);
-      featureFrameTitleEl.textContent = `FREE SPINS x${detail.count || 8}`;
-      if (featureFrameDetailEl) featureFrameDetailEl.textContent = "VIP noir floods the cabinet and the floor opens wider.";
+      featureFrameTitleEl.textContent = isVG03
+        ? `DYNASTY FREE SPINS • x${detail.count || 8}`
+        : `FREE SPINS x${detail.count || 8}`;
+      if (featureFrameDetailEl) featureFrameDetailEl.textContent = isVG03
+        ? "The aurora opens the dynasty grid — the dragon awakens."
+        : "VIP noir floods the cabinet and the floor opens wider.";
       for (let i = 0; i < 8; i += 1){
         const chip = document.createElement("span");
         chip.className = "vvFeatureChip";
@@ -1012,6 +1027,17 @@
         featureFrameStageEl.appendChild(chip);
       }
       triggerSoundHook("feature-free-spins", detail);
+    }
+
+    // VG-03 Phase 5 — event frame burst (900ms, no loops, self-cleaning)
+    if (isVG03) {
+      const burst = document.createElement("div");
+      burst.className = "vv-event-burst-vg03";
+      document.body.appendChild(burst);
+      burst.addEventListener("animationend", () => burst.remove(), { once: true });
+      // Safety cleanup in case animationend doesn't fire
+      const burstTimer = setTimeout(() => { if (burst.parentNode) burst.remove(); }, 950);
+      burst.addEventListener("animationend", () => clearTimeout(burstTimer), { once: true });
     }
 
     openTimedOverlay(featureFrameEl, "feature", 2400);

@@ -1,0 +1,115 @@
+{
+  "machineId": "VG-03",
+  "title": "Neon Dynasty",
+  "version": "1.0.0",
+  "theme": "neon-dynasty",
+  "accentColor": "#00e5cc",
+  "secondaryColor": "#9b5de5",
+  "skinClass": "vv-theme-vg-03",
+  "symbols": [
+    {
+      "id": "crown",
+      "path": "images/slots/vg/VG-03/symbols/neon-crown.png",
+      "label": "Dynasty Crown",
+      "tier": "premium",
+      "glowColor": "#00e5cc"
+    },
+    {
+      "id": "diamond",
+      "path": "images/slots/vg/VG-03/symbols/aurora-diamond.png",
+      "label": "Aurora Diamond",
+      "tier": "premium",
+      "glowColor": "#9b5de5"
+    },
+    {
+      "id": "ring",
+      "path": "images/slots/vg/VG-03/symbols/neon-lotus.png",
+      "label": "Neon Lotus",
+      "tier": "premium",
+      "glowColor": "#ff6eb4"
+    },
+    {
+      "id": "champagne",
+      "path": "images/slots/vg/VG-03/symbols/dynasty-dragon.png",
+      "label": "Dynasty Dragon",
+      "tier": "premium",
+      "glowColor": "#00e5cc"
+    },
+    {
+      "id": "mask",
+      "path": "images/slots/vg/VG-03/symbols/silk-mask.png",
+      "label": "Silk Mask",
+      "tier": "mid",
+      "glowColor": "#9b5de5"
+    },
+    {
+      "id": "chip",
+      "path": "images/slots/vg/VG-03/symbols/jade-chip.png",
+      "label": "Jade Chip",
+      "tier": "mid",
+      "glowColor": "#00c896"
+    },
+    {
+      "id": "vault",
+      "path": "images/slots/vg/VG-03/symbols/vault-orb.png",
+      "label": "Vault Orb",
+      "tier": "mid",
+      "glowColor": "#7b2fff"
+    },
+    {
+      "id": "ace",
+      "path": "images/slots/vg/VG-03/symbols/card-a.png",
+      "label": "Ace",
+      "tier": "low",
+      "glowColor": "#00e5cc"
+    },
+    {
+      "id": "king",
+      "path": "images/slots/vg/VG-03/symbols/card-k.png",
+      "label": "King",
+      "tier": "low",
+      "glowColor": "#00e5cc"
+    },
+    {
+      "id": "queen",
+      "path": "images/slots/vg/VG-03/symbols/card-q.png",
+      "label": "Queen",
+      "tier": "low",
+      "glowColor": "#9b5de5"
+    },
+    {
+      "id": "jack",
+      "path": "images/slots/vg/VG-03/symbols/card-j.png",
+      "label": "Jack",
+      "tier": "low",
+      "glowColor": "#00c896"
+    },
+    {
+      "id": "ten",
+      "path": "images/slots/vg/VG-03/symbols/card-10.png",
+      "label": "Ten",
+      "tier": "low",
+      "glowColor": "#00e5cc"
+    }
+  ],
+  "featureFrames": {
+    "freespins": {
+      "title": "DYNASTY FREE SPINS",
+      "subtitle": "× 8",
+      "badgeIcon": "neon-lotus",
+      "frameTheme": "aurora-ribbon"
+    },
+    "holdandwin": {
+      "title": "LOTUS LOCK",
+      "subtitle": "6 DROPS",
+      "badgeIcon": "neon-lotus",
+      "frameTheme": "aurora-ribbon"
+    },
+    "jackpot": {
+      "title": "AURORA JACKPOT",
+      "subtitle": "",
+      "badgeIcon": "aurora-diamond",
+      "frameTheme": "aurora-ribbon"
+    }
+  }
+}
