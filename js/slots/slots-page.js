@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 import { MACHINE_CONFIGS, getMachineConfig } from "./machines.js";
 import { SlotsEngine } from "./slots-engine.js";
 

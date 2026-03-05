@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * js/vaultgate.js
  * Vault Gate entrance animation for index.html

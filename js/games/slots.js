@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 (async function slotsInit(){
   const requiredIds = [
     "balance","result","betLabel","lineBetLabel","multLabel","autoLabel",

@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 const REGISTRY_URL = new URL("../../packages/vg-machines/index.json", import.meta.url);
 let registryPromise = null;
 const VALID_SWITCH_ON = new Set(["freespins", "holdandwin", "jackpot"]);

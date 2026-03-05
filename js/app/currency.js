@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 export function toCents(value, fallback = 0) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;

@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // tools/vv_audit_strict.mjs
 import fs from "fs";
 import path from "path";

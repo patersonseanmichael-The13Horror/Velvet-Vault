@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 (function vvNavInit(){
   const hamburger = document.querySelector('.hamburger');
   const drawer = document.querySelector('.mobile-drawer');

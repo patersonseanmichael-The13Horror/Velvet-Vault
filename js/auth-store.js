@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 import { signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 import {
   getDownloadURL,

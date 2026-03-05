@@ -76,6 +76,20 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // depositRequests: users can create their own, admin reads/processes via Admin SDK
+    match /depositRequests/{requestId} {
+      allow read: if isAdmin();
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // withdrawalRequests: users can create their own, admin reads/processes via Admin SDK
+    match /withdrawalRequests/{requestId} {
+      allow read: if isAdmin();
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
     // phoneIndex: written only by Admin SDK (callable functions), never by clients
     match /phoneIndex/{phoneKey} {
       allow read, write: if false;

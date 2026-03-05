@@ -1,3 +1,32 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
+
+// ── Login rate limiter (brute-force protection) ──────────────────────────────
+const _loginAttempts = { count: 0, lockedUntil: 0 };
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_MS = 60_000; // 1 minute
+
+function loginRateLimitCheck(sayFn) {
+  const now = Date.now();
+  if (_loginAttempts.lockedUntil > now) {
+    const secsLeft = Math.ceil((_loginAttempts.lockedUntil - now) / 1000);
+    sayFn(`Too many attempts. Please wait ${secsLeft}s before trying again.`);
+    return false;
+  }
+  return true;
+}
+function loginRateLimitRecord(failed, sayFn) {
+  if (failed) {
+    _loginAttempts.count += 1;
+    if (_loginAttempts.count >= LOGIN_MAX_ATTEMPTS) {
+      _loginAttempts.lockedUntil = Date.now() + LOGIN_LOCKOUT_MS;
+      _loginAttempts.count = 0;
+      sayFn("Too many failed attempts. Account temporarily locked for 60 seconds.");
+    }
+  } else {
+    _loginAttempts.count = 0;
+    _loginAttempts.lockedUntil = 0;
+  }
+}
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -146,6 +175,7 @@ signinBtn?.addEventListener("click", async () => {
   try {
     const email = await resolveLoginEmail(identifier);
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    loginRateLimitRecord(false, say);
     await ensureUserProfile({ email, displayName: cred.user.displayName || "", phone: cred.user.phoneNumber || "" });
     if (!cred.user.emailVerified) {
       showUid(cred.user.uid);

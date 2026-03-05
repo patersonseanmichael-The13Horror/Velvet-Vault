@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // Velvet Vault Firebase config
 // - Uses runtime override window.VELVET_VAULT_FIREBASE_CONFIG when provided (for static hosting)
 // - Falls back to the bundled demo config

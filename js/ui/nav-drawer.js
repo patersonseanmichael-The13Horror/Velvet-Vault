@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * Velvet Vault — Shared Nav Drawer (for vvShell pages)
  * Injects the global hamburger drawer with main navigation links.

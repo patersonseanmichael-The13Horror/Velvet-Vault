@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* Velvet Vault — Rebirth UI helpers
    - Mobile drawer open/close
    - ESC to close

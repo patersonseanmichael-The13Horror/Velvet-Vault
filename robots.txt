@@ -1,0 +1,19 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /members.html
+Disallow: /ledger.html
+Disallow: /slots.html
+Disallow: /slots-hub.html
+Disallow: /slots-lobby.html
+
+# Allow public pages
+Allow: /index.html
+Allow: /about.html
+Allow: /terms.html
+Allow: /privacy.html
+Allow: /responsible-gambling.html
+Allow: /contact.html
+Allow: /promotions.html
+Allow: /login.html
+
+Sitemap: https://velvetvault.com.au/sitemap.xml

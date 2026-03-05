@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* Velvet Vault — Story Engine
    - Sets chapter per page using <body data-chapter="...">
    - Animated background parallax (mouse + scroll)

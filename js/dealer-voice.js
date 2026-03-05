@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* =========================================
    VELVET VAULT — Dealer Voice Lines (Safe)
    - No autoplay: arms after first user click

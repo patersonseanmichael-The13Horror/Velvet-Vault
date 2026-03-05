@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* ==========================================================
    Velvet Vault — Manual Review Upload
    - Uploads image to Storage uploads/{uid}/...

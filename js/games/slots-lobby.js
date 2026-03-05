@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 function openSlotMachine(slot) {
   window.location.href = `slots.html?machine=${encodeURIComponent(slot)}`;
 }

@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // js/firebase-init.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";

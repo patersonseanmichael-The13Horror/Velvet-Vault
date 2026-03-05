@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 (function(){
   const form = document.getElementById("vvManualForm");
   if(!form) return;

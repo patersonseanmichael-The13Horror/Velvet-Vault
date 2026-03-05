@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // Casino floor: jackpot + recent wins feed
 (function(){
   const jackpotEl = document.getElementById("vvJackpot");

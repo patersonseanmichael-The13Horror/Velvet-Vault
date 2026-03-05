@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* ==========================================================
    Velvet Vault — Secure Wallet Engine (Client)
    Keeps the SAME API your games already call:

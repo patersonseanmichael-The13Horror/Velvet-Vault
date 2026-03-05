@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // Velvet Vault - Slots Hub list
 // Click a machine => opens slots.html with that machine selected.
 import { MACHINE_CONFIGS } from "../slots/machines.js";

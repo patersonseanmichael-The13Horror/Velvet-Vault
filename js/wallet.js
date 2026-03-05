@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 import { formatAUD as sharedFormatAUD, toCents } from "./app/currency.js";
 
 const LS_KEY = "vv_wallet_balance_v1";

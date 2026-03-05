@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* =====================================================
    VELVET VAULT — Casino Floor Animations Engine
    Works with css/casino-floor.css

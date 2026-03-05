@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // Set this to your Render slot server URL before frontend deploy.
 // Example:
 // window.VV_SLOT_SERVER_URL = "https://velvet-vault-slot-server.onrender.com";

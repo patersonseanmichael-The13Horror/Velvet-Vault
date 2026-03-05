@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 (function ledgerInit(){
   const requiredIds = ["bal","rows","testCredit","testDebit"];
   const missing = requiredIds.filter((id) => !document.getElementById(id));

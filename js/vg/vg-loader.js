@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 import { getMachineById, loadVGRegistry } from "./vg-registry.js";
 
 const SESSION_KEY = "vv_vg_selected";

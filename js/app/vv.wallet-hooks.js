@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 // Velvet Vault - Wallet Hooks (bets/wins/deposits/withdrawals)
 // - Deduct on BET
 // - Credit on WIN

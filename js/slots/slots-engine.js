@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 export class SlotsEngine {
   constructor(config) {
     this.config = config;

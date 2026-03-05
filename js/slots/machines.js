@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 export const DEFAULT_PAYLINES = [
   [0, 0, 0, 0, 0],
   [1, 1, 1, 1, 1],

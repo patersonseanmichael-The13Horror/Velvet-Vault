@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* Velvet Vault — Phase 4: Progress + HUD
    - Stores visited chapters in localStorage
    - Updates HUD badge and progress bar

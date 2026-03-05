@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * Velvet Vault — Tawk.to Live Chat
  * Property: 69a8f1e39f47f71c33c64fe1

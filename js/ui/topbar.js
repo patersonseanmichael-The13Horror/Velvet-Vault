@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * Velvet Vault — Global Topbar
  * Renders a sticky header with brand mark (left) + hamburger button (right).

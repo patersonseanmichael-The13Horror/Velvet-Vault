@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * vg-features.js — Shared VG Feature Frame + Win Tier Overlay Renderer
  * Provides theme-token-driven text and styling for all VG machines.

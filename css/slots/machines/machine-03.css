@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 body.machine-03 {
   --slot-bg: radial-gradient(1200px 720px at 48% 10%, rgba(0, 255, 154, 0.2), transparent 58%), radial-gradient(900px 620px at 72% 52%, rgba(255, 188, 70, 0.14), transparent 56%), linear-gradient(180deg, #06100c 0%, #020805 100%);
   --machine-bg: radial-gradient(closest-side at 26% 24%, rgba(0, 255, 154, 0.3), transparent 72%), radial-gradient(closest-side at 74% 70%, rgba(255, 196, 80, 0.24), transparent 70%), linear-gradient(180deg, rgba(16, 40, 28, 0.92), rgba(8, 18, 14, 0.96));

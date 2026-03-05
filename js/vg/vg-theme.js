@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /**
  * vg-theme.js — Shared VG Theme Template System
  * Applies body classes, CSS variables, and dynamically loads per-machine

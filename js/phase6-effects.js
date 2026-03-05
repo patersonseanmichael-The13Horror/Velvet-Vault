@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* Velvet Vault - Phase 6 Effects
    - Parallax depth (mouse + subtle scroll)
    - Gold particle shimmer (canvas)

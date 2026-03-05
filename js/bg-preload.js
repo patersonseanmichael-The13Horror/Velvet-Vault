@@ -1,3 +1,4 @@
+/* © 2026 Velvet Vault — Sean Michael Paterson. All rights reserved. */
 /* Velvet Vault — Phase 5: Background preloader + crossfade swap
    How it works:
    - story.css defines per-chapter URLs in CSS variables (vv-url-arrival, etc.)
