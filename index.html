@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/phase5-bg.css">
     <link rel="stylesheet" href="css/phase6-effects.css">
     <link rel="stylesheet" href="css/pages/index.css">
+  <link rel="stylesheet" href="css/pages/index-vaultgate.css">
 </head>
 
 <body data-chapter="arrival">
@@ -36,8 +37,24 @@
   <!-- Mouse trail container (elements appended by JS) -->
   <div id="trailRoot" aria-hidden="true"></div>
 
-  <!-- Vault Door Intro Overlay -->
-  <div class="door-overlay" id="doorOverlay" role="dialog" aria-modal="true" aria-label="Velvet Vault Entry">
+  <!-- ── Vault Gate Entrance (cinematic overlay) ── -->
+  <div id="vaultGate" role="dialog" aria-modal="true" aria-label="Enter Velvet Vault">
+    <div class="vg-bg" aria-hidden="true"></div>
+    <div class="vg-burst" aria-hidden="true"></div>
+    <div class="vg-door-left" aria-hidden="true"></div>
+    <div class="vg-door-right" aria-hidden="true"></div>
+    <div class="vg-handle" aria-hidden="true"></div>
+    <div class="vg-seam" aria-hidden="true"></div>
+    <div class="vg-center">
+      <h1>Velvet Vault</h1>
+      <p>What lies beyond the velvet door?</p>
+      <button class="vg-enter-btn" type="button">Enter Velvet Vault</button>
+    </div>
+    <span class="vg-skip-hint">Press ESC to skip</span>
+  </div>
+
+  <!-- Vault Door Intro Overlay (legacy story engine) -->
+  <div class="door-overlay" id="doorOverlay" role="dialog" aria-modal="true" aria-label="Velvet Vault Entry" style="display:none">
     <div class="door-frame" id="doorFrame">
       <div class="title">
         <div>
@@ -201,6 +218,7 @@
     <!-- Optional ambient file intentionally not bundled in this repo -->
   </audio>
 
+  <script src="js/vaultgate.js"></script>
   <script src="js/games/index.js" defer></script>
   <script src="js/story-engine.js"></script>
   <script src="js/story-progress.js"></script>
