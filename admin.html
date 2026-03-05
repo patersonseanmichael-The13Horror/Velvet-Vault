@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/pages/members.css" />
   <link rel="stylesheet" href="css/pages/admin.css" />
 
+  <link rel="stylesheet" href="css/vv-nav-drawer.css" />
   <script src="js/runtime-config.js" defer></script>
 </head>
 <body class="vvTheme">
@@ -26,8 +27,9 @@
       </div>
 
       <nav class="vvNav">
-        <a class="vvNavItem" href="slots-lobby.html">Slots</a>
-        <a class="vvNavItem" href="members.html">Members</a>
+        <button class="vvHamburger" data-vv-hamburger type="button" aria-label="Open menu" aria-expanded="false" aria-controls="vvNavDrawer">
+          <span></span><span></span><span></span>
+        </button>
         <button id="adminLogoutBtn" class="vvNavItem vvNavDanger" type="button">Logout</button>
       </nav>
     </header>
@@ -166,5 +168,6 @@
   <script type="module" src="js/admin.js"></script>
   <script type="module" src="js/ui/footer.js"></script>
   <script src="js/vv-bg-particles.js" defer></script>
+  <script type="module" src="js/ui/nav-drawer.js"></script>
 </body>
 </html>

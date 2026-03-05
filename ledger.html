@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/pages/slots.css" />
   <link rel="stylesheet" href="css/pages/members.css" />
+  <link rel="stylesheet" href="css/vv-nav-drawer.css" />
   <script src="js/runtime-config.js" defer></script>
 </head>
 <body class="vvTheme">
@@ -21,9 +22,9 @@
         </a>
       </div>
       <nav class="vvNav">
-        <a class="vvNavItem" href="members.html">Members</a>
-        <a class="vvNavItem" href="slots-lobby.html">Play Slots</a>
-        <a class="vvNavItem" href="promotions.html">Promotions</a>
+        <button class="vvHamburger" data-vv-hamburger type="button" aria-label="Open menu" aria-expanded="false" aria-controls="vvNavDrawer">
+          <span></span><span></span><span></span>
+        </button>
         <button id="btnLogout" class="vvNavItem vvNavDanger" type="button">Logout</button>
       </nav>
     </header>
@@ -66,5 +67,6 @@
   <script src="js/games/ledger.js" defer></script>
   <script type="module" src="js/ui/footer.js"></script>
   <script src="js/vv-bg-particles.js" defer></script>
+  <script type="module" src="js/ui/nav-drawer.js"></script>
 </body>
 </html>
